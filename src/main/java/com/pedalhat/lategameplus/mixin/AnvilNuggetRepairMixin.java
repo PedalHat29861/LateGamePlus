@@ -26,7 +26,6 @@ public abstract class AnvilNuggetRepairMixin {
     @Unique
     private boolean ne$inUpdate;
 
-    // IMPORTANTE: @At("RETURN") -> corre antes de CADA return del método
     @Inject(method = "updateResult", at = @At("RETURN"))
     private void ne$addNuggetRepair(CallbackInfo ci) {
         if (ne$inUpdate) return;
@@ -34,13 +33,13 @@ public abstract class AnvilNuggetRepairMixin {
         try {
             AnvilScreenHandler self = (AnvilScreenHandler)(Object) this;
 
-            ItemStack left  = self.getSlot(0).getStack(); // item a reparar
-            ItemStack right = self.getSlot(1).getStack(); // material
+            ItemStack left  = self.getSlot(0).getStack();
+            ItemStack right = self.getSlot(1).getStack();
             Slot outSlot    = self.getSlot(2);
             ItemStack out   = outSlot.getStack();
 
             if (left.isEmpty() || right.isEmpty()) return;
-            if (!right.isOf(ModItems.NETHERITE_NUGGET)) return; // no tocamos lingotes
+            if (!right.isOf(ModItems.NETHERITE_NUGGET)) return;
             if (!left.isDamageable()) return;
 
             boolean vanillaGaveResult = !out.isEmpty();
@@ -55,14 +54,12 @@ public abstract class AnvilNuggetRepairMixin {
                     left.isOf(Items.NETHERITE_LEGGINGS)    ||
                     left.isOf(Items.NETHERITE_BOOTS);
 
-            // Si vanilla no dio salida y tampoco es pieza vanilla de netherita, no hacemos nada
             if (!vanillaGaveResult && !isVanillaNetherite) return;
 
             int max    = left.getMaxDamage();
             int damage = left.getDamage();
             if (max <= 0 || damage <= 0) return;
 
-            // ~1/18 de la durabilidad por pepita (ajustable)
             int perNugget = Math.max(1, max / 18);
 
             int nuggetsAvailable = right.getCount();
@@ -78,7 +75,7 @@ public abstract class AnvilNuggetRepairMixin {
             this.levelCost.set(Math.max(1, use));
 
             LateGamePlus.LOGGER.debug(
-                "[NE DEBUG] nugget repair -> {} dmg {} -> {} usando {} pepitas",
+                "[NE DEBUG] nugget repair -> {} dmg {} -> {} using {} nuggets",
                 left.getItem(), damage, fixed.getDamage(), use
             );
         } finally {
