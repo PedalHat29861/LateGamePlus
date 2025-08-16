@@ -4,7 +4,6 @@ import com.pedalhat.lategameplus.registry.ModItems;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.item.ItemGroups;
-import com.pedalhat.lategameplus.item.ModItems;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
