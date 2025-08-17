@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": "minecraft:netherite_ingot",
+  "base": "minecraft:enchanted_golden_apple",
+  "result": {
+    "id": "lategameplus:enchanted_netherite_apple"
+  },
+  "template": "minecraft:netherite_upgrade_smithing_template"
+}

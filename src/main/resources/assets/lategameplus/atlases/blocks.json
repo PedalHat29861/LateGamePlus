@@ -1,0 +1,6 @@
+{
+  "sources": [
+    { "type": "directory", "source": "block" },
+    { "type": "directory", "source": "item" }
+  ]
+}

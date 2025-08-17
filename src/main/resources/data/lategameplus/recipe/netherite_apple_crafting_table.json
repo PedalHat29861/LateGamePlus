@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "D": "minecraft:diamond",
+    "G": "minecraft:golden_apple",
+    "N": "lategameplus:netherite_nugget"
+  },
+  "pattern": [
+    "NDN",
+    "DGD",
+    "NDN"
+  ],
+  "result": {
+    "count": 1,
+    "id": "lategameplus:netherite_apple"
+  }
+}

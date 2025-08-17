@@ -3,7 +3,7 @@
 	"package": "com.pedalhat.lategameplus.mixin.client",
 	"compatibilityLevel": "JAVA_21",
 	"client": [
-		"ExampleClientMixin"
+		"TotemFloatingDisplayMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
