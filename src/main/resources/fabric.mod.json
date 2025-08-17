@@ -23,7 +23,8 @@
 		],
 		"fabric-datagen": [
 			"com.pedalhat.lategameplus.LateGamePlusDataGenerator"
-		]
+		],
+		"modmenu": ["com.pedalhat.lategameplus.ModMenuCompat"]
 	},
 	"mixins": [
 		"lategameplus.mixins.json",
@@ -39,6 +40,7 @@
 		"fabric-api": "*"
 	},
 	"suggests": {
-		"another-mod": "*"
+		"modmenu": "*",
+		"yet-another-config-lib": "*"
 	}
 }

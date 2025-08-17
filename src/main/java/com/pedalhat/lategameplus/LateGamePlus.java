@@ -9,6 +9,7 @@ import net.minecraft.item.Items;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.pedalhat.lategameplus.config.ConfigManager;
 
 public class LateGamePlus implements ModInitializer {
     public static final String MOD_ID = "lategameplus";
@@ -16,20 +17,21 @@ public class LateGamePlus implements ModInitializer {
 
     @Override
     public void onInitialize() {
+        ConfigManager.load();
         LOGGER.info("Hello Fabric world! Late Game Plus is initializing...");
         ModItems.init();
 
-    ItemGroupEvents.modifyEntriesEvent(ItemGroups.INGREDIENTS)
-        .register(e -> e.addAfter(Items.NETHERITE_INGOT, ModItems.NETHERITE_NUGGET));
-    ItemGroupEvents.modifyEntriesEvent(ItemGroups.FOOD_AND_DRINK)
-        .register(e -> e.addAfter(Items.GOLDEN_APPLE, ModItems.NETHERITE_APPLE));
-    ItemGroupEvents.modifyEntriesEvent(ItemGroups.FOOD_AND_DRINK)
-        .register(e -> e.addAfter(Items.ENCHANTED_GOLDEN_APPLE, ModItems.ENCHANTED_NETHERITE_APPLE));
-    ItemGroupEvents.modifyEntriesEvent(ItemGroups.COMBAT)
-        .register(e -> e.addAfter(Items.TOTEM_OF_UNDYING, ModItems.TOTEM_OF_NETHERDYING));
-    ItemGroupEvents.modifyEntriesEvent(ItemGroups.TOOLS)
-        .register(e -> e.addAfter(Items.ELYTRA, ModItems.NETHERITE_ELYTRA));
+        ItemGroupEvents.modifyEntriesEvent(ItemGroups.INGREDIENTS)
+            .register(e -> e.addAfter(Items.NETHERITE_INGOT, ModItems.NETHERITE_NUGGET));
+        ItemGroupEvents.modifyEntriesEvent(ItemGroups.FOOD_AND_DRINK)
+            .register(e -> e.addAfter(Items.GOLDEN_APPLE, ModItems.NETHERITE_APPLE));
+        ItemGroupEvents.modifyEntriesEvent(ItemGroups.FOOD_AND_DRINK)
+            .register(e -> e.addAfter(Items.ENCHANTED_GOLDEN_APPLE, ModItems.ENCHANTED_NETHERITE_APPLE));
+        ItemGroupEvents.modifyEntriesEvent(ItemGroups.COMBAT)
+            .register(e -> e.addAfter(Items.TOTEM_OF_UNDYING, ModItems.TOTEM_OF_NETHERDYING));
+        ItemGroupEvents.modifyEntriesEvent(ItemGroups.TOOLS)
+            .register(e -> e.addAfter(Items.ELYTRA, ModItems.NETHERITE_ELYTRA));
 
-    ModEvents.register();
+        ModEvents.register();
     }
 }

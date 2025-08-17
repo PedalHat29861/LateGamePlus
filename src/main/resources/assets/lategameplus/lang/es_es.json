@@ -3,5 +3,30 @@
   "item.lategameplus.netherite_apple": "Manzana de netherita",
   "item.lategameplus.enchanted_netherite_apple": "Manzana de netherita encantada",
   "item.lategameplus.totem_of_netherdying": "Totem de netherdying",
-  "item.lategameplus.netherite_elytra": "Elytra de netherita"
+  "item.lategameplus.netherite_elytra": "Elytra de netherita",
+
+
+  "lategameplus.config.category.general": "General",
+
+  "lategameplus.config.elytra.protection_level": "Protección de élytras",
+  "lategameplus.config.elytra.protection_level.desc": "0=Cuero, 1=Oro, 2=Hierro (por defecto), 3=Diamante, 4=Netherita.",
+
+  "lategameplus.config.totem.netherite_uses": "Usos del tótem de netherita",
+  "lategameplus.config.totem.netherite_uses.desc": "Cantidad de activaciones del tótem de netherita (1–16).",
+
+  "lategameplus.config.totem.void_uses": "Usos del tótem del vacío",
+  "lategameplus.config.totem.void_uses.desc": "Cantidad de activaciones del tótem del vacío (1–16).",
+
+  "lategameplus.config.piglin_brute.drop_chance_percent": "Probabilidad de drop del piglin bruto (%)",
+  "lategameplus.config.piglin_brute.drop_chance_percent.desc": "Probabilidad de que suelte pepitas (0–100%).",
+
+  "lategameplus.config.piglin_brute.nugget_min": "Pepitas mínimas (bruto)",
+  "lategameplus.config.piglin_brute.nugget_min.desc": "Mínimo de pepitas que puede soltar (0–16).",
+
+  "lategameplus.config.piglin_brute.nugget_max": "Pepitas máximas (bruto)",
+  "lategameplus.config.piglin_brute.nugget_max.desc": "Máximo de pepitas que puede soltar (0–16).",
+
+  "lategameplus.config.repair.nugget_percent": "Reparación por pepita (%)",
+  "lategameplus.config.repair.nugget_percent.desc": "Porcentaje de durabilidad por pepita. Un lingote vainilla repara ~25%; por defecto aquí ~5.6% (1/18)."
+
 }
