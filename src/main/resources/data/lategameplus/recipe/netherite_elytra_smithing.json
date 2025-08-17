@@ -2,6 +2,6 @@
   "type": "minecraft:smithing_transform",
   "template": "minecraft:netherite_upgrade_smithing_template",
   "base": "minecraft:elytra",
-  "addition": "lategameplus:ingot",
+  "addition": "minecraft:netherite_ingot",
   "result": { "id": "lategameplus:netherite_elytra" }
 }
