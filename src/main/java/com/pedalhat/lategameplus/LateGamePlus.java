@@ -25,6 +25,8 @@ public class LateGamePlus implements ModInitializer {
         .register(e -> e.addAfter(Items.GOLDEN_APPLE, ModItems.NETHERITE_APPLE));
     ItemGroupEvents.modifyEntriesEvent(ItemGroups.FOOD_AND_DRINK)
         .register(e -> e.addAfter(Items.ENCHANTED_GOLDEN_APPLE, ModItems.ENCHANTED_NETHERITE_APPLE));
+    ItemGroupEvents.modifyEntriesEvent(ItemGroups.FOOD_AND_DRINK)
+        .register(e -> e.addAfter(Items.TOTEM_OF_UNDYING, ModItems.TOTEM_OF_NETHERDYING));
     ModEvents.register();
     }
 }

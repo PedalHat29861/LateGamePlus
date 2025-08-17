@@ -69,6 +69,14 @@ public class ModItems {
             ).rarity(Rarity.EPIC)
             .component(DataComponentTypes.ENCHANTMENT_GLINT_OVERRIDE, true)
         ));
+    public static final Item TOTEM_OF_NETHERDYING = register("totem_of_netherdying",
+        new Item(settings("totem_of_netherdying")
+            .fireproof()
+            .rarity(Rarity.UNCOMMON)
+            .maxCount(1)
+            .maxDamage(2)
+        ));
+
 
     public static void init() {
         // Force the class to load and run the static initializers
