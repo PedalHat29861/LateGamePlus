@@ -4,24 +4,39 @@ import com.pedalhat.lategameplus.LateGamePlus;
 
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.ConsumableComponents;
+import net.minecraft.component.type.EquippableComponent;
 import net.minecraft.component.type.FoodComponent;
+import net.minecraft.component.type.RepairableComponent;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.Item;
+import net.minecraft.item.Items;
 import net.minecraft.item.consume.ApplyEffectsConsumeEffect;
+import net.minecraft.item.equipment.EquipmentAssetKeys;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.entry.RegistryEntryList;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Rarity;
 
 public class ModItems {
     // HELPERS
-        private static RegistryKey<Item> key(String name) {
+    private static RepairableComponent repairsWithNuggetAndIngot() {
+        RegistryEntryList<Item> mats = RegistryEntryList.of(
+            Registries.ITEM.getEntry(NETHERITE_NUGGET),
+            Registries.ITEM.getEntry(Items.NETHERITE_INGOT)
+        );
+        return new RepairableComponent(mats);
+    }
+
+    private static RegistryKey<Item> key(String name) {
         return RegistryKey.of(RegistryKeys.ITEM, Identifier.of(LateGamePlus.MOD_ID, name));
     }
-        private static Item.Settings settings(String name) {
+
+    private static Item.Settings settings(String name) {
         return new Item.Settings().registryKey(key(name));
     }
     private static <T extends Item> T register(String name, T item) {
@@ -30,6 +45,30 @@ public class ModItems {
 
     // ITEMS
     public static final Item NETHERITE_NUGGET = register("netherite_nugget", new Item(settings("netherite_nugget").fireproof()));
+
+    public static final Item NETHERITE_ELYTRA = register("netherite_elytra",
+        new Item(settings("netherite_elytra")
+            .maxCount(1)
+            .maxDamage(648)
+            .fireproof()
+            .component(DataComponentTypes.EQUIPPABLE,
+                EquippableComponent.builder(EquipmentSlot.CHEST)
+                    .model(RegistryKey.of(EquipmentAssetKeys.REGISTRY_KEY,
+                            Identifier.of(LateGamePlus.MOD_ID, "wings/netherite_elytra")))
+                    .dispensable(true)
+                    .damageOnHurt(true)
+                    .build())
+            .component(DataComponentTypes.GLIDER, net.minecraft.util.Unit.INSTANCE)
+            .component(
+                DataComponentTypes.ATTRIBUTE_MODIFIERS,
+                Items.IRON_CHESTPLATE.getComponents().get(DataComponentTypes.ATTRIBUTE_MODIFIERS)
+            )
+            .component(DataComponentTypes.REPAIRABLE, repairsWithNuggetAndIngot())
+            .rarity(Rarity.EPIC)
+
+        )
+    );
+
 
     public static final Item NETHERITE_APPLE = register("netherite_apple",
         new Item(settings("netherite_apple")
@@ -75,9 +114,11 @@ public class ModItems {
             .rarity(Rarity.UNCOMMON)
             .maxCount(1)
             .maxDamage(2)
-        ));
+    ));
 
 
+
+    // INITIALIZER
     public static void init() {
         // Force the class to load and run the static initializers
     }
