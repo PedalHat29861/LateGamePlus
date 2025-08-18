@@ -155,9 +155,12 @@ public class ModItems {
             )
         );
 
-        // Lodestone Warp
+        // Lodestone Warp (usos/durabilidad y cooldown desde config)
         LODESTONE_WARP = register("lodestone_warp",
-            new LodestoneWarpItem(settings("lodestone_warp")) 
+            new LodestoneWarpItem(
+                settings("lodestone_warp")
+                    .maxDamage(Math.max(1, cfg.lodestoneWarpMaxUses))
+            )
         );
 
     }

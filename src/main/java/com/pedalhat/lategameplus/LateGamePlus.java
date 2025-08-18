@@ -4,7 +4,7 @@ import com.pedalhat.lategameplus.command.ModCommands;
 import com.pedalhat.lategameplus.config.ConfigManager;
 import com.pedalhat.lategameplus.config.ModConfig;
 import com.pedalhat.lategameplus.event.ModEvents;
-// import com.pedalhat.lategameplus.recipe.ModRecipes;
+import com.pedalhat.lategameplus.recipe.ModRecipes;
 import com.pedalhat.lategameplus.registry.ModItems;
 
 import net.fabricmc.api.ModInitializer;
@@ -31,7 +31,7 @@ public class LateGamePlus implements ModInitializer {
         ModItems.init(cfg);
         ModEvents.register(cfg);
         ModCommands.register();
-        // ModRecipes.init();
+        ModRecipes.init();
         // 3) Grupos creativos
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.INGREDIENTS)
                 .register(e -> e.addAfter(Items.NETHERITE_INGOT, ModItems.NETHERITE_NUGGET));
