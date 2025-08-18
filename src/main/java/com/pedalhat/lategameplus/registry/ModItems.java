@@ -159,7 +159,7 @@ public class ModItems {
         LODESTONE_WARP = register("lodestone_warp",
             new LodestoneWarpItem(
                 settings("lodestone_warp")
-                    .maxDamage(Math.max(1, cfg.lodestoneWarpMaxUses))
+                    .maxDamage(1)
             )
         );
 

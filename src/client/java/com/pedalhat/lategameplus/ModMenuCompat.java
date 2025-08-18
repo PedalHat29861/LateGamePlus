@@ -25,19 +25,6 @@ public class ModMenuCompat implements ModMenuApi {
             final ModConfig cfg = ConfigManager.get();
 
             // Lodestone warp config
-            var lodestoneWarpMaxUses = Option.<Integer>createBuilder()
-                .name(Text.translatable("lategameplus.config.lodestone.warp"))
-                .description(OptionDescription.of(Text.translatable("lategameplus.config.lodestone.warp.desc")))
-                .binding(
-                    1,
-                    () -> cfg.lodestoneWarpMaxUses,
-                    v  -> cfg.lodestoneWarpMaxUses = Math.max(0, Math.min(16, v))
-                )
-                .controller(opt -> IntegerSliderControllerBuilder.create(opt)
-                    .range(0, 16)
-                    .step(1)
-                )
-                .build();
             // Cooldown en ticks (80 = 4s)
             var lodestoneWarpCooldownTicks = Option.<Integer>createBuilder()
                 .name(Text.translatable("lategameplus.config.lodestone.warp_cooldown"))
@@ -177,7 +164,6 @@ public class ModMenuCompat implements ModMenuApi {
                 .option(bruteNuggetMin)
                 .option(bruteNuggetMax)
                 .option(nuggetRepairPercent)
-                .option(lodestoneWarpMaxUses)
                 .option(lodestoneWarpCooldownTicks)
                 .option(lodestoneWarpCrossDim)
                 .build();
