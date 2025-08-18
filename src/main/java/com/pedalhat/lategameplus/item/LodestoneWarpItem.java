@@ -1,5 +1,7 @@
 package com.pedalhat.lategameplus.item;
 
+import com.pedalhat.lategameplus.config.ConfigManager;
+
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.LodestoneTrackerComponent;
 import net.minecraft.entity.LivingEntity;
@@ -25,8 +27,8 @@ public class LodestoneWarpItem extends Item {
 
     /** Tiempo de “cargar” el uso (mantener pulsado). */
     private static final int CHARGE_TICKS = 12;       // ~0.6s
-    /** Cooldown tras teletransportar. Ajusta a gusto. */
-    private static final int COOLDOWN_TICKS = 20 * 30; // 30s
+    /** Cooldown tras teletransportar. Se lee de la config. */
+    // valor por defecto se toma de ModConfig
 
     public LodestoneWarpItem(Item.Settings settings) {
         super(settings.maxCount(1));
@@ -82,6 +84,13 @@ public class LodestoneWarpItem extends Item {
             return stack;
         }
 
+        // Chequear dimensiones si la config no permite cruzarlas
+        if (!ConfigManager.get().lodestoneWarpCrossDim
+            && !player.getWorld().getRegistryKey().equals(targetWorld.getRegistryKey())) {
+            player.playSound(SoundEvents.BLOCK_NOTE_BLOCK_BASS.value(), 1f, 0.5f);
+            return stack;
+        }
+
         BlockPos lodestone = gpos.pos();
         double x = lodestone.getX() + 0.5;
         double y = lodestone.getY() + 1.0; // aparece 1 bloque arriba
@@ -115,11 +124,16 @@ public class LodestoneWarpItem extends Item {
             0.8f, 1f
         );
 
-        // Aplicar cooldown – en 1.21.8 se pasa el STACK
-        player.getItemCooldownManager().set(stack, COOLDOWN_TICKS);
+        // Cooldown y consumo/durabilidad
+        int cooldown = Math.max(0, ConfigManager.get().lodestoneWarpCooldownTicks);
+        player.getItemCooldownManager().set(stack, cooldown);
+        // Reaplicar en el siguiente tick para mantener visual tras cambio de dimensión
+        player.getServer().execute(() -> player.getItemCooldownManager().set(stack, cooldown));
 
-        // Consumir (si quieres “cargas” en vez de consumo, cambia a durabilidad)
-        if (!player.isCreative()) stack.decrement(1);
+        if (!player.isCreative()) {
+            stack.setDamage(stack.getDamage() + 1);
+            if (stack.getDamage() >= stack.getMaxDamage()) stack.decrement(1);
+        }
 
         return stack;
     }
