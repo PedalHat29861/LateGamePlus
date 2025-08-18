@@ -1,7 +1,6 @@
 package com.pedalhat.lategameplus.command;
 
 import com.mojang.brigadier.CommandDispatcher;
-import com.pedalhat.lategameplus.LateGamePlus;
 import com.pedalhat.lategameplus.config.ConfigManager;
 import com.pedalhat.lategameplus.registry.ModItems;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
@@ -31,22 +30,24 @@ public final class ModCommands {
             .requires(src -> src.hasPermissionLevel(2)) // op
             .then(CommandManager.literal("reload")
                 .executes(ctx -> {
+                    var server = ctx.getSource().getServer();
                     var src = ctx.getSource();
                     // 1) Recargar JSON
                     ConfigManager.load();
+                    server.getCommandManager()
+                        .getDispatcher()
+                        .execute("reload", server.getCommandSource().withLevel(4));
 
-                    // 2) Parchear elytras en línea (aplicar nuevo nivel de protección)
-                    int patched = patchElytras(src.getServer());
-
-                    src.sendFeedback(
-                        () -> Text.literal("LateGamePlus: config recargada. Elytras parchadas: " + patched),
+                    ctx.getSource().sendFeedback(
+                        () -> Text.literal("LGP: config reloaded and datapacks /reload executed."),
                         true
                     );
-                    LateGamePlus.LOGGER.info("LGP /reload ejecutado. Elytras parchadas: {}", patched);
+
+                    // 2) Parchear elytras en línea (aplicar nuevo nivel de protección)
                     int patchedElytras = patchElytras(src.getServer());
 
                     src.sendFeedback(
-                        () -> Text.literal("LateGamePlus: config recargada. Elytras parchadas: "
+                        () -> Text.literal("LGP: Elytra config reloaded. Elytras patched: "
                             + patchedElytras),
                         true
                     );
@@ -56,7 +57,6 @@ public final class ModCommands {
         );
     }
 
-    // Copia los atributos de pechera según tu helper actual
     private static ComponentMap attrsFromLevel(int lvl) {
         int c = Math.max(0, Math.min(4, lvl));
         return switch (c) {
