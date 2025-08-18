@@ -3,6 +3,7 @@ package com.pedalhat.lategameplus.registry;
 import com.pedalhat.lategameplus.LateGamePlus;
 import com.pedalhat.lategameplus.config.ConfigManager;
 import com.pedalhat.lategameplus.config.ModConfig;
+import com.pedalhat.lategameplus.item.LodestoneWarpItem;
 
 import net.minecraft.component.ComponentMap;
 import net.minecraft.component.DataComponentTypes;
@@ -59,6 +60,9 @@ public class ModItems {
     private static <T extends Item> T register(String name, T item) {
         return Registry.register(Registries.ITEM, key(name), item);
     }
+    // public static final Item LODESTONE_WARP = register("lodestone_warp",
+    //     new LodestoneWarpItem(new Item.Settings().maxCount(1))
+    // );
 
     // ITEMS (se inicializan en init(cfg))
     public static Item NETHERITE_NUGGET;
@@ -66,14 +70,15 @@ public class ModItems {
     public static Item NETHERITE_APPLE;
     public static Item ENCHANTED_NETHERITE_APPLE;
     public static Item TOTEM_OF_NETHERDYING;
+    public static Item LODESTONE_WARP;
 
-    // INITIALIZER — ahora con config
+    // INITIALIZER w/config
     public static void init(ModConfig cfg) {
         // Nugget
         NETHERITE_NUGGET = register("netherite_nugget",
             new Item(settings("netherite_nugget").fireproof()));
 
-        // Elytra — atributos según nivel de pechera del config
+        // Elytra
         var equip = EquippableComponent.builder(EquipmentSlot.CHEST)
             .model(RegistryKey.of(EquipmentAssetKeys.REGISTRY_KEY,
                     Identifier.of(LateGamePlus.MOD_ID, "wings/netherite_elytra")))
@@ -90,7 +95,7 @@ public class ModItems {
             .component(DataComponentTypes.REPAIRABLE, repairsWithNuggetAndIngot())
             .rarity(Rarity.EPIC);
 
-        // Copiar modificadores de atributos desde la pechera “target” del config
+        // Copy attribute modifiers from the target chestplate level in the config
         var base = getChestplateAttributesForLevel(cfg.netheriteElytraProtectionLevel);
         var attr = base.get(DataComponentTypes.ATTRIBUTE_MODIFIERS);
         if (attr != null) {
@@ -98,7 +103,7 @@ public class ModItems {
         }
         NETHERITE_ELYTRA = register("netherite_elytra", new Item(elytraSettings));
 
-        // Manzanas
+        // Apples
         NETHERITE_APPLE = register("netherite_apple",
             new Item(settings("netherite_apple")
                 .fireproof()
@@ -149,5 +154,11 @@ public class ModItems {
                 .maxDamage(Math.max(1, ConfigManager.get().netheriteTotemUses))
             )
         );
+
+        // Lodestone Warp
+        LODESTONE_WARP = register("lodestone_warp",
+            new LodestoneWarpItem(settings("lodestone_warp")) 
+        );
+
     }
 }

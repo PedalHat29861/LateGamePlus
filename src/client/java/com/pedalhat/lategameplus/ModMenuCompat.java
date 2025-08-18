@@ -10,6 +10,7 @@ import dev.isxander.yacl3.api.Option;
 import dev.isxander.yacl3.api.OptionDescription;
 import dev.isxander.yacl3.api.YetAnotherConfigLib;
 import dev.isxander.yacl3.api.controller.IntegerSliderControllerBuilder;
+import dev.isxander.yacl3.api.controller.BooleanControllerBuilder;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -22,6 +23,45 @@ public class ModMenuCompat implements ModMenuApi {
     public ConfigScreenFactory<?> getModConfigScreenFactory() {
         return parent -> {
             final ModConfig cfg = ConfigManager.get();
+
+            // Lodestone warp config
+            var lodestoneWarpMaxUses = Option.<Integer>createBuilder()
+                .name(Text.translatable("lategameplus.config.lodestone.warp"))
+                .description(OptionDescription.of(Text.translatable("lategameplus.config.lodestone.warp.desc")))
+                .binding(
+                    1,
+                    () -> cfg.lodestoneWarpMaxUses,
+                    v  -> cfg.lodestoneWarpMaxUses = Math.max(0, Math.min(16, v))
+                )
+                .controller(opt -> IntegerSliderControllerBuilder.create(opt)
+                    .range(0, 16)
+                    .step(1)
+                )
+                .build();
+            // Cooldown en ticks (80 = 4s)
+            var lodestoneWarpCooldownTicks = Option.<Integer>createBuilder()
+                .name(Text.translatable("lategameplus.config.lodestone.warp_cooldown"))
+                .description(OptionDescription.of(Text.translatable("lategameplus.config.lodestone.warp_cooldown.desc")))
+                .binding(
+                    1,
+                    () -> cfg.lodestoneWarpCooldownTicks,
+                    v  -> cfg.lodestoneWarpCooldownTicks = Math.max(0, Math.min(1600, v))
+                )
+                .controller(opt -> IntegerSliderControllerBuilder.create(opt)
+                    .range(0, 1600)
+                    .step(1)
+                )
+                .build();
+            // allow tp across dimensions
+            var lodestoneWarpCrossDim = Option.<Boolean>createBuilder()
+                .name(Text.translatable("lategameplus.config.lodestone.warp_across_dimensions"))
+                .binding(
+                    false,
+                    () -> cfg.lodestoneWarpCrossDim,
+                    v  -> cfg.lodestoneWarpCrossDim = v
+                )
+                .controller(opt -> BooleanControllerBuilder.create(opt))
+                .build();
 
             // Elytra: nivel de protección (0..4)
             var elytraProt = Option.<Integer>createBuilder()
@@ -137,6 +177,9 @@ public class ModMenuCompat implements ModMenuApi {
                 .option(bruteNuggetMin)
                 .option(bruteNuggetMax)
                 .option(nuggetRepairPercent)
+                .option(lodestoneWarpMaxUses)
+                .option(lodestoneWarpCooldownTicks)
+                .option(lodestoneWarpCrossDim)
                 .build();
 
             return YetAnotherConfigLib.createBuilder()

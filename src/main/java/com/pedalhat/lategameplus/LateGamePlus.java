@@ -4,13 +4,16 @@ import com.pedalhat.lategameplus.command.ModCommands;
 import com.pedalhat.lategameplus.config.ConfigManager;
 import com.pedalhat.lategameplus.config.ModConfig;
 import com.pedalhat.lategameplus.event.ModEvents;
+// import com.pedalhat.lategameplus.recipe.ModRecipes;
 import com.pedalhat.lategameplus.registry.ModItems;
+
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.item.ItemGroups;
 import net.minecraft.item.Items;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 public class LateGamePlus implements ModInitializer {
     public static final String MOD_ID = "lategameplus";
@@ -28,7 +31,7 @@ public class LateGamePlus implements ModInitializer {
         ModItems.init(cfg);
         ModEvents.register(cfg);
         ModCommands.register();
-
+        // ModRecipes.init();
         // 3) Grupos creativos
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.INGREDIENTS)
                 .register(e -> e.addAfter(Items.NETHERITE_INGOT, ModItems.NETHERITE_NUGGET));
@@ -40,5 +43,7 @@ public class LateGamePlus implements ModInitializer {
                 .register(e -> e.addAfter(Items.TOTEM_OF_UNDYING, ModItems.TOTEM_OF_NETHERDYING));
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.TOOLS)
                 .register(e -> e.addAfter(Items.ELYTRA, ModItems.NETHERITE_ELYTRA));
+        ItemGroupEvents.modifyEntriesEvent(ItemGroups.TOOLS)
+                .register(e -> e.addAfter(Items.COMPASS, ModItems.LODESTONE_WARP));
     }
 }
