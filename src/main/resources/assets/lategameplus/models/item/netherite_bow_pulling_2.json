@@ -1,0 +1,4 @@
+{
+  "parent": "minecraft:item/bow",
+  "textures": { "layer0": "lategameplus:item/netherite_bow_pulling_2" }
+}

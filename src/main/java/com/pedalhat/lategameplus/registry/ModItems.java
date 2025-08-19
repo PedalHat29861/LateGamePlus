@@ -4,6 +4,7 @@ import com.pedalhat.lategameplus.LateGamePlus;
 import com.pedalhat.lategameplus.config.ConfigManager;
 import com.pedalhat.lategameplus.config.ModConfig;
 import com.pedalhat.lategameplus.item.LodestoneWarpItem;
+import com.pedalhat.lategameplus.item.NetheriteBowItem;
 
 import net.minecraft.component.ComponentMap;
 import net.minecraft.component.DataComponentTypes;
@@ -69,6 +70,7 @@ public class ModItems {
     public static Item NETHERITE_ELYTRA;
     public static Item NETHERITE_APPLE;
     public static Item ENCHANTED_NETHERITE_APPLE;
+    public static Item NETHERITE_BOW;
     public static Item TOTEM_OF_NETHERDYING;
     public static Item LODESTONE_WARP;
 
@@ -142,6 +144,17 @@ public class ModItems {
                         .build()
                 ).rarity(Rarity.EPIC)
                 .component(DataComponentTypes.ENCHANTMENT_GLINT_OVERRIDE, true)
+            )
+        );
+
+        NETHERITE_BOW = register("netherite_bow",
+            new NetheriteBowItem(
+                settings("netherite_bow")
+                    .maxDamage(500)
+                    .enchantable(15)
+                    .fireproof()
+                    .component(DataComponentTypes.REPAIRABLE, repairsWithNuggetAndIngot())
+                    .rarity(Rarity.RARE)
             )
         );
 
