@@ -1,11 +1,13 @@
 package com.pedalhat.lategameplus.mixin;
 
+import com.pedalhat.lategameplus.LateGamePlus;
+import com.pedalhat.lategameplus.config.ConfigManager;
+import com.pedalhat.lategameplus.registry.ModItems;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.screen.AnvilScreenHandler;
 import net.minecraft.screen.Property;
 import net.minecraft.screen.slot.Slot;
-
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -13,9 +15,6 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import com.pedalhat.lategameplus.LateGamePlus;
-import com.pedalhat.lategameplus.registry.ModItems;
 
 @Mixin(AnvilScreenHandler.class)
 public abstract class AnvilNuggetRepairMixin {
@@ -33,16 +32,20 @@ public abstract class AnvilNuggetRepairMixin {
         try {
             AnvilScreenHandler self = (AnvilScreenHandler)(Object) this;
 
-            ItemStack left  = self.getSlot(0).getStack();
-            ItemStack right = self.getSlot(1).getStack();
+            ItemStack left  = self.getSlot(0).getStack(); // pieza a reparar
+            ItemStack right = self.getSlot(1).getStack(); // material
             Slot outSlot    = self.getSlot(2);
             ItemStack out   = outSlot.getStack();
 
             if (left.isEmpty() || right.isEmpty()) return;
-            if (!right.isOf(ModItems.NETHERITE_NUGGET)) return;
             if (!left.isDamageable()) return;
 
+            if (!right.isOf(ModItems.NETHERITE_NUGGET)) return;
+
             boolean vanillaGaveResult = !out.isEmpty();
+
+            // Permite reparar también netherite vanilla con nugget si vanilla ya dio una salida
+            // (misma lógica que tenías antes).
             boolean isVanillaNetherite =
                     left.isOf(Items.NETHERITE_SWORD)   ||
                     left.isOf(Items.NETHERITE_SHOVEL)  ||
@@ -60,7 +63,12 @@ public abstract class AnvilNuggetRepairMixin {
             int damage = left.getDamage();
             if (max <= 0 || damage <= 0) return;
 
-            int perNugget = Math.max(1, max / 18);
+            // ==== ÚNICO CAMBIO: usar porcentaje desde config ====
+            float pct = ConfigManager.get().nuggetRepairPercent; // 0..1
+            if (pct < 0f) pct = 0f;
+            if (pct > 1f) pct = 1f;
+            int perNugget = Math.max(1, Math.round(max * pct));
+            // =====================================================
 
             int nuggetsAvailable = right.getCount();
             int nuggetsNeeded    = (int)Math.ceil(damage / (double)perNugget);
@@ -75,8 +83,8 @@ public abstract class AnvilNuggetRepairMixin {
             this.levelCost.set(Math.max(1, use));
 
             LateGamePlus.LOGGER.debug(
-                "[NE DEBUG] nugget repair -> {} dmg {} -> {} using {} nuggets",
-                left.getItem(), damage, fixed.getDamage(), use
+                "[LGP DEBUG] nugget repair -> {} dmg {} -> {} using {} nuggets ({}% each)",
+                left.getItem(), damage, fixed.getDamage(), use, Math.round(pct * 100f)
             );
         } finally {
             ne$inUpdate = false;

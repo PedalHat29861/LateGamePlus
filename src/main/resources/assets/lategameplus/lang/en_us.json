@@ -2,5 +2,33 @@
   "item.lategameplus.netherite_nugget": "Netherite Nugget",
   "item.lategameplus.netherite_apple": "Netherite Apple",
   "item.lategameplus.enchanted_netherite_apple": "Enchanted Netherite Apple",
-  "item.lategameplus.totem_of_netherdying": "Totem of Netherdying"
+  "item.lategameplus.totem_of_netherdying": "Totem of Netherdying",
+  "item.lategameplus.netherite_elytra": "Netherite Elytra",
+  "item.lategameplus.lodestone_warp": "Compass Warp",
+  "item.lategameplus.netherite_bow": "Netherite Bow",
+
+
+  "lategameplus.config.category.general": "General",
+
+  "lategameplus.config.elytra.protection_level": "Elytra protection tier",
+  "lategameplus.config.elytra.protection_level.desc": "0=Leather, 1=Gold, 2=Iron (default), 3=Diamond, 4=Netherite; (REQUIRES RUNNING \"/lategameplus reload/\").",
+
+  "lategameplus.config.totem.netherite_uses": "Netherite Totem uses",
+  "lategameplus.config.totem.netherite_uses.desc": "Specifies the number of times the Netherite Totem can activate (1-16). Requires reloading the world to apply changes.",
+
+  "lategameplus.config.totem.void_uses": "Void Totem uses",
+  "lategameplus.config.totem.void_uses.desc": "How many times the Void Totem can trigger (1-16); Requires reloading the world to apply changes.",
+
+  "lategameplus.config.piglin_brute.drop_chance_percent": "Piglin Brute drop chance (%)",
+  "lategameplus.config.piglin_brute.drop_chance_percent.desc": "Chance that a Brute drops nuggets (0-100%); (REQUIRES RUNNING \"/lategameplus reload/\").",
+
+  "lategameplus.config.piglin_brute.nugget_min": "Piglin Brute nugget min",
+  "lategameplus.config.piglin_brute.nugget_min.desc": "Minimum nuggets dropped (0-16); (REQUIRES RUNNING \"/lategameplus reload/\").",
+
+  "lategameplus.config.piglin_brute.nugget_max": "Piglin Brute nugget max",
+  "lategameplus.config.piglin_brute.nugget_max.desc": "Maximum nuggets dropped (0-16); (REQUIRES RUNNING \"/lategameplus reload/\").",
+
+  "lategameplus.config.repair.nugget_percent": "Repair per nugget (%)",
+  "lategameplus.config.repair.nugget_percent.desc": "Percent of durability per nugget. Vanilla ingot is 25%; default nugget here is ~5.6% (1/18); (REQUIRES RUNNING \"/lategameplus reload/\")."
+
 }
