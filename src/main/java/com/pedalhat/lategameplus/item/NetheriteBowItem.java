@@ -15,7 +15,7 @@ public class NetheriteBowItem extends BowItem {
     public ProjectileEntity createArrowEntity(World world, LivingEntity shooter, ItemStack weaponStack, ItemStack projectileStack, boolean critical) {
         ProjectileEntity projectile = super.createArrowEntity(world, shooter, weaponStack, projectileStack, critical);
         if (projectile instanceof PersistentProjectileEntity persistent) {
-            persistent.applyDamageModifier(1.3F);
+            persistent.applyDamageModifier(1.5F);
         }
         return projectile;
     }
