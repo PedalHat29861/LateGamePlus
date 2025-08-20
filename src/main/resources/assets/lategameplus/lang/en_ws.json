@@ -1,0 +1,46 @@
+{
+  "item.lategameplus.netherite_nugget": "Netherite Shard of Fortune",
+  "item.lategameplus.netherite_apple": "Netherite Apple of Might",
+  "item.lategameplus.enchanted_netherite_apple": "Enchanted Apple of Netherite",
+  "item.lategameplus.totem_of_netherdying": "Totem of Defiance o’ Death",
+  "item.lategameplus.netherite_elytra": "Wings of Netherite",
+  "item.lategameplus.lodestone_warp": "Compass of Arcane Voyage",
+  "item.lategameplus.netherite_bow": "Bow wrought of Netherite",
+
+  "lategameplus.config.category.general": "General Decrees",
+  "lategameplus.config.category.elytra": "Wings Enchantéd",
+  "lategameplus.config.category.totems": "Idols of Immortal Grace",
+  "lategameplus.config.category.piglin": "Brutes of Swinish Kin",
+  "lategameplus.config.category.repair": "Mending of Arms",
+  "lategameplus.config.category.lodestone": "Warp of Lodestone",
+
+  "lategameplus.config.elytra.protection_level": "Tier of Wingéd Protection",
+  "lategameplus.config.elytra.protection_level.desc": "0 = None, 1 = Golden Guard, 2 = Iron’d Ward (default), 3 = Diamond’s Shield, 4 = Netherite’s Eternal Guard. (Type \"/lategameplus reload\")",
+
+  "lategameplus.config.totem.netherite_uses": "Totem’s Count o’ Lives",
+  "lategameplus.config.totem.netherite_uses.desc": "How oft may thou defy Death? (1-16). World must be renew’d.",
+
+  "lategameplus.config.totem.void_uses": "Totem of the Void",
+  "lategameplus.config.totem.void_uses.desc": "How oft may thou slip ‘neath the abyss, yet breathe anew? (1-16). World must be renew’d.",
+
+  "lategameplus.config.piglin_brute.drop_chance_percent": "Brute’s Fortune of Gold (%)",
+  "lategameplus.config.piglin_brute.drop_chance_percent.desc": "What chance hath the brutish swine to bestow his glitter (0-100%). (Type \"/lategameplus reload\")",
+
+  "lategameplus.config.piglin_brute.nugget_min": "Brute’s Least Tribute",
+  "lategameplus.config.piglin_brute.nugget_min.desc": "The smallest wealth he may bequeath (0-16). (World renew’d)",
+
+  "lategameplus.config.piglin_brute.nugget_max": "Brute’s Greatest Tribute",
+  "lategameplus.config.piglin_brute.nugget_max.desc": "The greatest wealth he may bestow (0-16). (World renew’d)",
+
+  "lategameplus.config.repair.nugget_percent": "Mending per Shard (%)",
+  "lategameplus.config.repair.nugget_percent.desc": "Each shard restoreth a measure. Ingot mendeth 25%; shard mendeth ~5.6%. (Type \"/lategameplus reload\")",
+
+  "lategameplus.config.lodestone.warp_cooldown": "Cooldown (measured in fleeting moments)",
+  "lategameplus.config.lodestone.warp_cooldown.desc": "How long must thou tarry ere thy compass bewitch’d awakens anew.",
+
+  "lategameplus.config.lodestone.warp_across_dimensions": "Traverse Realms Beyond?",
+  "lategameplus.config.lodestone.warp_across_dimensions.desc": "If true, thou mayest stride o’er realms; if false, thou art bound to thine own.",
+
+  "lategameplus.config.lodestone.warp_cooldown_seconds": "Cooldown (in mortal seconds)",
+  "lategameplus.config.lodestone.warp_cooldown_seconds.desc": "The measure of time till thy compass may once more perform its sorcery."
+}

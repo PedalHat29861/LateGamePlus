@@ -3,13 +3,12 @@
 	"id": "lategameplus",
 	"version": "${version}",
 	"name": "LateGamePlus",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"description": "LateGamePlus is a mod that adds new content to the late game of Minecraft, including new uses for netherite and mechanics to enhance the gameplay experience.",
 	"authors": [
-		"Me!"
+		"PedalHat29861"
 	],
 	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"sources": "https://modrinth.com/project/late-game-plus"
 	},
 	"license": "CC0-1.0",
 	"icon": "assets/lategameplus/icon.png",

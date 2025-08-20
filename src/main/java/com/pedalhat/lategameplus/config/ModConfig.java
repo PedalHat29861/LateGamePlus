@@ -12,5 +12,5 @@ public class ModConfig {
 
         // Lodestone Warp
     public int lodestoneWarpCooldownTicks = 80;    // IN TPS; 1s = 20 TPS
-    public boolean lodestoneWarpCrossDim = true;   // allow across dimensions
+    public boolean lodestoneWarpCrossDim = false;   // allow across dimensions
 }

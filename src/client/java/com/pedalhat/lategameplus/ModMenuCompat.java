@@ -9,8 +9,8 @@ import dev.isxander.yacl3.api.ConfigCategory;
 import dev.isxander.yacl3.api.Option;
 import dev.isxander.yacl3.api.OptionDescription;
 import dev.isxander.yacl3.api.YetAnotherConfigLib;
-import dev.isxander.yacl3.api.controller.IntegerSliderControllerBuilder;
 import dev.isxander.yacl3.api.controller.BooleanControllerBuilder;
+import dev.isxander.yacl3.api.controller.IntegerSliderControllerBuilder;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -24,33 +24,38 @@ public class ModMenuCompat implements ModMenuApi {
         return parent -> {
             final ModConfig cfg = ConfigManager.get();
 
-            // Lodestone warp config
-            // Cooldown en ticks (80 = 4s)
-            var lodestoneWarpCooldownTicks = Option.<Integer>createBuilder()
-                .name(Text.translatable("lategameplus.config.lodestone.warp_cooldown"))
-                .description(OptionDescription.of(Text.translatable("lategameplus.config.lodestone.warp_cooldown.desc")))
+            /* =======================
+             *  Opciones (reutilizadas)
+             * ======================= */
+
+            // LODESTONE
+            var lodestoneWarpCooldownSeconds = Option.<Integer>createBuilder()
+                .name(Text.translatable("lategameplus.config.lodestone.warp_cooldown_seconds"))
+                .description(OptionDescription.of(Text.translatable("lategameplus.config.lodestone.warp_cooldown_seconds.desc")))
                 .binding(
-                    1,
-                    () -> cfg.lodestoneWarpCooldownTicks,
-                    v  -> cfg.lodestoneWarpCooldownTicks = Math.max(0, Math.min(1600, v))
+                    4, // valor por defecto visible: 4s
+                    () -> Math.max(0, ConfigManager.get().lodestoneWarpCooldownTicks / 20),        // ticks -> s
+                    v  -> ConfigManager.get().lodestoneWarpCooldownTicks = Math.max(0, v) * 20     // s -> ticks
                 )
-                .controller(opt -> IntegerSliderControllerBuilder.create(opt)
-                    .range(0, 1600)
-                    .step(1)
+                .controller(opt -> dev.isxander.yacl3.api.controller.IntegerFieldControllerBuilder
+                    .create(opt)
+                    .min(0)
+                    .max(3600) // hasta 1 hora (ajusta a gusto)
                 )
                 .build();
-            // allow tp across dimensions
+
             var lodestoneWarpCrossDim = Option.<Boolean>createBuilder()
                 .name(Text.translatable("lategameplus.config.lodestone.warp_across_dimensions"))
+                .description(OptionDescription.of(Text.translatable("lategameplus.config.lodestone.warp_across_dimensions.desc")))
                 .binding(
                     false,
                     () -> cfg.lodestoneWarpCrossDim,
                     v  -> cfg.lodestoneWarpCrossDim = v
                 )
-                .controller(opt -> BooleanControllerBuilder.create(opt))
+                .controller(BooleanControllerBuilder::create)
                 .build();
 
-            // Elytra: nivel de protección (0..4)
+            // ELYTRA
             var elytraProt = Option.<Integer>createBuilder()
                 .name(Text.translatable("lategameplus.config.elytra.protection_level"))
                 .description(OptionDescription.of(Text.translatable("lategameplus.config.elytra.protection_level.desc")))
@@ -61,11 +66,10 @@ public class ModMenuCompat implements ModMenuApi {
                 )
                 .controller(opt -> IntegerSliderControllerBuilder.create(opt)
                     .range(0, 4)
-                    .step(1)
-                )
+                    .step(1))
                 .build();
 
-            // Tótem de netherite: usos (1..16)
+            // TOTEMS
             var netheriteTotemUses = Option.<Integer>createBuilder()
                 .name(Text.translatable("lategameplus.config.totem.netherite_uses"))
                 .description(OptionDescription.of(Text.translatable("lategameplus.config.totem.netherite_uses.desc")))
@@ -76,26 +80,23 @@ public class ModMenuCompat implements ModMenuApi {
                 )
                 .controller(opt -> IntegerSliderControllerBuilder.create(opt)
                     .range(1, 16)
-                    .step(1)
-                )
+                    .step(1))
                 .build();
 
-            // Tótem de void: usos (1..16)
-            var voidTotemUses = Option.<Integer>createBuilder()
-                .name(Text.translatable("lategameplus.config.totem.void_uses"))
-                .description(OptionDescription.of(Text.translatable("lategameplus.config.totem.void_uses.desc")))
-                .binding(
-                    3,
-                    () -> cfg.voidTotemUses,
-                    v  -> cfg.voidTotemUses = Math.max(1, Math.min(16, v))
-                )
-                .controller(opt -> IntegerSliderControllerBuilder.create(opt)
-                    .range(1, 16)
-                    .step(1)
-                )
-                .build();
+            // var voidTotemUses = Option.<Integer>createBuilder()
+            //     .name(Text.translatable("lategameplus.config.totem.void_uses"))
+            //     .description(OptionDescription.of(Text.translatable("lategameplus.config.totem.void_uses.desc")))
+            //     .binding(
+            //         3,
+            //         () -> cfg.voidTotemUses,
+            //         v  -> cfg.voidTotemUses = Math.max(1, Math.min(16, v))
+            //     )
+            //     .controller(opt -> IntegerSliderControllerBuilder.create(opt)
+            //         .range(1, 16)
+            //         .step(1))
+            //     .build();
 
-            // Piglin Brute: % de drop (0..100)
+            // PIGLIN BRUTE
             var bruteDropChance = Option.<Integer>createBuilder()
                 .name(Text.translatable("lategameplus.config.piglin_brute.drop_chance_percent"))
                 .description(OptionDescription.of(Text.translatable("lategameplus.config.piglin_brute.drop_chance_percent.desc")))
@@ -106,11 +107,9 @@ public class ModMenuCompat implements ModMenuApi {
                 )
                 .controller(opt -> IntegerSliderControllerBuilder.create(opt)
                     .range(0, 100)
-                    .step(1)
-                )
+                    .step(1))
                 .build();
 
-            // Piglin Brute: nuggets mínimos (0..16)
             var bruteNuggetMin = Option.<Integer>createBuilder()
                 .name(Text.translatable("lategameplus.config.piglin_brute.nugget_min"))
                 .description(OptionDescription.of(Text.translatable("lategameplus.config.piglin_brute.nugget_min.desc")))
@@ -121,11 +120,9 @@ public class ModMenuCompat implements ModMenuApi {
                 )
                 .controller(opt -> IntegerSliderControllerBuilder.create(opt)
                     .range(0, 16)
-                    .step(1)
-                )
+                    .step(1))
                 .build();
 
-            // Piglin Brute: nuggets máximos (0..16)
             var bruteNuggetMax = Option.<Integer>createBuilder()
                 .name(Text.translatable("lategameplus.config.piglin_brute.nugget_max"))
                 .description(OptionDescription.of(Text.translatable("lategameplus.config.piglin_brute.nugget_max.desc")))
@@ -136,43 +133,64 @@ public class ModMenuCompat implements ModMenuApi {
                 )
                 .controller(opt -> IntegerSliderControllerBuilder.create(opt)
                     .range(0, 16)
-                    .step(1)
-                )
+                    .step(1))
                 .build();
 
-            // Reparación por nugget (0..100%) – por defecto ~6% (1/18)
+            // REPAIR
             var nuggetRepairPercent = Option.<Integer>createBuilder()
                 .name(Text.translatable("lategameplus.config.repair.nugget_percent"))
                 .description(OptionDescription.of(Text.translatable("lategameplus.config.repair.nugget_percent.desc")))
                 .binding(
-                    Math.round(100f / 18f), // ≈ 6
+                    Math.round(100f / 18f),
                     () -> Math.round(cfg.nuggetRepairPercent * 100f),
                     v  -> cfg.nuggetRepairPercent = Math.max(0f, Math.min(100f, v)) / 100f
                 )
                 .controller(opt -> IntegerSliderControllerBuilder.create(opt)
                     .range(0, 100)
-                    .step(1)
-                )
+                    .step(1))
                 .build();
 
-            var general = ConfigCategory.createBuilder()
-                .name(Text.translatable("lategameplus.config.category.general"))
+            /* =======================
+             *  Categorías
+             * ======================= */
+
+            var catLodestone = ConfigCategory.createBuilder()
+                .name(Text.translatable("lategameplus.config.category.lodestone"))
+                .option(lodestoneWarpCooldownSeconds)
+                .option(lodestoneWarpCrossDim)
+                .build();
+
+            var catElytra = ConfigCategory.createBuilder()
+                .name(Text.translatable("lategameplus.config.category.elytra"))
                 .option(elytraProt)
+                .build();
+
+            var catTotems = ConfigCategory.createBuilder()
+                .name(Text.translatable("lategameplus.config.category.totems"))
                 .option(netheriteTotemUses)
-                .option(voidTotemUses)
+                // .option(voidTotemUses)
+                .build();
+
+            var catPiglin = ConfigCategory.createBuilder()
+                .name(Text.translatable("lategameplus.config.category.piglin"))
                 .option(bruteDropChance)
                 .option(bruteNuggetMin)
                 .option(bruteNuggetMax)
+                .build();
+
+            var catRepair = ConfigCategory.createBuilder()
+                .name(Text.translatable("lategameplus.config.category.repair"))
                 .option(nuggetRepairPercent)
-                .option(lodestoneWarpCooldownTicks)
-                .option(lodestoneWarpCrossDim)
                 .build();
 
             return YetAnotherConfigLib.createBuilder()
                 .title(Text.literal("LateGamePlus"))
-                .category(general)
+                .category(catLodestone)
+                .category(catElytra)
+                .category(catTotems)
+                .category(catPiglin)
+                .category(catRepair)
                 .save(() -> {
-                    // Normalizar min ≤ max
                     if (cfg.piglinBruteNuggetMin > cfg.piglinBruteNuggetMax) {
                         int tmp = cfg.piglinBruteNuggetMin;
                         cfg.piglinBruteNuggetMin = cfg.piglinBruteNuggetMax;
