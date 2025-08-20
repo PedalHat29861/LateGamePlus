@@ -16,7 +16,6 @@ import com.pedalhat.lategameplus.registry.ModItems;
 @Mixin(ClientPlayNetworkHandler.class)
 public abstract class TotemFloatingDisplayMixin {
 
-    // Nombre usado en varias versiones (más viejo)
     @Inject(
         method = "onEntityStatus(Lnet/minecraft/network/packet/s2c/play/EntityStatusS2CPacket;)V",
         at = @At("HEAD"),
