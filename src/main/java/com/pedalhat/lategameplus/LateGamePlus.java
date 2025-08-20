@@ -21,18 +21,15 @@ public class LateGamePlus implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        // 1) Cargar config y obtener instancia
         ConfigManager.load();
         ModConfig cfg = ConfigManager.get();
 
         LOGGER.info("Hello Fabric world! Late Game Plus is initializing...");
 
-        // 2) Pasar config a tus registradores
         ModItems.init(cfg);
         ModEvents.register(cfg);
         ModCommands.register();
         ModRecipes.init();
-        // 3) Grupos creativos
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.INGREDIENTS)
                 .register(e -> e.addAfter(Items.NETHERITE_INGOT, ModItems.NETHERITE_NUGGET));
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.FOOD_AND_DRINK)

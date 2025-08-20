@@ -27,7 +27,7 @@ public final class ConfigManager {
                     if (loaded != null) INSTANCE = loaded;
                 }
             } else {
-                save(); // crea archivo con defaults
+                save();
             }
         } catch (IOException e) {
             e.printStackTrace();

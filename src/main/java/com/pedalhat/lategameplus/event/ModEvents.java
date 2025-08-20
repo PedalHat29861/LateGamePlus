@@ -57,26 +57,21 @@ public final class ModEvents {
             }
         });
 
-        // ------------ Totem de Netherdying (uso por daño + efectos) -------------
+        // ------------ Totem of Netherdying -------------
         ServerLivingEntityEvents.ALLOW_DEATH.register((LivingEntity living, DamageSource source, float amount) -> {
-            // si el daño ignora invulnerabilidad, no salva
             if (source.isIn(DamageTypeTags.BYPASSES_INVULNERABILITY)) return true;
 
-            // buscar el tótem en mano principal/offhand
             for (Hand hand : Hand.values()) {
                 ItemStack stack = living.getStackInHand(hand);
                 if (stack.isOf(ModItems.TOTEM_OF_NETHERDYING)) {
-                    // stats + trigger vanilla
                     if (living instanceof ServerPlayerEntity player) {
                         player.incrementStat(Stats.USED.getOrCreateStat(ModItems.TOTEM_OF_NETHERDYING));
                         Criteria.USED_TOTEM.trigger(player, stack);
                     }
 
-                    // consumir un “uso” (durabilidad)
                     stack.setDamage(stack.getDamage() + 1);
                     if (stack.getDamage() >= stack.getMaxDamage()) stack.decrement(1);
 
-                    // curas/efectos (ajústalos a gusto)
                     living.setHealth(1.0F);
                     living.clearStatusEffects();
                     living.addStatusEffect(new StatusEffectInstance(StatusEffects.REGENERATION, 900, 2));
@@ -84,10 +79,10 @@ public final class ModEvents {
                     living.addStatusEffect(new StatusEffectInstance(StatusEffects.FIRE_RESISTANCE, 800, 0));
                     living.getWorld().sendEntityStatus(living, (byte) 35);
 
-                    return false; // evita la muerte
+                    return false;
                 }
             }
-            return true; // no había tótem → muerte normal
+            return true;
         });
     }
 }

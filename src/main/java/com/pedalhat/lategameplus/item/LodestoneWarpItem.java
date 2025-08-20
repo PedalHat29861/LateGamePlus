@@ -25,10 +25,7 @@ import java.util.Set;
 
 public class LodestoneWarpItem extends Item {
 
-    /** Tiempo de “cargar” el uso (mantener pulsado). */
     private static final int CHARGE_TICKS = 12;       // ~0.6s
-    /** Cooldown tras teletransportar. Se lee de la config. */
-    // valor por defecto se toma de ModConfig
 
     public LodestoneWarpItem(Item.Settings settings) {
         super(settings.maxCount(1));
@@ -36,16 +33,14 @@ public class LodestoneWarpItem extends Item {
 
     @Override
     public ActionResult use(World world, PlayerEntity user, Hand hand) {
-        // Si está en cooldown, no deja empezar a usar
         ItemStack inHand = user.getStackInHand(hand);
         if (user.getItemCooldownManager().isCoolingDown(inHand)) {
-            // Sonidito de “no se puede”
             user.playSound(SoundEvents.BLOCK_NOTE_BLOCK_BASS.value(), 1f, 0.5f);
             return ActionResult.FAIL;
         }
 
         user.setCurrentHand(hand);
-        return ActionResult.CONSUME; // correcto en 1.21.x
+        return ActionResult.CONSUME;
     }
 
     @Override
@@ -55,21 +50,18 @@ public class LodestoneWarpItem extends Item {
 
     @Override
     public UseAction getUseAction(ItemStack stack) {
-        return UseAction.BOW; // animación tipo arco (tensar)
+        return UseAction.BOW;
     }
 
     @Override
     public ItemStack finishUsing(ItemStack stack, World world, LivingEntity entity) {
-        // Sólo servidor y sólo jugadores
         if (!(entity instanceof ServerPlayerEntity player)) return stack;
 
-        // Respetar cooldown también aquí (por si cambió mientras cargaba)
         if (player.getItemCooldownManager().isCoolingDown(stack)) {
             player.playSound(SoundEvents.BLOCK_NOTE_BLOCK_BASS.value(), 1f, 0.5f);
             return stack;
         }
 
-        // Leer objetivo del componente de brújula imantada en ESTE stack
         LodestoneTrackerComponent tracker = stack.get(DataComponentTypes.LODESTONE_TRACKER);
         Optional<GlobalPos> maybeTarget = (tracker == null) ? Optional.empty() : tracker.target();
         if (maybeTarget.isEmpty()) {
@@ -84,7 +76,6 @@ public class LodestoneWarpItem extends Item {
             return stack;
         }
 
-        // Chequear dimensiones si la config no permite cruzarlas
         if (!ConfigManager.get().lodestoneWarpCrossDim
             && !player.getWorld().getRegistryKey().equals(targetWorld.getRegistryKey())) {
             player.playSound(SoundEvents.BLOCK_NOTE_BLOCK_BASS.value(), 1f, 0.5f);
@@ -93,10 +84,9 @@ public class LodestoneWarpItem extends Item {
 
         BlockPos lodestone = gpos.pos();
         double x = lodestone.getX() + 0.5;
-        double y = lodestone.getY() + 1.0; // aparece 1 bloque arriba
+        double y = lodestone.getY() + 1.0;
         double z = lodestone.getZ() + 0.5;
 
-        // Sonido previo (en el mundo actual)
         world.playSound(
             null,
             entity.getBlockPos(),
@@ -105,17 +95,15 @@ public class LodestoneWarpItem extends Item {
             0.8f, 1f
         );
 
-        // Teletransporte (firma 1.21.x con PositionFlag)
         player.teleport(
             targetWorld,
             x, y, z,
-            Set.<PositionFlag>of(),      // sin flags extra
+            Set.<PositionFlag>of(),
             player.getYaw(),
             player.getPitch(),
-            false                        // no resetear cámara
+            false
         );
 
-        // Sonido posterior en destino
         targetWorld.playSound(
             null,
             BlockPos.ofFloored(x, y, z),
@@ -124,10 +112,8 @@ public class LodestoneWarpItem extends Item {
             0.8f, 1f
         );
 
-        // Cooldown y consumo/durabilidad
         int cooldown = Math.max(0, ConfigManager.get().lodestoneWarpCooldownTicks);
         player.getItemCooldownManager().set(stack, cooldown);
-        // Reaplicar en el siguiente tick para mantener visual tras cambio de dimensión
         player.getServer().execute(() -> player.getItemCooldownManager().set(stack, cooldown));
 
         if (!player.isCreative()) {

@@ -24,23 +24,19 @@ public class ModMenuCompat implements ModMenuApi {
         return parent -> {
             final ModConfig cfg = ConfigManager.get();
 
-            /* =======================
-             *  Opciones (reutilizadas)
-             * ======================= */
-
             // LODESTONE
             var lodestoneWarpCooldownSeconds = Option.<Integer>createBuilder()
                 .name(Text.translatable("lategameplus.config.lodestone.warp_cooldown_seconds"))
                 .description(OptionDescription.of(Text.translatable("lategameplus.config.lodestone.warp_cooldown_seconds.desc")))
                 .binding(
-                    4, // valor por defecto visible: 4s
+                    4,
                     () -> Math.max(0, ConfigManager.get().lodestoneWarpCooldownTicks / 20),        // ticks -> s
                     v  -> ConfigManager.get().lodestoneWarpCooldownTicks = Math.max(0, v) * 20     // s -> ticks
                 )
                 .controller(opt -> dev.isxander.yacl3.api.controller.IntegerFieldControllerBuilder
                     .create(opt)
                     .min(0)
-                    .max(3600) // hasta 1 hora (ajusta a gusto)
+                    .max(3600)
                 )
                 .build();
 
@@ -150,9 +146,6 @@ public class ModMenuCompat implements ModMenuApi {
                     .step(1))
                 .build();
 
-            /* =======================
-             *  Categorías
-             * ======================= */
 
             var catLodestone = ConfigCategory.createBuilder()
                 .name(Text.translatable("lategameplus.config.category.lodestone"))

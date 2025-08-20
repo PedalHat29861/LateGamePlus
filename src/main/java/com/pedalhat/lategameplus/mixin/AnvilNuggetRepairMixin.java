@@ -1,6 +1,5 @@
 package com.pedalhat.lategameplus.mixin;
 
-import com.pedalhat.lategameplus.LateGamePlus;
 import com.pedalhat.lategameplus.config.ConfigManager;
 import com.pedalhat.lategameplus.registry.ModItems;
 import net.minecraft.item.ItemStack;
@@ -32,7 +31,7 @@ public abstract class AnvilNuggetRepairMixin {
         try {
             AnvilScreenHandler self = (AnvilScreenHandler)(Object) this;
 
-            ItemStack left  = self.getSlot(0).getStack(); // pieza a reparar
+            ItemStack left  = self.getSlot(0).getStack(); // to repair
             ItemStack right = self.getSlot(1).getStack(); // material
             Slot outSlot    = self.getSlot(2);
             ItemStack out   = outSlot.getStack();
@@ -44,8 +43,6 @@ public abstract class AnvilNuggetRepairMixin {
 
             boolean vanillaGaveResult = !out.isEmpty();
 
-            // Permite reparar también netherite vanilla con nugget si vanilla ya dio una salida
-            // (misma lógica que tenías antes).
             boolean isVanillaNetherite =
                     left.isOf(Items.NETHERITE_SWORD)   ||
                     left.isOf(Items.NETHERITE_SHOVEL)  ||
@@ -63,7 +60,7 @@ public abstract class AnvilNuggetRepairMixin {
             int damage = left.getDamage();
             if (max <= 0 || damage <= 0) return;
 
-            // ==== ÚNICO CAMBIO: usar porcentaje desde config ====
+            // ==== Use percentage from config ====
             float pct = ConfigManager.get().nuggetRepairPercent; // 0..1
             if (pct < 0f) pct = 0f;
             if (pct > 1f) pct = 1f;
@@ -82,10 +79,6 @@ public abstract class AnvilNuggetRepairMixin {
             this.repairItemUsage = use;
             this.levelCost.set(Math.max(1, use));
 
-            LateGamePlus.LOGGER.debug(
-                "[LGP DEBUG] nugget repair -> {} dmg {} -> {} using {} nuggets ({}% each)",
-                left.getItem(), damage, fixed.getDamage(), use, Math.round(pct * 100f)
-            );
         } finally {
             ne$inUpdate = false;
         }

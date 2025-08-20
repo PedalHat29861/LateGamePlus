@@ -42,8 +42,6 @@ public final class ModCommands {
                         () -> Text.literal("LGP: config reloaded and datapacks /reload executed."),
                         true
                     );
-
-                    // 2) Parchear elytras en línea (aplicar nuevo nivel de protección)
                     int patchedElytras = patchElytras(src.getServer());
 
                     src.sendFeedback(
@@ -76,7 +74,7 @@ public final class ModCommands {
 
         int patched = 0;
         for (ServerPlayerEntity p : server.getPlayerManager().getPlayerList()) {
-            PlayerInventory inv = p.getInventory();  // incluye main + armor + off-hand
+            PlayerInventory inv = p.getInventory();
 
             for (int i = 0; i < inv.size(); i++) {
                 ItemStack stack = inv.getStack(i);
