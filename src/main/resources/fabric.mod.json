@@ -8,7 +8,9 @@
 		"PedalHat29861"
 	],
 	"contact": {
-		"sources": "https://modrinth.com/project/late-game-plus"
+		"sources": "https://github.com/PedalHat29861/LateGamePlus",
+		"issues": "https://github.com/PedalHat29861/LateGamePlus/issues",
+		"homepage": ""
 	},
 	"license": "CC0-1.0",
 	"icon": "assets/lategameplus/icon.png",
