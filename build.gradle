@@ -11,7 +11,6 @@ base {
 }
 
 repositories {
-    // Declaradas también en settings.gradle (dependencyResolutionManagement), pero las dejamos aquí por claridad del proyecto
     maven { url = "https://maven.fabricmc.net/" }
     maven { url = "https://maven.terraformersmc.com/releases" } // Mod Menu
     maven { url = "https://maven.isxander.dev/releases" }       // YACL
@@ -28,7 +27,6 @@ loom {
         }
     }
 
-    // Generación de data (client = true para assets/client)
     fabricApi {
         configureDataGeneration {
             client = true
@@ -42,11 +40,9 @@ dependencies {
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-    // Fabric API para main Y para client (importante)
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
     modClientImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
 
-    // YACL y ModMenu como ya los tenías
     modImplementation "dev.isxander:yet-another-config-lib:${project.yacl_version}"
     modCompileOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
     modRuntimeOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
@@ -85,6 +81,5 @@ publishing {
         }
     }
     repositories {
-        // Configura aquí tu repo si publicas (mavenLocal, GitHub Packages, etc.)
     }
 }
