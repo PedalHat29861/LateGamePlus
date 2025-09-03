@@ -70,6 +70,7 @@ public class ModItems {
     public static Item NETHERITE_BOW;
     public static Item TOTEM_OF_NETHERDYING;
     public static Item LODESTONE_WARP;
+    public static Item VOID_CRYSTAL;
 
     // INITIALIZER w/config
     public static void init(ModConfig cfg) {
