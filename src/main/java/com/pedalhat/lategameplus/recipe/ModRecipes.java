@@ -3,7 +3,6 @@ package com.pedalhat.lategameplus.recipe;
 import com.pedalhat.lategameplus.LateGamePlus;
 
 import net.minecraft.recipe.RecipeSerializer;
-import net.minecraft.recipe.SmithingTransformRecipe;
 import net.minecraft.recipe.SpecialCraftingRecipe;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
@@ -21,11 +20,7 @@ public class ModRecipes {
                     Identifier.of(LateGamePlus.MOD_ID, "crafting_special_lodestone_warp"),
                     new SpecialCraftingRecipe.SpecialRecipeSerializer<>(WarpFromLodestoneCompassRecipe::new));
 
-    /** Serializer for upgrading shulker boxes to netherite shulker boxes, copying components. */
-    public static final RecipeSerializer<SmithingTransformRecipe> NETHERITE_SHULKER_BOX_UPGRADE =
-            Registry.register(Registries.RECIPE_SERIALIZER,
-                    Identifier.of(LateGamePlus.MOD_ID, "netherite_shulker_box_upgrade"),
-                    new net.minecraft.recipe.SmithingTransformRecipe.Serializer<>(NetheriteShulkerBoxUpgradeRecipe::new));
+    // No custom smithing serializer is needed; we patch smithing craft via mixin for NBT copy.
 
     /** Called from mod initialization to ensure class loading. */
     public static void init() {

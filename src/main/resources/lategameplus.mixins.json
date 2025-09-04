@@ -3,7 +3,8 @@
 	"package": "com.pedalhat.lategameplus.mixin",
 	"compatibilityLevel": "JAVA_21",
 	"mixins": [
-		"AnvilNuggetRepairMixin"
+		"AnvilNuggetRepairMixin",
+		"SmithingTransformCopyMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

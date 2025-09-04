@@ -1,5 +1,6 @@
 package com.pedalhat.lategameplus.block.entity;
 
+import com.pedalhat.lategameplus.config.ConfigManager;
 import com.pedalhat.lategameplus.registry.ModBlocks;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.LockableContainerBlockEntity;
@@ -18,11 +19,32 @@ import net.minecraft.util.ItemScatterer;
 import org.jetbrains.annotations.Nullable;
 
 public class NetheriteShulkerBoxBlockEntity extends LockableContainerBlockEntity implements SidedInventory {
-    private static final int SIZE = 36;
-    private DefaultedList<ItemStack> items = DefaultedList.ofSize(SIZE, ItemStack.EMPTY);
+    private DefaultedList<ItemStack> items = DefaultedList.ofSize(getSize(), ItemStack.EMPTY);
 
     public NetheriteShulkerBoxBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlocks.NETHERITE_SHULKER_BOX_ENTITY, pos, state);
+    }
+
+    public static int getRows() {
+        int rows = ConfigManager.get().netheriteShulkerRows;
+        // Default to 5 when unset (0) or explicitly 5; otherwise 4
+        return (rows == 0 || rows == 5) ? 5 : 4;
+    }
+
+    public static int getSize() {
+        return 9 * getRows();
+    }
+
+    private void ensureSize() {
+        int size = getSize();
+        if (this.items.size() != size) {
+            DefaultedList<ItemStack> resized = DefaultedList.ofSize(size, ItemStack.EMPTY);
+            for (int i = 0; i < Math.min(size, this.items.size()); i++) {
+                resized.set(i, this.items.get(i));
+            }
+            this.items = resized;
+            markDirty();
+        }
     }
 
     @Override
@@ -32,14 +54,16 @@ public class NetheriteShulkerBoxBlockEntity extends LockableContainerBlockEntity
 
     @Override
     protected DefaultedList<ItemStack> getHeldStacks() {
+        ensureSize();
         return items;
     }
 
     @Override
     protected void setHeldStacks(DefaultedList<ItemStack> items) {
-        if (items.size() != SIZE) {
-            DefaultedList<ItemStack> resized = DefaultedList.ofSize(SIZE, ItemStack.EMPTY);
-            for (int i = 0; i < Math.min(SIZE, items.size()); i++) {
+        int size = getSize();
+        if (items.size() != size) {
+            DefaultedList<ItemStack> resized = DefaultedList.ofSize(size, ItemStack.EMPTY);
+            for (int i = 0; i < Math.min(size, items.size()); i++) {
                 resized.set(i, items.get(i));
             }
             this.items = resized;
@@ -50,19 +74,23 @@ public class NetheriteShulkerBoxBlockEntity extends LockableContainerBlockEntity
 
     @Override
     public int size() {
-        return SIZE;
+        ensureSize();
+        return getSize();
     }
 
     @Override
     protected ScreenHandler createScreenHandler(int syncId, PlayerInventory playerInventory) {
-        return new GenericContainerScreenHandler(ScreenHandlerType.GENERIC_9X4, syncId, playerInventory, this, 4);
+        int rows = getRows();
+        ScreenHandlerType<GenericContainerScreenHandler> type = rows == 5 ? ScreenHandlerType.GENERIC_9X5 : ScreenHandlerType.GENERIC_9X4;
+        return new GenericContainerScreenHandler(type, syncId, playerInventory, this, rows);
     }
 
     // Sided inventory
     @Override
     public int[] getAvailableSlots(Direction side) {
-        int[] slots = new int[SIZE];
-        for (int i = 0; i < SIZE; i++) slots[i] = i;
+        int size = getSize();
+        int[] slots = new int[size];
+        for (int i = 0; i < size; i++) slots[i] = i;
         return slots;
     }
 

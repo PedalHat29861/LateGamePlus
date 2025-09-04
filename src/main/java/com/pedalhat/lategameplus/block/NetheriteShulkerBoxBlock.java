@@ -12,7 +12,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.state.StateManager;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.server.world.ServerWorld;
@@ -87,6 +86,9 @@ public class NetheriteShulkerBoxBlock extends BlockWithEntity {
         }
         return super.onBreak(world, pos, state, player);
     }
+
+    // Placement behavior uses default BlockItem logic; inventory is preserved
+    // via item components when the box is broken and placed again.
 
     @Override
     public List<ItemStack> getDroppedStacks(BlockState state, LootWorldContext.Builder builder) {

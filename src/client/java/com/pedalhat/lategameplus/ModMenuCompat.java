@@ -147,10 +147,29 @@ public class ModMenuCompat implements ModMenuApi {
                 .build();
 
 
+            // GENERAL
+            var netheriteShulkerRows = Option.<Integer>createBuilder()
+                .name(Text.translatable("lategameplus.config.shulker.rows"))
+                .description(OptionDescription.of(Text.translatable("lategameplus.config.shulker.rows.desc")))
+                .binding(
+                    5,
+                    () -> cfg.netheriteShulkerRows == 0 ? 5 : cfg.netheriteShulkerRows,
+                    v  -> cfg.netheriteShulkerRows = (v >= 5 ? 5 : 4)
+                )
+                .controller(opt -> IntegerSliderControllerBuilder.create(opt)
+                    .range(4, 5)
+                    .step(1))
+                .build();
+
             var catLodestone = ConfigCategory.createBuilder()
                 .name(Text.translatable("lategameplus.config.category.lodestone"))
                 .option(lodestoneWarpCooldownSeconds)
                 .option(lodestoneWarpCrossDim)
+                .build();
+
+            var catGeneral = ConfigCategory.createBuilder()
+                .name(Text.translatable("lategameplus.config.category.general"))
+                .option(netheriteShulkerRows)
                 .build();
 
             var catElytra = ConfigCategory.createBuilder()
@@ -178,6 +197,7 @@ public class ModMenuCompat implements ModMenuApi {
 
             return YetAnotherConfigLib.createBuilder()
                 .title(Text.literal("LateGamePlus"))
+                .category(catGeneral)
                 .category(catLodestone)
                 .category(catElytra)
                 .category(catTotems)

@@ -42,5 +42,9 @@
   "lategameplus.config.lodestone.warp_across_dimensions.desc": "If true, thou mayest stride o’er realms; if false, thou art bound to thine own.",
 
   "lategameplus.config.lodestone.warp_cooldown_seconds": "Cooldown (in mortal seconds)",
-  "lategameplus.config.lodestone.warp_cooldown_seconds.desc": "The measure of time till thy compass may once more perform its sorcery."
+  "lategameplus.config.lodestone.warp_cooldown_seconds.desc": "The measure of time till thy compass may once more perform its sorcery.",
+  "block.lategameplus.netherite_shulker_box": "Nethertie Shülkér Böx",
+  "container.lategameplus.netherite_shulker_box": "Nethertie Shülkér Böx",
+  "lategameplus.config.shulker.rows": "Nethertie Shülkér röws",
+  "lategameplus.config.shulker.rows.desc": "How many inventöry röws (4 or 5). Changing this affects new böxes and GUIs."
 }

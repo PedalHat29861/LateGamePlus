@@ -1,0 +1,7 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:shulker_box",
+    "#minecraft:shulker_boxes"
+  ]
+}

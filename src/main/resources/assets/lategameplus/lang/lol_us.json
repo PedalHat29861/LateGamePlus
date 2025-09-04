@@ -42,5 +42,9 @@
   "lategameplus.config.lodestone.warp_across_dimensions.desc": "Enable = YAY u go anywhere. Disable = Nope, stay home.",
   
   "lategameplus.config.lodestone.warp_cooldown_seconds": "Nap time (seconds)",
-  "lategameplus.config.lodestone.warp_cooldown_seconds.desc": "How long kitteh haz to rest before zoomy teleport again."
+  "lategameplus.config.lodestone.warp_cooldown_seconds.desc": "How long kitteh haz to rest before zoomy teleport again.",
+  "block.lategameplus.netherite_shulker_box": "Netherite Shulker Bawx",
+  "container.lategameplus.netherite_shulker_box": "Netherite Shulker Bawx",
+  "lategameplus.config.shulker.rows": "Shulker rowz",
+  "lategameplus.config.shulker.rows.desc": "How many rowz (4 or 5). Changing this affects new bawxes and GUIs."
 }
