@@ -112,3 +112,4 @@ public class NetheriteShulkerBoxBlockEntity extends LockableContainerBlockEntity
         ItemScatterer.spawn(world, pos, this);
     }
 }
+

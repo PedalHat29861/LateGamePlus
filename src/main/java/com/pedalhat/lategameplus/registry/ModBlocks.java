@@ -2,9 +2,9 @@ package com.pedalhat.lategameplus.registry;
 
 import com.pedalhat.lategameplus.LateGamePlus;
 import com.pedalhat.lategameplus.block.NetheriteShulkerBoxBlock;
-import com.pedalhat.lategameplus.block.entity.NetheriteShulkerBoxBlockEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import com.pedalhat.lategameplus.block.entity.NetheriteShulkerBoxBlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.minecraft.item.BlockItem;
