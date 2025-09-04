@@ -5,6 +5,7 @@ import com.pedalhat.lategameplus.config.ConfigManager;
 import com.pedalhat.lategameplus.config.ModConfig;
 import com.pedalhat.lategameplus.event.ModEvents;
 import com.pedalhat.lategameplus.recipe.ModRecipes;
+import com.pedalhat.lategameplus.registry.ModBlocks;
 import com.pedalhat.lategameplus.registry.ModItems;
 
 import net.fabricmc.api.ModInitializer;
@@ -26,6 +27,7 @@ public class LateGamePlus implements ModInitializer {
 
         LOGGER.info("Hello Fabric world! Late Game Plus is initializing...");
 
+        ModBlocks.init();
         ModItems.init(cfg);
         ModEvents.register(cfg);
         ModCommands.register();
@@ -44,5 +46,7 @@ public class LateGamePlus implements ModInitializer {
                 .register(e -> e.addAfter(Items.ELYTRA, ModItems.NETHERITE_ELYTRA));
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.TOOLS)
                 .register(e -> e.addAfter(Items.COMPASS, ModItems.LODESTONE_WARP));
+        ItemGroupEvents.modifyEntriesEvent(ItemGroups.FUNCTIONAL)
+                .register(e -> e.addAfter(Items.SHULKER_BOX, ModBlocks.NETHERITE_SHULKER_BOX_ITEM));
     }
 }

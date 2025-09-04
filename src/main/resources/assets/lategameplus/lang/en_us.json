@@ -6,6 +6,8 @@
   "item.lategameplus.netherite_elytra": "Netherite Elytra",
   "item.lategameplus.lodestone_warp": "Compass Warp",
   "item.lategameplus.netherite_bow": "Netherite Bow",
+  "block.lategameplus.netherite_shulker_box": "Netherite Shulker Box",
+  "container.lategameplus.netherite_shulker_box": "Netherite Shulker Box",
 
 
   "lategameplus.config.category.general": "General",

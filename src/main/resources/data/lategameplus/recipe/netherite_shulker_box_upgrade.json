@@ -1,0 +1,7 @@
+{
+  "type": "lategameplus:netherite_shulker_box_upgrade",
+  "template": { "item": "minecraft:netherite_upgrade_smithing_template" },
+  "base": { "item": "minecraft:shulker_box" },
+  "addition": { "item": "minecraft:netherite_ingot" },
+  "result": { "id": "lategameplus:netherite_shulker_box" }
+}

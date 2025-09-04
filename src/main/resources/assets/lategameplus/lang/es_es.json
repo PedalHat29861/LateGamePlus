@@ -6,6 +6,8 @@
   "item.lategameplus.netherite_elytra": "Elytra de netherita",
   "item.lategameplus.lodestone_warp": "Brujula de teletransporte",
   "item.lategameplus.netherite_bow": "Arco de netherita",
+  "block.lategameplus.netherite_shulker_box": "Caja de shulker de netherita",
+  "container.lategameplus.netherite_shulker_box": "Caja de shulker de netherita",
 
   "lategameplus.config.category.general": "General",
   "lategameplus.config.category.elytra": "Élytra de Netherita",
