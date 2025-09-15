@@ -49,8 +49,9 @@ public final class ModBlocks {
         AbstractBlock.Settings netheriteAnvilSettings = AbstractBlock.Settings
             .create()
             .sounds(BlockSoundGroup.ANVIL)
-            .strength(50.0F, 1200.0F)
+            .strength(60.0F, 1200.0F)
             .requiresTool()
+            .luminance(state -> 3)
             .registryKey(blockKey("netherite_anvil"));
 
         NETHERITE_ANVIL = registerWithItem(

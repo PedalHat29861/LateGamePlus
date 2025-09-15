@@ -2,13 +2,14 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "pattern": [
-    "BBB",
+    "BAB",
     " I ",
     "III"
   ],
   "key": {
     "B": "minecraft:netherite_block",
-    "I": "minecraft:netherite_ingot"
+    "I": "minecraft:netherite_ingot",
+    "A": "minecraft:anvil"
   },
   "result": { "id": "lategameplus:netherite_anvil" }
 }
