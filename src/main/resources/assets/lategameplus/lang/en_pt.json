@@ -43,8 +43,5 @@
 
   "lategameplus.config.lodestone.warp_cooldown_seconds": "Cooldown (rum seconds)",
   "lategameplus.config.lodestone.warp_cooldown_seconds.desc": "Wait fer yer compass ‘til it works again, ye scallywag.",
-  "block.lategameplus.netherite_shulker_box": "Netheryte Shoolker Bocks",
-  "container.lategameplus.netherite_shulker_box": "Netheryte Shoolker Bocks",
-  "lategameplus.config.shulker.rows": "Netheryte Shoolker rowz",
-  "lategameplus.config.shulker.rows.desc": "How many inventury rowz (4 or 5). Changing this affects new boxes and GUIs."
+  
 }

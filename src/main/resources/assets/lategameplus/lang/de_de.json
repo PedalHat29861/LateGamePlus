@@ -6,8 +6,6 @@
   "item.lategameplus.netherite_elytra": "Netherit-Elytra",
   "item.lategameplus.lodestone_warp": "Warp-Kompass",
   "item.lategameplus.netherite_bow": "Netherit-Bogen",
-  "block.lategameplus.netherite_shulker_box": "Netherit-Shulker-Kiste",
-  "container.lategameplus.netherite_shulker_box": "Netherit-Shulker-Kiste",
 
   "lategameplus.config.category.general": "Allgemein",
   "lategameplus.config.category.elytra": "Netherit-Elytra",
@@ -45,6 +43,5 @@
 
   "lategameplus.config.lodestone.warp_cooldown_seconds": "Abklingzeit (Sekunden)",
   "lategameplus.config.lodestone.warp_cooldown_seconds.desc": "Zeit nach Warp, bevor das Item erneut benutzt werden kann.",
-  "lategameplus.config.shulker.rows": "Netherit-Shulker Reihen",
-  "lategameplus.config.shulker.rows.desc": "Wie viele Inventarreihen die Netherit-Shulker hat (4 oder 5). Änderungen betreffen neu platzierte Kisten und GUIs."
+  
 }

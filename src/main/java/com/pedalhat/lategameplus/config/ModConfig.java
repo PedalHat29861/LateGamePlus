@@ -14,7 +14,5 @@ public class ModConfig {
     public int lodestoneWarpCooldownTicks = 80;    // IN TPS; 1s = 20 TPS
     public boolean lodestoneWarpCrossDim = false;   // allow across dimensions
 
-    // Netherite Shulker Box
-    // Choose rows: 4 (36 slots) or 5 (45 slots)
-    public int netheriteShulkerRows = 5;
+    
 }

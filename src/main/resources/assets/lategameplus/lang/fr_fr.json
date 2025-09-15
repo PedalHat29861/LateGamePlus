@@ -43,8 +43,5 @@
 
   "lategameplus.config.lodestone.warp_cooldown_seconds": "Temps de recharge (secondes)",
   "lategameplus.config.lodestone.warp_cooldown_seconds.desc": "Temps d'attente après téléportation avant réutilisation.",
-  "block.lategameplus.netherite_shulker_box": "Boîte de shulker en netherite",
-  "container.lategameplus.netherite_shulker_box": "Boîte de shulker en netherite",
-  "lategameplus.config.shulker.rows": "Lignes de la shulker en netherite",
-  "lategameplus.config.shulker.rows.desc": "Nombre de lignes d’inventaire (4 ou 5). Modifie les boîtes placées et les interfaces."
+  
 }

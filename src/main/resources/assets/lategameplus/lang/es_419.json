@@ -43,8 +43,5 @@
    "lategameplus.config.lodestone.warp_cooldown_seconds": "Enfriamiento (segundos)",
   "lategameplus.config.lodestone.warp_cooldown_seconds.desc": "Tiempo de espera tras hacer warp antes de volver a usar el ítem.",
 
-  "block.lategameplus.netherite_shulker_box": "Caja de shulker de netherita",
-  "container.lategameplus.netherite_shulker_box": "Caja de shulker de netherita",
-  "lategameplus.config.shulker.rows": "Filas de la shulker de netherita",
-  "lategameplus.config.shulker.rows.desc": "Cuántas filas de inventario tiene la shulker de netherita (4 o 5). Cambiarlo afecta a cajas nuevas y a las interfaces."
+  
 }

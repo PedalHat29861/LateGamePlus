@@ -43,8 +43,5 @@
 
   "lategameplus.config.lodestone.warp_cooldown_seconds": "冷却时间 (秒)",
   "lategameplus.config.lodestone.warp_cooldown_seconds.desc": "传送后需等待的时间，才能再次使用。",
-  "block.lategameplus.netherite_shulker_box": "下界合金潜影盒",
-  "container.lategameplus.netherite_shulker_box": "下界合金潜影盒",
-  "lategameplus.config.shulker.rows": "下界合金潜影盒行数",
-  "lategameplus.config.shulker.rows.desc": "潜影盒的物品栏行数（4 或 5）。更改会影响新放置的箱子与界面。"
+  
 }
