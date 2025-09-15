@@ -24,7 +24,7 @@ public class ModRecipes {
 
     /** Called from mod initialization to ensure class loading. */
     public static void init() {
-        // no-op
+        
     }
 }
 

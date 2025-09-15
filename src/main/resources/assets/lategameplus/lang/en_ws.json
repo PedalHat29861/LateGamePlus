@@ -42,6 +42,6 @@
   "lategameplus.config.lodestone.warp_across_dimensions.desc": "If true, thou mayest stride o’er realms; if false, thou art bound to thine own.",
 
   "lategameplus.config.lodestone.warp_cooldown_seconds": "Cooldown (in mortal seconds)",
-  "lategameplus.config.lodestone.warp_cooldown_seconds.desc": "The measure of time till thy compass may once more perform its sorcery.",
+  "lategameplus.config.lodestone.warp_cooldown_seconds.desc": "The measure of time till thy compass may once more perform its sorcery."
   
 }

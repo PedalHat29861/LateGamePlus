@@ -26,17 +26,6 @@ public abstract class TotemFloatingDisplayMixin {
         netex$maybeHandleTotem(pkt, ci);
     }
 
-    // Nombre alternativo en otras builds (más nuevo)
-
-    // @Inject(
-    //     method = "onEntityEvent(Lnet/minecraft/network/packet/s2c/play/EntityStatusS2CPacket;)V",
-    //     at = @At("HEAD"),
-    //     cancellable = true,
-    //     require = 0
-    // )
-    // private void netex$showCustomTotem_onEntityEvent(EntityStatusS2CPacket pkt, CallbackInfo ci) {
-    //     netex$maybeHandleTotem(pkt, ci);
-    // }
 
     private static void netex$maybeHandleTotem(EntityStatusS2CPacket pkt, CallbackInfo ci) {
         if (pkt.getStatus() != EntityStatuses.USE_TOTEM_OF_UNDYING) return;

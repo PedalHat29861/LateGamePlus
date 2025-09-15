@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "lategameplus:block/netherite_anvil" },
+    "facing=south": { "model": "lategameplus:block/netherite_anvil", "y": 180 },
+    "facing=west":  { "model": "lategameplus:block/netherite_anvil", "y": 270 },
+    "facing=east":  { "model": "lategameplus:block/netherite_anvil", "y": 90 }
+  }
+}

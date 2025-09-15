@@ -31,8 +31,8 @@ public abstract class AnvilNuggetRepairMixin {
         try {
             AnvilScreenHandler self = (AnvilScreenHandler)(Object) this;
 
-            ItemStack left  = self.getSlot(0).getStack(); // to repair
-            ItemStack right = self.getSlot(1).getStack(); // material
+            ItemStack left  = self.getSlot(0).getStack();
+            ItemStack right = self.getSlot(1).getStack();
             Slot outSlot    = self.getSlot(2);
             ItemStack out   = outSlot.getStack();
 
@@ -60,12 +60,10 @@ public abstract class AnvilNuggetRepairMixin {
             int damage = left.getDamage();
             if (max <= 0 || damage <= 0) return;
 
-            // ==== Use percentage from config ====
-            float pct = ConfigManager.get().nuggetRepairPercent; // 0..1
+            float pct = ConfigManager.get().nuggetRepairPercent;
             if (pct < 0f) pct = 0f;
             if (pct > 1f) pct = 1f;
             int perNugget = Math.max(1, Math.round(max * pct));
-            // =====================================================
 
             int nuggetsAvailable = right.getCount();
             int nuggetsNeeded    = (int)Math.ceil(damage / (double)perNugget);

@@ -27,12 +27,11 @@ public final class ModCommands {
                                          CommandManager.RegistrationEnvironment env) {
 
         dispatcher.register(CommandManager.literal("lategameplus")
-            .requires(src -> src.hasPermissionLevel(2)) // op
+            .requires(src -> src.hasPermissionLevel(2))
             .then(CommandManager.literal("reload")
                 .executes(ctx -> {
                     var server = ctx.getSource().getServer();
                     var src = ctx.getSource();
-                    // 1) Recargar JSON
                     ConfigManager.load();
                     server.getCommandManager()
                         .getDispatcher()

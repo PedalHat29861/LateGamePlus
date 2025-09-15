@@ -42,6 +42,6 @@
   "lategameplus.config.lodestone.warp_across_dimensions.desc": "启用后，传送可跨越维度。",
 
   "lategameplus.config.lodestone.warp_cooldown_seconds": "冷却时间 (秒)",
-  "lategameplus.config.lodestone.warp_cooldown_seconds.desc": "传送后需等待的时间，才能再次使用。",
+  "lategameplus.config.lodestone.warp_cooldown_seconds.desc": "传送后需等待的时间，才能再次使用。"
   
 }

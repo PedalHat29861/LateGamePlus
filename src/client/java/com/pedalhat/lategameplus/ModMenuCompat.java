@@ -24,14 +24,13 @@ public class ModMenuCompat implements ModMenuApi {
         return parent -> {
             final ModConfig cfg = ConfigManager.get();
 
-            // LODESTONE
             var lodestoneWarpCooldownSeconds = Option.<Integer>createBuilder()
                 .name(Text.translatable("lategameplus.config.lodestone.warp_cooldown_seconds"))
                 .description(OptionDescription.of(Text.translatable("lategameplus.config.lodestone.warp_cooldown_seconds.desc")))
                 .binding(
                     4,
-                    () -> Math.max(0, ConfigManager.get().lodestoneWarpCooldownTicks / 20),        // ticks -> s
-                    v  -> ConfigManager.get().lodestoneWarpCooldownTicks = Math.max(0, v) * 20     // s -> ticks
+                    () -> Math.max(0, ConfigManager.get().lodestoneWarpCooldownTicks / 20),
+                    v  -> ConfigManager.get().lodestoneWarpCooldownTicks = Math.max(0, v) * 20
                 )
                 .controller(opt -> dev.isxander.yacl3.api.controller.IntegerFieldControllerBuilder
                     .create(opt)
@@ -51,7 +50,6 @@ public class ModMenuCompat implements ModMenuApi {
                 .controller(BooleanControllerBuilder::create)
                 .build();
 
-            // ELYTRA
             var elytraProt = Option.<Integer>createBuilder()
                 .name(Text.translatable("lategameplus.config.elytra.protection_level"))
                 .description(OptionDescription.of(Text.translatable("lategameplus.config.elytra.protection_level.desc")))
@@ -65,7 +63,6 @@ public class ModMenuCompat implements ModMenuApi {
                     .step(1))
                 .build();
 
-            // TOTEMS
             var netheriteTotemUses = Option.<Integer>createBuilder()
                 .name(Text.translatable("lategameplus.config.totem.netherite_uses"))
                 .description(OptionDescription.of(Text.translatable("lategameplus.config.totem.netherite_uses.desc")))
@@ -79,20 +76,6 @@ public class ModMenuCompat implements ModMenuApi {
                     .step(1))
                 .build();
 
-            // var voidTotemUses = Option.<Integer>createBuilder()
-            //     .name(Text.translatable("lategameplus.config.totem.void_uses"))
-            //     .description(OptionDescription.of(Text.translatable("lategameplus.config.totem.void_uses.desc")))
-            //     .binding(
-            //         3,
-            //         () -> cfg.voidTotemUses,
-            //         v  -> cfg.voidTotemUses = Math.max(1, Math.min(16, v))
-            //     )
-            //     .controller(opt -> IntegerSliderControllerBuilder.create(opt)
-            //         .range(1, 16)
-            //         .step(1))
-            //     .build();
-
-            // PIGLIN BRUTE
             var bruteDropChance = Option.<Integer>createBuilder()
                 .name(Text.translatable("lategameplus.config.piglin_brute.drop_chance_percent"))
                 .description(OptionDescription.of(Text.translatable("lategameplus.config.piglin_brute.drop_chance_percent.desc")))
@@ -132,7 +115,6 @@ public class ModMenuCompat implements ModMenuApi {
                     .step(1))
                 .build();
 
-            // REPAIR
             var nuggetRepairPercent = Option.<Integer>createBuilder()
                 .name(Text.translatable("lategameplus.config.repair.nugget_percent"))
                 .description(OptionDescription.of(Text.translatable("lategameplus.config.repair.nugget_percent.desc")))
@@ -161,7 +143,6 @@ public class ModMenuCompat implements ModMenuApi {
             var catTotems = ConfigCategory.createBuilder()
                 .name(Text.translatable("lategameplus.config.category.totems"))
                 .option(netheriteTotemUses)
-                // .option(voidTotemUses)
                 .build();
 
             var catPiglin = ConfigCategory.createBuilder()

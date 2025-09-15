@@ -42,6 +42,6 @@
   "lategameplus.config.lodestone.warp_across_dimensions.desc": "Enable = YAY u go anywhere. Disable = Nope, stay home.",
   
   "lategameplus.config.lodestone.warp_cooldown_seconds": "Nap time (seconds)",
-  "lategameplus.config.lodestone.warp_cooldown_seconds.desc": "How long kitteh haz to rest before zoomy teleport again.",
+  "lategameplus.config.lodestone.warp_cooldown_seconds.desc": "How long kitteh haz to rest before zoomy teleport again."
   
 }

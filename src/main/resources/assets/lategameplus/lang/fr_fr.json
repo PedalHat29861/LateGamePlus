@@ -6,6 +6,8 @@
   "item.lategameplus.netherite_elytra": "Élytres en Netherite",
   "item.lategameplus.lodestone_warp": "Boussole de téléportation",
   "item.lategameplus.netherite_bow": "Arc en Netherite",
+  "block.lategameplus.netherite_anvil": "Enclume en Netherite",
+  "item.lategameplus.netherite_anvil": "Enclume en Netherite",
 
   "lategameplus.config.category.general": "Général",
   "lategameplus.config.category.elytra": "Élytres en Netherite",
@@ -42,6 +44,6 @@
   "lategameplus.config.lodestone.warp_across_dimensions.desc": "Si activé, la téléportation peut traverser les dimensions.",
 
   "lategameplus.config.lodestone.warp_cooldown_seconds": "Temps de recharge (secondes)",
-  "lategameplus.config.lodestone.warp_cooldown_seconds.desc": "Temps d'attente après téléportation avant réutilisation.",
+  "lategameplus.config.lodestone.warp_cooldown_seconds.desc": "Temps d'attente après téléportation avant réutilisation."
   
 }
