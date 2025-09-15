@@ -43,4 +43,5 @@
 
   "lategameplus.config.lodestone.warp_cooldown_seconds": "冷却时间 (秒)",
   "lategameplus.config.lodestone.warp_cooldown_seconds.desc": "传送后需等待的时间，才能再次使用。"
+  
 }

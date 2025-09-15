@@ -33,7 +33,6 @@ import net.minecraft.util.Hand;
 public final class ModEvents {
 
     public static void register(ModConfig cfg) {
-        // ------------ Loot: Piglin Brute -> Netherite Nuggets -------------
         LootTableEvents.MODIFY.register((RegistryKey<LootTable> key,
                                          LootTable.Builder table,
                                          LootTableSource source,
@@ -57,7 +56,6 @@ public final class ModEvents {
             }
         });
 
-        // ------------ Totem of Netherdying -------------
         ServerLivingEntityEvents.ALLOW_DEATH.register((LivingEntity living, DamageSource source, float amount) -> {
             if (source.isIn(DamageTypeTags.BYPASSES_INVULNERABILITY)) return true;
 

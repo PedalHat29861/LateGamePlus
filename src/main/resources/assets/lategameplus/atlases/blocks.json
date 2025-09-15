@@ -1,6 +1,6 @@
 {
   "sources": [
-    { "type": "directory", "source": "block" },
-    { "type": "directory", "source": "item" }
+    { "type": "directory", "source": "textures/block", "prefix": "block/" },
+    { "type": "directory", "source": "textures/item",  "prefix": "item/"  }
   ]
 }

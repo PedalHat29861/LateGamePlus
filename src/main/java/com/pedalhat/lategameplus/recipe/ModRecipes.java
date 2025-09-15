@@ -20,9 +20,11 @@ public class ModRecipes {
                     Identifier.of(LateGamePlus.MOD_ID, "crafting_special_lodestone_warp"),
                     new SpecialCraftingRecipe.SpecialRecipeSerializer<>(WarpFromLodestoneCompassRecipe::new));
 
+    // No custom smithing serializer is needed; we patch smithing craft via mixin for NBT copy.
+
     /** Called from mod initialization to ensure class loading. */
     public static void init() {
-        // no-op
+        
     }
 }
 

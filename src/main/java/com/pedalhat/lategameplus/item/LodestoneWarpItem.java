@@ -25,7 +25,7 @@ import java.util.Set;
 
 public class LodestoneWarpItem extends Item {
 
-    private static final int CHARGE_TICKS = 12;       // ~0.6s
+    private static final int CHARGE_TICKS = 12;
 
     public LodestoneWarpItem(Item.Settings settings) {
         super(settings.maxCount(1));

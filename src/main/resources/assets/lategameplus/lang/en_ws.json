@@ -43,4 +43,5 @@
 
   "lategameplus.config.lodestone.warp_cooldown_seconds": "Cooldown (in mortal seconds)",
   "lategameplus.config.lodestone.warp_cooldown_seconds.desc": "The measure of time till thy compass may once more perform its sorcery."
+  
 }

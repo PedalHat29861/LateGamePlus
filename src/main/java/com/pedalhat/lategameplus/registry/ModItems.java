@@ -28,9 +28,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.Rarity;
 
 public class ModItems {
-    // HELPERS
     private static ComponentMap getChestplateAttributesForLevel(int lvl) {
-        // 0..4  (0 = no armor)
         int clamped = Math.max(0, Math.min(4, lvl));
         return switch (clamped) {
             case 0 -> ComponentMap.EMPTY;
@@ -62,7 +60,6 @@ public class ModItems {
         return Registry.register(Registries.ITEM, key(name), item);
     }
 
-    // ITEMS
     public static Item NETHERITE_NUGGET;
     public static Item NETHERITE_ELYTRA;
     public static Item NETHERITE_APPLE;
@@ -70,14 +67,12 @@ public class ModItems {
     public static Item NETHERITE_BOW;
     public static Item TOTEM_OF_NETHERDYING;
     public static Item LODESTONE_WARP;
+    public static Item VOID_CRYSTAL;
 
-    // INITIALIZER w/config
     public static void init(ModConfig cfg) {
-        // Nugget
         NETHERITE_NUGGET = register("netherite_nugget",
             new Item(settings("netherite_nugget").fireproof()));
 
-        // Elytra
         var equip = EquippableComponent.builder(EquipmentSlot.CHEST)
             .model(RegistryKey.of(EquipmentAssetKeys.REGISTRY_KEY,
                     Identifier.of(LateGamePlus.MOD_ID, "wings/netherite_elytra")))
@@ -101,7 +96,6 @@ public class ModItems {
         }
         NETHERITE_ELYTRA = register("netherite_elytra", new Item(elytraSettings));
 
-        // Apples
         NETHERITE_APPLE = register("netherite_apple",
             new Item(settings("netherite_apple")
                 .fireproof()
@@ -143,7 +137,6 @@ public class ModItems {
             )
         );
 
-        // BOW
         NETHERITE_BOW = register("netherite_bow",
             new NetheriteBowItem(
                 settings("netherite_bow")
@@ -155,7 +148,6 @@ public class ModItems {
             )
         );
 
-        // Tótem
         TOTEM_OF_NETHERDYING = register("totem_of_netherdying",
             new Item(settings("totem_of_netherdying")
                 .fireproof()
@@ -165,7 +157,6 @@ public class ModItems {
             )
         );
 
-        // Lodestone Warp
         LODESTONE_WARP = register("lodestone_warp",
             new LodestoneWarpItem(
                 settings("lodestone_warp")

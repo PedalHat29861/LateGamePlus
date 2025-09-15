@@ -40,7 +40,10 @@
 
   "lategameplus.config.lodestone.warp_across_dimensions": "Permitir warp entre dimensiones",
   "lategameplus.config.lodestone.warp_across_dimensions.desc": "Si está activo, permite teletransportarse entre dimensiones.",
-   "lategameplus.config.lodestone.warp_cooldown_seconds": "Enfriamiento (segundos)",
-  "lategameplus.config.lodestone.warp_cooldown_seconds.desc": "Tiempo de espera tras hacer warp antes de volver a usar el ítem."
+  "lategameplus.config.lodestone.warp_cooldown_seconds": "Enfriamiento (segundos)",
+  "lategameplus.config.lodestone.warp_cooldown_seconds.desc": "Tiempo de espera tras hacer warp antes de volver a usar el ítem.",
+  "item.lategameplus.netherite_anvil": "Yunque de netherita",
+  "block.lategameplus.netherite_anvil": "Yunque de netherita"
 
+  
 }

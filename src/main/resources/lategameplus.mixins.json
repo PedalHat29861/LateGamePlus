@@ -1,14 +1,16 @@
 {
-	"required": true,
-	"package": "com.pedalhat.lategameplus.mixin",
-	"compatibilityLevel": "JAVA_21",
-	"mixins": [
-		"AnvilNuggetRepairMixin"
-	],
-	"injectors": {
-		"defaultRequire": 1
-	},
-	"overwrites": {
-		"requireAnnotations": true
-	}
+  "required": true,
+  "package": "com.pedalhat.lategameplus.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "AnvilNuggetRepairMixin",
+    "AnvilHandlerCapMixin",
+    "AnvilScreenHandlerAccessor"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
+  }
 }
