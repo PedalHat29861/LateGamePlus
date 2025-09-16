@@ -42,6 +42,8 @@ public class LateGamePlus implements ModInitializer {
                 .register(e -> e.addAfter(Items.TOTEM_OF_UNDYING, ModItems.TOTEM_OF_NETHERDYING));
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.COMBAT)
                 .register(e -> e.addAfter(Items.BOW, ModItems.NETHERITE_BOW));
+        ItemGroupEvents.modifyEntriesEvent(ItemGroups.COMBAT)
+                .register(e -> e.addAfter(Items.CROSSBOW, ModItems.NETHERITE_CROSSBOW));
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.TOOLS)
                 .register(e -> e.addAfter(Items.ELYTRA, ModItems.NETHERITE_ELYTRA));
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.TOOLS)

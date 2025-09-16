@@ -5,6 +5,7 @@ import com.pedalhat.lategameplus.config.ConfigManager;
 import com.pedalhat.lategameplus.config.ModConfig;
 import com.pedalhat.lategameplus.item.LodestoneWarpItem;
 import com.pedalhat.lategameplus.item.NetheriteBowItem;
+import com.pedalhat.lategameplus.item.NetheriteCrossbowItem;
 
 import net.minecraft.component.ComponentMap;
 import net.minecraft.component.DataComponentTypes;
@@ -65,6 +66,7 @@ public class ModItems {
     public static Item NETHERITE_APPLE;
     public static Item ENCHANTED_NETHERITE_APPLE;
     public static Item NETHERITE_BOW;
+    public static Item NETHERITE_CROSSBOW;
     public static Item TOTEM_OF_NETHERDYING;
     public static Item LODESTONE_WARP;
     public static Item VOID_CRYSTAL;
@@ -144,7 +146,19 @@ public class ModItems {
                     .enchantable(15)
                     .fireproof()
                     .component(DataComponentTypes.REPAIRABLE, repairsWithNuggetAndIngot())
-                    .rarity(Rarity.RARE)
+                    .rarity(Rarity.COMMON)
+            )
+        );
+
+        NETHERITE_CROSSBOW = register("netherite_crossbow",
+            new NetheriteCrossbowItem(
+                settings("netherite_crossbow")
+                    .maxDamage(652)
+                    .enchantable(1)
+                    .fireproof()
+                    .component(DataComponentTypes.REPAIRABLE, repairsWithNuggetAndIngot())
+                    .component(DataComponentTypes.ITEM_MODEL, Identifier.of(LateGamePlus.MOD_ID, "netherite_crossbow"))
+                    .rarity(Rarity.COMMON)
             )
         );
 
