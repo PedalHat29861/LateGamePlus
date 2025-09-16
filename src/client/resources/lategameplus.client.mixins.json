@@ -3,7 +3,9 @@
 	"package": "com.pedalhat.lategameplus.mixin.client",
 	"compatibilityLevel": "JAVA_21",
 	"client": [
-		"TotemFloatingDisplayMixin"
+		"TotemFloatingDisplayMixin",
+		"HeldItemRendererMixin",
+		"PlayerEntityRendererMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

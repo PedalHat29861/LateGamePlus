@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": "minecraft:netherite_ingot",
+  "base": "minecraft:crossbow",
+  "result": {
+    "id": "lategameplus:netherite_crossbow"
+  },
+  "template": "minecraft:netherite_upgrade_smithing_template"
+}
