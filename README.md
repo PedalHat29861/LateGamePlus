@@ -1,6 +1,24 @@
 # LateGame+
+---
 
-**LateGame+** expands Minecraft’s endgame with new **progression items, upgrades, and utilities** — keeping your adventure challenging and rewarding long after you’re geared up.  
+
+## ❤️ Support & Feedback
+
+If you enjoy **LateGame+** and want to help out, there are a couple of ways:
+
+- ☕ [Buy me a coffee](https://ko-fi.com/pedalhat29861) if you feel like supporting the project. Totally optional, but always appreciated.
+  
+  [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/pedalhat29861)
+  
+- 📝 Got ideas, suggestions, or found a bug? Drop them here: [GitHub Issues](https://github.com/PedalHat29861/LateGamePlus/issues)  
+
+Every bit of support (whether it’s feedback or a coffee) helps me keep making the mod better. Thanks a ton!
+
+
+---
+
+
+**LateGame+** expands Minecraft’s endgame with new **progression items, upgrades, and utilities** keeping your adventure challenging and rewarding long after you’re geared up.  
 
 From **Netherite Apples** to **Warping Compasses**, **Unbreakable Anvils**, and **Armored Elytras**, every addition is balanced and fully configurable.
 
@@ -117,7 +135,7 @@ Vanilla Comparison:
 A darker twist on the Totem of Undying.  
 
 * **Two uses by default** (configurable).  
-* Same mechanics as vanilla — just tougher.  
+* Same mechanics as vanilla just tougher.  
 
 ![totem_of_netherdying_smithing](https://cdn.modrinth.com/data/cached_images/25848de7684edb40fc8a6cd2fb3f066fcd18d106.png)
 
@@ -164,7 +182,7 @@ Fine-tune the mod to fit your playstyle:
 
 ## 📥 Installation
 
-  1. Install Fabric or Quilt.  
+  1. Install Fabric.  
   2. Drop the `.jar` into your `mods` folder.  
   3. (Optional) Add Mod Menu + YACL for easy config in-game.  
 
