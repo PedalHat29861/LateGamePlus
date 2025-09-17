@@ -10,6 +10,8 @@ import dev.isxander.yacl3.api.Option;
 import dev.isxander.yacl3.api.OptionDescription;
 import dev.isxander.yacl3.api.YetAnotherConfigLib;
 import dev.isxander.yacl3.api.controller.BooleanControllerBuilder;
+import dev.isxander.yacl3.api.controller.FloatSliderControllerBuilder;
+import dev.isxander.yacl3.api.controller.IntegerFieldControllerBuilder;
 import dev.isxander.yacl3.api.controller.IntegerSliderControllerBuilder;
 
 import net.fabricmc.api.EnvType;
@@ -24,30 +26,43 @@ public class ModMenuCompat implements ModMenuApi {
         return parent -> {
             final ModConfig cfg = ConfigManager.get();
 
-            var lodestoneWarpCooldownSeconds = Option.<Integer>createBuilder()
-                .name(Text.translatable("lategameplus.config.lodestone.warp_cooldown_seconds"))
-                .description(OptionDescription.of(Text.translatable("lategameplus.config.lodestone.warp_cooldown_seconds.desc")))
+            var crossbowDamageMultiplier = Option.<Float>createBuilder()
+                .name(Text.translatable("lategameplus.config.crossbow.damage_multiplier"))
+                .description(OptionDescription.of(Text.translatable("lategameplus.config.crossbow.damage_multiplier.desc")))
                 .binding(
-                    4,
-                    () -> Math.max(0, ConfigManager.get().lodestoneWarpCooldownTicks / 20),
-                    v  -> ConfigManager.get().lodestoneWarpCooldownTicks = Math.max(0, v) * 20
+                    1.5f,
+                    () -> cfg.netheriteCrossbowDamageMultiplier,
+                    v  -> cfg.netheriteCrossbowDamageMultiplier = Math.max(0f, Math.min(5f, v))
                 )
-                .controller(opt -> dev.isxander.yacl3.api.controller.IntegerFieldControllerBuilder
-                    .create(opt)
-                    .min(0)
-                    .max(3600)
-                )
+                .controller(opt -> FloatSliderControllerBuilder.create(opt)
+                    .range(0f, 5f)
+                    .step(0.05f))
                 .build();
 
-            var lodestoneWarpCrossDim = Option.<Boolean>createBuilder()
-                .name(Text.translatable("lategameplus.config.lodestone.warp_across_dimensions"))
-                .description(OptionDescription.of(Text.translatable("lategameplus.config.lodestone.warp_across_dimensions.desc")))
+            var netheriteAnvilCap = Option.<Integer>createBuilder()
+                .name(Text.translatable("lategameplus.config.anvil.max_cost"))
+                .description(OptionDescription.of(Text.translatable("lategameplus.config.anvil.max_cost.desc")))
                 .binding(
-                    false,
-                    () -> cfg.lodestoneWarpCrossDim,
-                    v  -> cfg.lodestoneWarpCrossDim = v
+                    35,
+                    () -> Math.max(20, Math.min(39, cfg.netheriteAnvilMaxLevelCost)),
+                    v  -> cfg.netheriteAnvilMaxLevelCost = Math.max(20, Math.min(39, v))
                 )
-                .controller(BooleanControllerBuilder::create)
+                .controller(opt -> IntegerSliderControllerBuilder.create(opt)
+                    .range(20, 39)
+                    .step(1))
+                .build();
+
+            var nuggetRepairPercent = Option.<Integer>createBuilder()
+                .name(Text.translatable("lategameplus.config.repair.nugget_percent"))
+                .description(OptionDescription.of(Text.translatable("lategameplus.config.repair.nugget_percent.desc")))
+                .binding(
+                    Math.round(100f / 18f),
+                    () -> Math.round(cfg.nuggetRepairPercent * 100f),
+                    v  -> cfg.nuggetRepairPercent = Math.max(0f, Math.min(100f, v)) / 100f
+                )
+                .controller(opt -> IntegerSliderControllerBuilder.create(opt)
+                    .range(0, 100)
+                    .step(1))
                 .build();
 
             var elytraProt = Option.<Integer>createBuilder()
@@ -74,6 +89,30 @@ public class ModMenuCompat implements ModMenuApi {
                 .controller(opt -> IntegerSliderControllerBuilder.create(opt)
                     .range(1, 16)
                     .step(1))
+                .build();
+
+            var lodestoneWarpCooldownSeconds = Option.<Integer>createBuilder()
+                .name(Text.translatable("lategameplus.config.lodestone.warp_cooldown_seconds"))
+                .description(OptionDescription.of(Text.translatable("lategameplus.config.lodestone.warp_cooldown_seconds.desc")))
+                .binding(
+                    4,
+                    () -> Math.max(0, cfg.lodestoneWarpCooldownTicks / 20),
+                    v  -> cfg.lodestoneWarpCooldownTicks = Math.max(0, v) * 20
+                )
+                .controller(opt -> IntegerFieldControllerBuilder.create(opt)
+                    .min(0)
+                    .max(3600))
+                .build();
+
+            var lodestoneWarpCrossDim = Option.<Boolean>createBuilder()
+                .name(Text.translatable("lategameplus.config.lodestone.warp_across_dimensions"))
+                .description(OptionDescription.of(Text.translatable("lategameplus.config.lodestone.warp_across_dimensions.desc")))
+                .binding(
+                    false,
+                    () -> cfg.lodestoneWarpCrossDim,
+                    v  -> cfg.lodestoneWarpCrossDim = v
+                )
+                .controller(BooleanControllerBuilder::create)
                 .build();
 
             var bruteDropChance = Option.<Integer>createBuilder()
@@ -115,34 +154,19 @@ public class ModMenuCompat implements ModMenuApi {
                     .step(1))
                 .build();
 
-            var nuggetRepairPercent = Option.<Integer>createBuilder()
-                .name(Text.translatable("lategameplus.config.repair.nugget_percent"))
-                .description(OptionDescription.of(Text.translatable("lategameplus.config.repair.nugget_percent.desc")))
-                .binding(
-                    Math.round(100f / 18f),
-                    () -> Math.round(cfg.nuggetRepairPercent * 100f),
-                    v  -> cfg.nuggetRepairPercent = Math.max(0f, Math.min(100f, v)) / 100f
-                )
-                .controller(opt -> IntegerSliderControllerBuilder.create(opt)
-                    .range(0, 100)
-                    .step(1))
+            var catGeneral = ConfigCategory.createBuilder()
+                .name(Text.translatable("lategameplus.config.category.general"))
+                .option(crossbowDamageMultiplier)
+                .option(netheriteAnvilCap)
+                .option(elytraProt)
+                .option(netheriteTotemUses)
+                .option(nuggetRepairPercent)
                 .build();
-
 
             var catLodestone = ConfigCategory.createBuilder()
                 .name(Text.translatable("lategameplus.config.category.lodestone"))
                 .option(lodestoneWarpCooldownSeconds)
                 .option(lodestoneWarpCrossDim)
-                .build();
-
-            var catElytra = ConfigCategory.createBuilder()
-                .name(Text.translatable("lategameplus.config.category.elytra"))
-                .option(elytraProt)
-                .build();
-
-            var catTotems = ConfigCategory.createBuilder()
-                .name(Text.translatable("lategameplus.config.category.totems"))
-                .option(netheriteTotemUses)
                 .build();
 
             var catPiglin = ConfigCategory.createBuilder()
@@ -152,24 +176,19 @@ public class ModMenuCompat implements ModMenuApi {
                 .option(bruteNuggetMax)
                 .build();
 
-            var catRepair = ConfigCategory.createBuilder()
-                .name(Text.translatable("lategameplus.config.category.repair"))
-                .option(nuggetRepairPercent)
-                .build();
-
             return YetAnotherConfigLib.createBuilder()
                 .title(Text.literal("LateGamePlus"))
+                .category(catGeneral)
                 .category(catLodestone)
-                .category(catElytra)
-                .category(catTotems)
                 .category(catPiglin)
-                .category(catRepair)
                 .save(() -> {
                     if (cfg.piglinBruteNuggetMin > cfg.piglinBruteNuggetMax) {
                         int tmp = cfg.piglinBruteNuggetMin;
                         cfg.piglinBruteNuggetMin = cfg.piglinBruteNuggetMax;
                         cfg.piglinBruteNuggetMax = tmp;
                     }
+                    cfg.netheriteCrossbowDamageMultiplier = Math.max(0f, Math.min(5f, cfg.netheriteCrossbowDamageMultiplier));
+                    cfg.netheriteAnvilMaxLevelCost = Math.max(20, Math.min(39, cfg.netheriteAnvilMaxLevelCost));
                     ConfigManager.save();
                 })
                 .build()

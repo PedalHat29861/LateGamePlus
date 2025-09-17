@@ -7,44 +7,36 @@
   "item.lategameplus.lodestone_warp": "Brujula de teletransporte",
   "item.lategameplus.netherite_bow": "Arco de netherita",
   "item.lategameplus.netherite_crossbow": "Ballesta de netherita",
-  
-
   "lategameplus.config.category.general": "General",
   "lategameplus.config.category.elytra": "Élytra de Netherita",
   "lategameplus.config.category.totems": "Tótems",
   "lategameplus.config.category.piglin": "Piglin Bruto",
   "lategameplus.config.category.repair": "Reparación",
   "lategameplus.config.category.lodestone": "Warp a magnetita",
-
   "lategameplus.config.elytra.protection_level": "Nivel de protección de élytra",
   "lategameplus.config.elytra.protection_level.desc": "0 = desactivado, 1 = Oro, 2 = Hierro (por defecto), 3 = Diamante, 4 = Netherita. (Requiere \"/lategameplus reload\")",
-
   "lategameplus.config.totem.netherite_uses": "Usos del tótem de netherita",
   "lategameplus.config.totem.netherite_uses.desc": "Número de activaciones permitidas (1-16). Requiere reiniciar el mundo.",
-
   "lategameplus.config.totem.void_uses": "Usos del tótem del vacío",
   "lategameplus.config.totem.void_uses.desc": "Número de activaciones permitidas (1-16). Requiere reiniciar el mundo.",
-
   "lategameplus.config.piglin_brute.drop_chance_percent": "Probabilidad de drop del piglin bruto (%)",
   "lategameplus.config.piglin_brute.drop_chance_percent.desc": "Probabilidad de que suelte pepitas (0-100%). (Requiere \"/lategameplus reload\")",
-
   "lategameplus.config.piglin_brute.nugget_min": "Pepitas mínimas (bruto)",
   "lategameplus.config.piglin_brute.nugget_min.desc": "Mínimo de pepitas que puede soltar (0-16). (Requiere \"/lategameplus reload\")",
-
   "lategameplus.config.piglin_brute.nugget_max": "Pepitas máximas (bruto)",
   "lategameplus.config.piglin_brute.nugget_max.desc": "Máximo de pepitas que puede soltar (0-16). (Requiere \"/lategameplus reload\")",
-
   "lategameplus.config.repair.nugget_percent": "Reparación por pepita (%)",
   "lategameplus.config.repair.nugget_percent.desc": "Durabilidad restaurada por pepita. Un lingote vainilla ≈ 25%; por defecto aquí ≈ 5.6% (1/18). (Requiere \"/lategameplus reload\")",
-
   "lategameplus.config.lodestone.warp_cooldown": "Enfriamiento (segundos)",
   "lategameplus.config.lodestone.warp_cooldown.desc": "Tiempo de espera tras teletransportarse antes de volver a usar el ítem.",
-
   "lategameplus.config.lodestone.warp_across_dimensions": "Permitir warp entre dimensiones",
   "lategameplus.config.lodestone.warp_across_dimensions.desc": "Si está activo, permite teletransportarse entre dimensiones.",
-   "lategameplus.config.lodestone.warp_cooldown_seconds": "Enfriamiento (segundos)",
+  "lategameplus.config.lodestone.warp_cooldown_seconds": "Enfriamiento (segundos)",
   "lategameplus.config.lodestone.warp_cooldown_seconds.desc": "Tiempo de espera tras hacer warp antes de volver a usar el ítem.",
   "block.lategameplus.netherite_anvil": "Yunque de netherita",
-  "item.lategameplus.netherite_anvil": "Yunque de netherita"
-
+  "item.lategameplus.netherite_anvil": "Yunque de netherita",
+  "lategameplus.config.crossbow.damage_multiplier": "Multiplicador de daño de la ballesta de netherita",
+  "lategameplus.config.crossbow.damage_multiplier.desc": "Ajusta el daño de los proyectiles de la ballesta de netherita. 1.0 = daño original, 1.5 = valor predeterminado.",
+  "lategameplus.config.anvil.max_cost": "Límite de experiencia del yunque de netherita",
+  "lategameplus.config.anvil.max_cost.desc": "Nivel máximo que exige el yunque antes de limitar el coste (20-39 niveles)."
 }

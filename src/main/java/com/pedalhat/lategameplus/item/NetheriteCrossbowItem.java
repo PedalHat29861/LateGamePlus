@@ -1,5 +1,7 @@
 package com.pedalhat.lategameplus.item;
 
+import com.pedalhat.lategameplus.config.ConfigManager;
+
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
@@ -16,7 +18,8 @@ public class NetheriteCrossbowItem extends CrossbowItem {
     protected ProjectileEntity createArrowEntity(World world, LivingEntity shooter, ItemStack weaponStack, ItemStack projectileStack, boolean critical) {
         ProjectileEntity projectile = super.createArrowEntity(world, shooter, weaponStack, projectileStack, critical);
         if (projectile instanceof PersistentProjectileEntity persistent) {
-            persistent.applyDamageModifier(1.5F);
+            float multiplier = Math.max(0.0F, ConfigManager.get().netheriteCrossbowDamageMultiplier);
+            persistent.applyDamageModifier(multiplier);
         }
         return projectile;
     }
