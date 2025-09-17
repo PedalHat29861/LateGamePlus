@@ -7,42 +7,34 @@
   "item.lategameplus.lodestone_warp": "Magic Compass Teleporty",
   "item.lategameplus.netherite_bow": "Shiny PewPew Stick",
   "item.lategameplus.netherite_crossbow": "Chunky PewPew Launcher",
-
   "lategameplus.config.category.general": "Stuffz",
   "lategameplus.config.category.elytra": "Shiny Wingz",
   "lategameplus.config.category.totems": "No-Ded Kitteh Idolz",
   "lategameplus.config.category.piglin": "Chonky Piggy Boss",
   "lategameplus.config.category.repair": "Fix-It Thingies",
   "lategameplus.config.category.lodestone": "Teleporty Compass",
-
   "lategameplus.config.elytra.protection_level": "Wing Armor Levelz",
   "lategameplus.config.elytra.protection_level.desc": "0 = nope, 1 = Shiny Goldz, 2 = Ironz (default), 3 = Diamondz, 4 = Netherite OMG. (Needz \"/lategameplus reload\")",
-
   "lategameplus.config.totem.netherite_uses": "How many lifes dis shiny totem haz?",
   "lategameplus.config.totem.netherite_uses.desc": "1-16 lives. Reload world plz.",
-
   "lategameplus.config.totem.void_uses": "Void Totem lifes",
   "lategameplus.config.totem.void_uses.desc": "How many times u fall in void an still no ded (1-16). Reload needed.",
-
   "lategameplus.config.piglin_brute.drop_chance_percent": "Piggy Brute drop shiny bitz (%)",
   "lategameplus.config.piglin_brute.drop_chance_percent.desc": "Chance piggy drop shiniez (0-100%). (Needz \"/lategameplus reload\")",
-
   "lategameplus.config.piglin_brute.nugget_min": "Piggy min shiny",
   "lategameplus.config.piglin_brute.nugget_min.desc": "Min nomz drop (0-16). (Reload plz)",
-
   "lategameplus.config.piglin_brute.nugget_max": "Piggy max shiny",
   "lategameplus.config.piglin_brute.nugget_max.desc": "Max nomz drop (0-16). (Reload plz)",
-
   "lategameplus.config.repair.nugget_percent": "Fix armor with shiny (%)",
   "lategameplus.config.repair.nugget_percent.desc": "Each nuggetz heal ur thingy. Big ingot = 25%, lil nugget ≈ 5.6%. (Needz \"/lategameplus reload\")",
-
   "lategameplus.config.lodestone.warp_cooldown": "Nap time (seconds)",
   "lategameplus.config.lodestone.warp_cooldown.desc": "How long u wait till teleport again.",
-
   "lategameplus.config.lodestone.warp_across_dimensions": "Warp cross dimensionz?",
   "lategameplus.config.lodestone.warp_across_dimensions.desc": "Enable = YAY u go anywhere. Disable = Nope, stay home.",
-  
   "lategameplus.config.lodestone.warp_cooldown_seconds": "Nap time (seconds)",
-  "lategameplus.config.lodestone.warp_cooldown_seconds.desc": "How long kitteh haz to rest before zoomy teleport again."
-  
+  "lategameplus.config.lodestone.warp_cooldown_seconds.desc": "How long kitteh haz to rest before zoomy teleport again.",
+  "lategameplus.config.crossbow.damage_multiplier": "Netherite boomstick dmg multipli-catur",
+  "lategameplus.config.crossbow.damage_multiplier.desc": "Makez dat shiny boomstick arrowz hurt moar. 1.0 = boring vanilla, 1.5 = default nom.",
+  "lategameplus.config.anvil.max_cost": "Netherite anvil XP ceiling",
+  "lategameplus.config.anvil.max_cost.desc": "Highest level tax da anvil asks before it yowls NOPE (20-39 lvlz)."
 }

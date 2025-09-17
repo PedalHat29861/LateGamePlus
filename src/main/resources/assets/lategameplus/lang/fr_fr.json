@@ -9,42 +9,34 @@
   "item.lategameplus.netherite_crossbow": "Arbalète en Netherite",
   "block.lategameplus.netherite_anvil": "Enclume en Netherite",
   "item.lategameplus.netherite_anvil": "Enclume en Netherite",
-
   "lategameplus.config.category.general": "Général",
   "lategameplus.config.category.elytra": "Élytres en Netherite",
   "lategameplus.config.category.totems": "Totems",
   "lategameplus.config.category.piglin": "Brute Piglin",
   "lategameplus.config.category.repair": "Réparation",
   "lategameplus.config.category.lodestone": "Téléportation Lodestone",
-
   "lategameplus.config.elytra.protection_level": "Niveau de protection des élytres",
   "lategameplus.config.elytra.protection_level.desc": "0 = désactivé, 1 = Or, 2 = Fer (par défaut), 3 = Diamant, 4 = Netherite. (\"/lategameplus reload\" requis)",
-
   "lategameplus.config.totem.netherite_uses": "Utilisations du Totem de Netherite",
   "lategameplus.config.totem.netherite_uses.desc": "Nombre d'activations autorisées (1–16). Rechargement du monde requis.",
-
   "lategameplus.config.totem.void_uses": "Utilisations du Totem du Vide",
   "lategameplus.config.totem.void_uses.desc": "Nombre d'activations autorisées (1–16). Rechargement du monde requis.",
-
   "lategameplus.config.piglin_brute.drop_chance_percent": "Chance de loot de la brute Piglin (%)",
   "lategameplus.config.piglin_brute.drop_chance_percent.desc": "Chance qu'une brute laisse tomber des pépites (0–100%). (\"/lategameplus reload\" requis)",
-
   "lategameplus.config.piglin_brute.nugget_min": "Nombre minimal de pépites",
   "lategameplus.config.piglin_brute.nugget_min.desc": "Nombre minimum de pépites lâchées (0–16). (\"/lategameplus reload\" requis)",
-
   "lategameplus.config.piglin_brute.nugget_max": "Nombre maximal de pépites",
   "lategameplus.config.piglin_brute.nugget_max.desc": "Nombre maximum de pépites lâchées (0–16). (\"/lategameplus reload\" requis)",
-
   "lategameplus.config.repair.nugget_percent": "Réparation par pépite (%)",
   "lategameplus.config.repair.nugget_percent.desc": "Durabilité restaurée par pépite. Lingot vanille = 25%; pépite par défaut ≈ 5,6% (1/18). (\"/lategameplus reload\" requis)",
-
   "lategameplus.config.lodestone.warp_cooldown": "Temps de recharge (secondes)",
   "lategameplus.config.lodestone.warp_cooldown.desc": "Temps d'attente après téléportation avant de réutiliser l'objet.",
-
   "lategameplus.config.lodestone.warp_across_dimensions": "Autoriser la téléportation inter-dimensions",
   "lategameplus.config.lodestone.warp_across_dimensions.desc": "Si activé, la téléportation peut traverser les dimensions.",
-
   "lategameplus.config.lodestone.warp_cooldown_seconds": "Temps de recharge (secondes)",
-  "lategameplus.config.lodestone.warp_cooldown_seconds.desc": "Temps d'attente après téléportation avant réutilisation."
-  
+  "lategameplus.config.lodestone.warp_cooldown_seconds.desc": "Temps d'attente après téléportation avant réutilisation.",
+  "lategameplus.config.crossbow.damage_multiplier": "Multiplicateur de dégâts de l'arbalète en netherite",
+  "lategameplus.config.crossbow.damage_multiplier.desc": "Ajuste les dégâts des projectiles de l'arbalète en netherite. 1,0 = valeur vanilla, 1,5 = valeur par défaut.",
+  "lategameplus.config.anvil.max_cost": "Plafond d'expérience de l'enclume en netherite",
+  "lategameplus.config.anvil.max_cost.desc": "Coût en niveaux maximal appliqué avant plafonnement (20 à 39 niveaux)."
 }

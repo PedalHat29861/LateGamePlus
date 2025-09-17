@@ -1,6 +1,7 @@
 package com.pedalhat.lategameplus.screen;
 
 import com.pedalhat.lategameplus.LateGamePlus;
+import com.pedalhat.lategameplus.config.ConfigManager;
 import com.pedalhat.lategameplus.mixin.AnvilScreenHandlerAccessor;
 import com.pedalhat.lategameplus.registry.ModBlocks;
 import net.minecraft.entity.player.PlayerEntity;
@@ -12,10 +13,15 @@ import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerContext;
 
 public class NetheriteAnvilScreenHandler extends AnvilScreenHandler {
-    private static final int MAX_COST = 35;
+    private static final int MIN_CAP = 20;
+    private static final int MAX_CAP = 39;
 
     public NetheriteAnvilScreenHandler(int syncId, PlayerInventory inv, ScreenHandlerContext ctx) {
         super(syncId, inv, ctx);
+    }
+
+    private static int resolveMaxCost() {
+        return Math.max(MIN_CAP, Math.min(MAX_CAP, ConfigManager.get().netheriteAnvilMaxLevelCost));
     }
 
     @Override
@@ -34,16 +40,18 @@ public class NetheriteAnvilScreenHandler extends AnvilScreenHandler {
 
         super.updateResult();
 
+        int maxCost = resolveMaxCost();
         int vanillaCost = levelCost.get();
         int finalCost = vanillaCost;
-        boolean capped = vanillaCost > MAX_COST;
+        boolean capped = vanillaCost > maxCost;
         if (capped) {
-            finalCost = MAX_COST;
+            finalCost = maxCost;
             levelCost.set(finalCost);
             LateGamePlus.LOGGER.info(
-                "[NetheriteAnvil] cost capped from {} to {}",
+                "[NetheriteAnvil] cost capped from {} to {} (max allowed {})",
                 vanillaCost,
-                finalCost
+                finalCost,
+                maxCost
             );
             this.sendContentUpdates();
         }

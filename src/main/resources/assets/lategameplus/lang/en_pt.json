@@ -9,42 +9,34 @@
   "item.lategameplus.netherite_crossbow": "Netherite Boomstick",
   "block.lategameplus.netherite_anvil": "Netherite Anvil",
   "item.lategameplus.netherite_anvil": "Netherite Anvil",
-
   "lategameplus.config.category.general": "Cap’n’s Orders",
   "lategameplus.config.category.elytra": "Shiny Sails",
   "lategameplus.config.category.totems": "Idols o’ No Drownin’",
   "lategameplus.config.category.piglin": "Brutish Swine",
   "lategameplus.config.category.repair": "Patch’n Gear",
   "lategameplus.config.category.lodestone": "Warp’n Compass",
-
   "lategameplus.config.elytra.protection_level": "Sails Armor Tier",
   "lategameplus.config.elytra.protection_level.desc": "0 = Nay, 1 = Gold Doubloon, 2 = Iron Hook (default), 3 = Diamond Treasure, 4 = Netherite Booty. (Type \"/lategameplus reload\")",
-
   "lategameplus.config.totem.netherite_uses": "How many times ye cheat Death?",
   "lategameplus.config.totem.netherite_uses.desc": "1-16 times. Reload the seas.",
-
   "lategameplus.config.totem.void_uses": "Void Totem uses",
   "lategameplus.config.totem.void_uses.desc": "How many times ye fall inta the deep blue ‘n still breathe (1-16). Reload needed.",
-
   "lategameplus.config.piglin_brute.drop_chance_percent": "Brute Piggy Booty Chance (%)",
   "lategameplus.config.piglin_brute.drop_chance_percent.desc": "Odds the piggy brute drops shiny loot (0-100%). (Type \"/lategameplus reload\")",
-
   "lategameplus.config.piglin_brute.nugget_min": "Piggy minimum booty",
   "lategameplus.config.piglin_brute.nugget_min.desc": "Minimum shiny bits from a brute (0-16). (Reload yer ship)",
-
   "lategameplus.config.piglin_brute.nugget_max": "Piggy maximum booty",
   "lategameplus.config.piglin_brute.nugget_max.desc": "Maximum shiny bits from a brute (0-16). (Reload yer ship)",
-
   "lategameplus.config.repair.nugget_percent": "Patch armor with shinies (%)",
   "lategameplus.config.repair.nugget_percent.desc": "Each lil’ shiny fixes yer gear. Big ingot = 25%, lil nugget ≈ 5.6%. (Type \"/lategameplus reload\")",
-
   "lategameplus.config.lodestone.warp_cooldown": "Cooldown (swig o’ rum time)",
   "lategameplus.config.lodestone.warp_cooldown.desc": "How long ye wait ‘til ye compass works again.",
-
   "lategameplus.config.lodestone.warp_across_dimensions": "Warp ‘cross seas?",
   "lategameplus.config.lodestone.warp_across_dimensions.desc": "Enable = Sail any sea, Disable = Ye be stuck.",
-
   "lategameplus.config.lodestone.warp_cooldown_seconds": "Cooldown (rum seconds)",
-  "lategameplus.config.lodestone.warp_cooldown_seconds.desc": "Wait fer yer compass 'til it works again, ye scallywag."
-  
+  "lategameplus.config.lodestone.warp_cooldown_seconds.desc": "Wait fer yer compass 'til it works again, ye scallywag.",
+  "lategameplus.config.crossbow.damage_multiplier": "Boomstick pow'r multiplier",
+  "lategameplus.config.crossbow.damage_multiplier.desc": "Make yer Netherite boomstick hit harder. 1.0 = scallywag standard, 1.5 = current boost.",
+  "lategameplus.config.anvil.max_cost": "Netherite Anvil level toll",
+  "lategameplus.config.anvil.max_cost.desc": "Biggest level toll the anvil demands afore it stops climbin' (20-39 levels)."
 }
