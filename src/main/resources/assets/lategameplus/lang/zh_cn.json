@@ -7,42 +7,34 @@
   "item.lategameplus.lodestone_warp": "磁石传送罗盘",
   "item.lategameplus.netherite_bow": "下界合金弓",
   "item.lategameplus.netherite_crossbow": "下界合金弩",
-
   "lategameplus.config.category.general": "通用",
   "lategameplus.config.category.elytra": "下界合金鞘翅",
   "lategameplus.config.category.totems": "图腾",
   "lategameplus.config.category.piglin": "猪灵蛮兵",
   "lategameplus.config.category.repair": "修复",
   "lategameplus.config.category.lodestone": "磁石传送",
-
   "lategameplus.config.elytra.protection_level": "鞘翅保护等级",
   "lategameplus.config.elytra.protection_level.desc": "0 = 禁用, 1 = 金, 2 = 铁 (默认), 3 = 钻石, 4 = 下界合金. (需执行 \"/lategameplus reload\")",
-
   "lategameplus.config.totem.netherite_uses": "下界合金图腾使用次数",
   "lategameplus.config.totem.netherite_uses.desc": "允许的激活次数 (1-16)。需要重启世界。",
-
   "lategameplus.config.totem.void_uses": "虚空图腾使用次数",
   "lategameplus.config.totem.void_uses.desc": "允许的激活次数 (1-16)。需要重启世界。",
-
   "lategameplus.config.piglin_brute.drop_chance_percent": "猪灵蛮兵掉落几率 (%)",
   "lategameplus.config.piglin_brute.drop_chance_percent.desc": "蛮兵掉落粒的几率 (0-100%)。 (需执行 \"/lategameplus reload\")",
-
   "lategameplus.config.piglin_brute.nugget_min": "最少掉落粒数",
   "lategameplus.config.piglin_brute.nugget_min.desc": "最少掉落 (0-16)。 (需执行 \"/lategameplus reload\")",
-
   "lategameplus.config.piglin_brute.nugget_max": "最多掉落粒数",
   "lategameplus.config.piglin_brute.nugget_max.desc": "最多掉落 (0-16)。 (需执行 \"/lategameplus reload\")",
-
   "lategameplus.config.repair.nugget_percent": "每个粒修复 (%)",
   "lategameplus.config.repair.nugget_percent.desc": "每个粒恢复耐久度。原版锭 = 25%; 默认粒 ≈ 5.6% (1/18)。 (需执行 \"/lategameplus reload\")",
-
   "lategameplus.config.lodestone.warp_cooldown": "冷却时间 (秒)",
   "lategameplus.config.lodestone.warp_cooldown.desc": "传送后需等待的时间，才能再次使用。",
-
   "lategameplus.config.lodestone.warp_across_dimensions": "允许跨维度传送",
   "lategameplus.config.lodestone.warp_across_dimensions.desc": "启用后，传送可跨越维度。",
-
   "lategameplus.config.lodestone.warp_cooldown_seconds": "冷却时间 (秒)",
-  "lategameplus.config.lodestone.warp_cooldown_seconds.desc": "传送后需等待的时间，才能再次使用。"
-  
+  "lategameplus.config.lodestone.warp_cooldown_seconds.desc": "传送后需等待的时间，才能再次使用。",
+  "lategameplus.config.crossbow.damage_multiplier": "下界合金弩伤害倍率",
+  "lategameplus.config.crossbow.damage_multiplier.desc": "调整下界合金弩射出的弹药伤害。1.0 = 原版数值，1.5 = 默认加成。",
+  "lategameplus.config.anvil.max_cost": "下界合金铁砧经验上限",
+  "lategameplus.config.anvil.max_cost.desc": "封顶前铁砧需要的最高等级消耗（20-39级）。"
 }

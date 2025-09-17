@@ -153,7 +153,7 @@ public class ModItems {
         NETHERITE_CROSSBOW = register("netherite_crossbow",
             new NetheriteCrossbowItem(
                 settings("netherite_crossbow")
-                    .maxDamage(652)
+                    .maxDamage(700)
                     .enchantable(1)
                     .fireproof()
                     .component(DataComponentTypes.REPAIRABLE, repairsWithNuggetAndIngot())

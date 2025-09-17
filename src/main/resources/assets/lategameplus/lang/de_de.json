@@ -9,42 +9,34 @@
   "item.lategameplus.netherite_crossbow": "Netherit-Armbrust",
   "block.lategameplus.netherite_anvil": "Netherit-Amboss",
   "item.lategameplus.netherite_anvil": "Netherit-Amboss",
-
   "lategameplus.config.category.general": "Allgemein",
   "lategameplus.config.category.elytra": "Netherit-Elytra",
   "lategameplus.config.category.totems": "Totems",
   "lategameplus.config.category.piglin": "Piglin-Barbar",
   "lategameplus.config.category.repair": "Reparatur",
   "lategameplus.config.category.lodestone": "Lodestone-Warp",
-
   "lategameplus.config.elytra.protection_level": "Elytra-Schutzstufe",
   "lategameplus.config.elytra.protection_level.desc": "0 = deaktiviert, 1 = Gold, 2 = Eisen (Standard), 3 = Diamant, 4 = Netherit. (\"/lategameplus reload\" erforderlich)",
-
   "lategameplus.config.totem.netherite_uses": "Verwendungen des Netherit-Totems",
   "lategameplus.config.totem.netherite_uses.desc": "Anzahl der erlaubten Aktivierungen (1–16). Weltneustart erforderlich.",
-
   "lategameplus.config.totem.void_uses": "Verwendungen des Leeren-Totems",
   "lategameplus.config.totem.void_uses.desc": "Anzahl der erlaubten Aktivierungen (1–16). Weltneustart erforderlich.",
-
   "lategameplus.config.piglin_brute.drop_chance_percent": "Dropchance Piglin-Barbar (%)",
   "lategameplus.config.piglin_brute.drop_chance_percent.desc": "Chance, dass ein Barbar Nuggets droppt (0–100%). (\"/lategameplus reload\" erforderlich)",
-
   "lategameplus.config.piglin_brute.nugget_min": "Minimaler Nugget-Drop",
   "lategameplus.config.piglin_brute.nugget_min.desc": "Minimum an Nuggets (0–16). (\"/lategameplus reload\" erforderlich)",
-
   "lategameplus.config.piglin_brute.nugget_max": "Maximaler Nugget-Drop",
   "lategameplus.config.piglin_brute.nugget_max.desc": "Maximum an Nuggets (0–16). (\"/lategameplus reload\" erforderlich)",
-
   "lategameplus.config.repair.nugget_percent": "Reparatur pro Nugget (%)",
   "lategameplus.config.repair.nugget_percent.desc": "Wiederhergestellte Haltbarkeit pro Nugget. Vanille-Barren = 25%; Standard Nugget ≈ 5,6% (1/18). (\"/lategameplus reload\" erforderlich)",
-
   "lategameplus.config.lodestone.warp_cooldown": "Abklingzeit (Sekunden)",
   "lategameplus.config.lodestone.warp_cooldown.desc": "Zeit nach Warp, bevor das Item erneut benutzt werden kann.",
-
   "lategameplus.config.lodestone.warp_across_dimensions": "Dimensionsübergreifender Warp",
   "lategameplus.config.lodestone.warp_across_dimensions.desc": "Wenn aktiviert, kann Warp zwischen Dimensionen springen.",
-
   "lategameplus.config.lodestone.warp_cooldown_seconds": "Abklingzeit (Sekunden)",
-  "lategameplus.config.lodestone.warp_cooldown_seconds.desc": "Zeit nach Warp, bevor das Item erneut benutzt werden kann."
-  
+  "lategameplus.config.lodestone.warp_cooldown_seconds.desc": "Zeit nach Warp, bevor das Item erneut benutzt werden kann.",
+  "lategameplus.config.crossbow.damage_multiplier": "Schadensmultiplikator der Netherit-Armbrust",
+  "lategameplus.config.crossbow.damage_multiplier.desc": "Skaliert den Schaden von Projektilen der Netherit-Armbrust. 1,0 = Vanilla-Schaden, 1,5 = Standard.",
+  "lategameplus.config.anvil.max_cost": "XP-Limit des Netherit-Ambosses",
+  "lategameplus.config.anvil.max_cost.desc": "Höchste Erfahrungsstufe, die der Netherit-Amboss verlangt (20-39)."
 }

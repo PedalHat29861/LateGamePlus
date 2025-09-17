@@ -9,43 +9,34 @@
   "item.lategameplus.netherite_crossbow": "Netherite Crossbow",
   "block.lategameplus.netherite_anvil": "Netherite Anvil",
   "item.lategameplus.netherite_anvil": "Netherite Anvil",
-  
-
-
   "lategameplus.config.category.general": "General",
   "lategameplus.config.category.elytra": "Netherite Elytra",
   "lategameplus.config.category.totems": "Totems",
   "lategameplus.config.category.piglin": "Piglin Brute",
   "lategameplus.config.category.repair": "Repair",
   "lategameplus.config.category.lodestone": "Lodestone Warp",
-
   "lategameplus.config.elytra.protection_level": "Elytra protection tier",
   "lategameplus.config.elytra.protection_level.desc": "0 = disabled, 1 = Gold, 2 = Iron (default), 3 = Diamond, 4 = Netherite. (Requires \"/lategameplus reload\" to apply)",
-
   "lategameplus.config.totem.netherite_uses": "Netherite Totem uses",
   "lategameplus.config.totem.netherite_uses.desc": "Number of activations allowed (1-16). Requires world reload.",
-
   "lategameplus.config.totem.void_uses": "Void Totem uses",
   "lategameplus.config.totem.void_uses.desc": "Number of activations allowed (1-16). Requires world reload.",
-
   "lategameplus.config.piglin_brute.drop_chance_percent": "Piglin Brute drop chance (%)",
   "lategameplus.config.piglin_brute.drop_chance_percent.desc": "Chance a Brute drops nuggets (0-100%). (Requires \"/lategameplus reload\")",
-
   "lategameplus.config.piglin_brute.nugget_min": "Piglin Brute nugget minimum",
   "lategameplus.config.piglin_brute.nugget_min.desc": "Minimum nuggets dropped (0-16). (Requires \"/lategameplus reload\")",
-
   "lategameplus.config.piglin_brute.nugget_max": "Piglin Brute nugget maximum",
   "lategameplus.config.piglin_brute.nugget_max.desc": "Maximum nuggets dropped (0-16). (Requires \"/lategameplus reload\")",
-
   "lategameplus.config.repair.nugget_percent": "Repair per nugget (%)",
   "lategameplus.config.repair.nugget_percent.desc": "Durability restored per nugget. Vanilla ingot = 25%; default nugget ≈ 5.6% (1/18). (Requires \"/lategameplus reload\")",
-
   "lategameplus.config.lodestone.warp_cooldown": "Cooldown (seconds)",
   "lategameplus.config.lodestone.warp_cooldown.desc": "Time to wait after warping before the item can be used again.",
-
   "lategameplus.config.lodestone.warp_across_dimensions": "Allow cross-dimension warp",
   "lategameplus.config.lodestone.warp_across_dimensions.desc": "If enabled, warp can jump between dimensions.",
   "lategameplus.config.lodestone.warp_cooldown_seconds": "Cooldown (seconds)",
-  "lategameplus.config.lodestone.warp_cooldown_seconds.desc": "Time to wait after warping before the item can be used again."
-
+  "lategameplus.config.lodestone.warp_cooldown_seconds.desc": "Time to wait after warping before the item can be used again.",
+  "lategameplus.config.crossbow.damage_multiplier": "Netherite Crossbow damage multiplier",
+  "lategameplus.config.crossbow.damage_multiplier.desc": "Scales the damage dealt by Netherite Crossbow projectiles. 1.0 = vanilla damage, 1.5 = default.",
+  "lategameplus.config.anvil.max_cost": "Netherite Anvil XP cap",
+  "lategameplus.config.anvil.max_cost.desc": "Maximum level cost the Netherite Anvil will charge before capping (20-39 levels)."
 }
