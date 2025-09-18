@@ -10,11 +10,6 @@ import net.minecraft.util.Hand;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
-/**
- * 1.21.8: en PlayerEntityRenderer.getArmPose(...) se comprueba ItemStack.isOf(Items.CROSSBOW)
- * para decidir si se usa la pose CROSSBOW_HOLD. Extendemos esa comprobación a los ítems del tag
- * lategameplus:crossbows (y a cualquier CrossbowItem) para que la pose cargada funcione en 3ra persona.
- */
 @Mixin(PlayerEntityRenderer.class)
 public abstract class PlayerEntityRendererMixin {
     @ModifyExpressionValue(
