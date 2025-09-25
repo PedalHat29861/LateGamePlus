@@ -6,6 +6,7 @@ import com.pedalhat.lategameplus.config.ModConfig;
 import com.pedalhat.lategameplus.item.LodestoneWarpItem;
 import com.pedalhat.lategameplus.item.NetheriteBowItem;
 import com.pedalhat.lategameplus.item.NetheriteCrossbowItem;
+import com.pedalhat.lategameplus.item.DebrisResonatorItem;
 
 import net.minecraft.component.ComponentMap;
 import net.minecraft.component.DataComponentTypes;
@@ -13,6 +14,7 @@ import net.minecraft.component.type.ConsumableComponents;
 import net.minecraft.component.type.EquippableComponent;
 import net.minecraft.component.type.FoodComponent;
 import net.minecraft.component.type.RepairableComponent;
+import net.minecraft.component.type.NbtComponent;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
@@ -70,6 +72,7 @@ public class ModItems {
     public static Item TOTEM_OF_NETHERDYING;
     public static Item LODESTONE_WARP;
     public static Item VOID_CRYSTAL;
+    public static Item DEBRIS_RESONATOR;
 
     public static void init(ModConfig cfg) {
         NETHERITE_NUGGET = register("netherite_nugget",
@@ -175,6 +178,17 @@ public class ModItems {
             new LodestoneWarpItem(
                 settings("lodestone_warp")
                     .maxDamage(1)
+            )
+        );
+        DEBRIS_RESONATOR = register("debris_resonator",
+            new DebrisResonatorItem(
+                settings("debris_resonator")
+                    .maxCount(1)
+                    .maxDamage(20)
+                    .fireproof()
+                    .rarity(Rarity.RARE)
+                    .component(DataComponentTypes.ITEM_MODEL, Identifier.of(LateGamePlus.MOD_ID, "debris_resonator"))
+                    .component(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT)
             )
         );
 

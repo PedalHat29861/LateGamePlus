@@ -50,6 +50,8 @@ public class LateGamePlus implements ModInitializer {
                 .register(e -> e.addAfter(Items.COMPASS, ModItems.LODESTONE_WARP));
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.FUNCTIONAL)
                 .register(e -> e.addAfter(Items.ANVIL, ModBlocks.NETHERITE_ANVIL.asItem()));
+        ItemGroupEvents.modifyEntriesEvent(ItemGroups.TOOLS)
+                .register(e -> e.addAfter(ModItems.LODESTONE_WARP, ModItems.DEBRIS_RESONATOR));
         
     }
 }

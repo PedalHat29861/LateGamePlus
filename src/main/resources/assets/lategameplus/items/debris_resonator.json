@@ -1,0 +1,22 @@
+{
+  "model": {
+    "type": "minecraft:select",
+    "property": "minecraft:custom_model_data",
+    "index": 0,
+    "cases": [
+      {
+        "when": "cooldown",
+        "model": { "type": "minecraft:model", "model": "lategameplus:item/debris_resonator_cooldown" }
+      },
+      {
+        "when": "searching",
+        "model": { "type": "minecraft:model", "model": "lategameplus:item/debris_resonator_searching" }
+      },
+      {
+        "when": "on",
+        "model": { "type": "minecraft:model", "model": "lategameplus:item/debris_resonator_on" }
+      }
+    ],
+    "fallback": { "type": "minecraft:model", "model": "lategameplus:item/debris_resonator_off" }
+  }
+}
