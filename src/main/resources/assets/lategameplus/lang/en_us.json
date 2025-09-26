@@ -13,6 +13,13 @@
   "item.lategameplus.debris_resonator.searching_seconds": "%s (%s s)",
   "item.lategameplus.debris_resonator.depleted": "%s (Depleted)",
   "item.lategameplus.debris_resonator.locked": "Cannot be turned off while tracking.",
+  "item.lategameplus.debris_resonator.searching_minutes_suffix": "(%s min)",
+  "item.lategameplus.debris_resonator.searching_seconds_suffix": "(%s sec)",
+  "item.lategameplus.debris_resonator.depleted_suffix": "(depleted)",
+  "item.lategameplus.debris_resonator.cooldown_minutes_suffix": "(cooldown %s min)",
+  "item.lategameplus.debris_resonator.cooldown_seconds_suffix": "(cooldown %s sec)",
+  "item.lategameplus.debris_resonator.cooldown_message_minutes": "Cooldown... %s min remaining",
+  "item.lategameplus.debris_resonator.cooldown_message_seconds": "Cooldown... %s sec remaining",
   
   "block.lategameplus.netherite_anvil": "Netherite Anvil",
   
