@@ -184,7 +184,6 @@ public class ModItems {
             new DebrisResonatorItem(
                 settings("debris_resonator")
                     .maxCount(1)
-                    .maxDamage(20)
                     .fireproof()
                     .rarity(Rarity.RARE)
                     .component(DataComponentTypes.ITEM_MODEL, Identifier.of(LateGamePlus.MOD_ID, "debris_resonator"))

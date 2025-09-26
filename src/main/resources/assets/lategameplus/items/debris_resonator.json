@@ -13,8 +13,24 @@
         "model": { "type": "minecraft:model", "model": "lategameplus:item/debris_resonator_searching" }
       },
       {
-        "when": "on",
-        "model": { "type": "minecraft:model", "model": "lategameplus:item/debris_resonator_on" }
+        "when": "on_close",
+        "model": { "type": "minecraft:model", "model": "lategameplus:item/debris_resonator_on_close" }
+      },
+      {
+        "when": "on_mid",
+        "model": { "type": "minecraft:model", "model": "lategameplus:item/debris_resonator_on_mid" }
+      },
+      {
+        "when": "on_far",
+        "model": { "type": "minecraft:model", "model": "lategameplus:item/debris_resonator_on_far" }
+      },
+      {
+        "when": "off",
+        "model": { "type": "minecraft:model", "model": "lategameplus:item/debris_resonator_off" }
+      },
+      {
+        "when": "depleted",
+        "model": { "type": "minecraft:model", "model": "lategameplus:item/debris_resonator_depleted" }
       }
     ],
     "fallback": { "type": "minecraft:model", "model": "lategameplus:item/debris_resonator_off" }

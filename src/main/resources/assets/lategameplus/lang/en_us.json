@@ -7,8 +7,14 @@
   "item.lategameplus.lodestone_warp": "Compass Warp",
   "item.lategameplus.netherite_bow": "Netherite Bow",
   "item.lategameplus.netherite_crossbow": "Netherite Crossbow",
-  "block.lategameplus.netherite_anvil": "Netherite Anvil",
   "item.lategameplus.netherite_anvil": "Netherite Anvil",
+  "item.lategameplus.debris_resonator": "Debris Resonator",
+  "item.lategameplus.debris_resonator.searching_minutes": "%s (%s min)",
+  "item.lategameplus.debris_resonator.searching_seconds": "%s (%s s)",
+  "item.lategameplus.debris_resonator.depleted": "%s (Depleted)",
+  
+  "block.lategameplus.netherite_anvil": "Netherite Anvil",
+  
   "lategameplus.config.category.general": "General",
   "lategameplus.config.category.elytra": "Netherite Elytra",
   "lategameplus.config.category.totems": "Totems",
