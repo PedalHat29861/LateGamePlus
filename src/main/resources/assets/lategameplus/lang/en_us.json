@@ -12,6 +12,7 @@
   "item.lategameplus.debris_resonator.searching_minutes": "%s (%s min)",
   "item.lategameplus.debris_resonator.searching_seconds": "%s (%s s)",
   "item.lategameplus.debris_resonator.depleted": "%s (Depleted)",
+  "item.lategameplus.debris_resonator.locked": "Cannot be turned off while tracking.",
   
   "block.lategameplus.netherite_anvil": "Netherite Anvil",
   

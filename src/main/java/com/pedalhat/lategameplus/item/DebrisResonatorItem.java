@@ -132,7 +132,7 @@ public class DebrisResonatorItem extends Item {
                 new CustomModelDataComponent(List.of(), List.of(), List.of(s), colors));
     }
 
-    /* ================== Batería en vivo (sin writes por segundo) ================== */
+    /* ================== Batería en vivo ================== */
 
     private static int calcEffectiveBatteryLive(ItemStack stack) {
         State st = readState(stack);
@@ -179,7 +179,7 @@ public class DebrisResonatorItem extends Item {
                             SoundEvents.BLOCK_REDSTONE_TORCH_BURNOUT, SoundCategory.PLAYERS, 0.6f, 0.8f);
                     ((ServerWorld) world).spawnParticles(ParticleTypes.SMOKE, user.getX(), user.getBodyY(0.5), user.getZ(),
                             5, 0.1, 0.1, 0.1, 0.0);
-                    user.sendMessage(Text.literal("No puede apagarse mientras rastrea.").formatted(Formatting.GRAY), true);
+                    user.sendMessage(Text.translatable("item.lategameplus.debris_resonator.locked").formatted(Formatting.GRAY), true);
                 } else {
                     // Ruta futura si lo desbloqueas por minado/distancia:
                     commitBatteryFromFloats(stack);
@@ -193,7 +193,7 @@ public class DebrisResonatorItem extends Item {
         return ActionResult.SUCCESS;
     }
 
-    /* ================== Tick inventario (server): detectar agotamiento en cualquier slot ================== */
+    /* ================== Tick inventario (server) ================== */
 
     @Override
     public void inventoryTick(ItemStack stack, ServerWorld world, Entity entity, @Nullable EquipmentSlot slot) {
@@ -235,7 +235,7 @@ public class DebrisResonatorItem extends Item {
         return base;
     }
 
-    /* ================== Barra tipo durabilidad (en vivo, sin re-equip) ================== */
+    /* ================== Barra tipo durabilidad ================== */
 
     @Override
     public boolean isItemBarVisible(ItemStack stack) {
