@@ -31,6 +31,10 @@
       {
         "when": "depleted",
         "model": { "type": "minecraft:model", "model": "lategameplus:item/debris_resonator_depleted" }
+      },
+      {
+        "when": "on_too_far",
+        "model": { "type": "minecraft:model", "model": "lategameplus:item/debris_resonator_on_too_far" }
       }
     ],
     "fallback": { "type": "minecraft:model", "model": "lategameplus:item/debris_resonator_off" }

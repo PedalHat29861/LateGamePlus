@@ -26,29 +26,24 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 public class DebrisResonatorItem extends Item {
 
-    private static final int  MAX_BATTERY_SECONDS   = 600;
-    private static final int  SCAN_PERIOD_SECONDS   = 2;
+    private static final int  MAX_BATTERY_SECONDS   = 900;
+    private static final double  SCAN_PERIOD_SECONDS= 0.5;
     private static final int  RANGE_XZ              = 16;
     private static final int  RANGE_Y               = 2;
     private static final int  RELEASE_DISTANCE      = 32;
     private static final long RELEASE_GRACE_MS      = 1500;
-    private static final int  COOLDOWN_SELF         = 30;
-    private static final int  COOLDOWN_OTHER        = 15;
-    private static final int  COOLDOWN_FAR          = 45;
+    private static final int  COOLDOWN_SELF         = 25;
+    private static final int  COOLDOWN_OTHER        = 10;
+    private static final int  COOLDOWN_FAR          = 60;
     private static final long MODEL_RATE_LIMIT_MS   = 500;
 
-    private static final float PING_SEARCHING_SECS = 0.75f;
-    private static final float PING_FAR_SECS       = 1.50f;
-    private static final float PING_MID_SECS       = 1.00f;
-    private static final float PING_CLOSE_SECS     = 0.50f;
-    private static final float PITCH_SEARCHING     = 0.80f;
-    private static final float PITCH_FAR           = 0.50f;
-    private static final float PITCH_MID           = 1.00f;
-    private static final float PITCH_CLOSE         = 1.50f;
 
 
     private static final int CMD_INDEX       = 0;
@@ -58,7 +53,6 @@ public class DebrisResonatorItem extends Item {
 
     private static final String ROOT_KEY                    = "lategameplus";
     private static final String KEY_BATTERY                 = "res_battery_secs";
-    private static final String KEY_NEXT_SCAN_AT            = "res_next_scan_at";
     private static final String KEY_SCAN_COOLDOWN_UNTIL     = "res_scan_cooldown_until";
     private static final String KEY_TARGET_LOCKED           = "res_target_locked";
     private static final String KEY_TARGET_DIM              = "res_target_dim";
@@ -70,6 +64,18 @@ public class DebrisResonatorItem extends Item {
     private static final String KEY_FAR_SINCE_MS            = "res_far_since_ms";
     private static final String KEY_MISSING_SINCE_MS        = "res_missing_since_ms";
     private static final long   MISSING_GRACE_MS            = 100L;
+
+    // Cache estático para evitar escrituras NBT innecesarias
+    private static final Map<UUID, Long> soundCycleCache = new ConcurrentHashMap<>();
+    private static final Map<UUID, Long> nextScanCache = new ConcurrentHashMap<>();
+    private static final Map<UUID, Integer> lastPingTierCache = new ConcurrentHashMap<>();
+
+    private static void clearSoundCycle(PlayerEntity player) {
+        UUID playerId = player.getUuid();
+        soundCycleCache.remove(playerId);
+        nextScanCache.remove(playerId);
+        lastPingTierCache.remove(playerId);
+    }
 
     public DebrisResonatorItem(Settings settings) {
         super(settings.maxCount(1));
@@ -85,7 +91,7 @@ public class DebrisResonatorItem extends Item {
         String s = cmd.getString(CMD_INDEX);
         if (s == null) return State.OFF;
         return switch (s) {
-            case "searching", "on_far", "on_mid", "on_close" -> State.SEARCHING;
+            case "searching", "on_too_far", "on_far", "on_mid", "on_close" -> State.SEARCHING;
             case "depleted" -> State.DEPLETED;
             default -> State.OFF;
         };
@@ -110,6 +116,13 @@ public class DebrisResonatorItem extends Item {
 
     private static void setCooldownVisual(ItemStack stack) {
         setModelString(stack, "cooldown");
+    }
+
+    private static String getModelStateString(ItemStack stack) {
+        CustomModelDataComponent cmd = stack.get(DataComponentTypes.CUSTOM_MODEL_DATA);
+        if (cmd == null) return "off";
+        String s = cmd.getString(CMD_INDEX);
+        return s != null ? s : "off";
     }
 
 
@@ -226,6 +239,14 @@ public class DebrisResonatorItem extends Item {
         float since = getCmdFloat(stack, CMD_F_SINCE, TimeBridge.nowSeconds());
         long now = TimeBridge.nowSeconds();
         long elapsed = Math.max(0L, now - (long) since);
+        
+        // Fix para salto temporal anormal (mundo recargado)
+        // Si el tiempo transcurrido es mayor que el tiempo base + margen, resetear
+        if (elapsed > base + 60) { // 60 segundos de margen
+            // Auto-corregir: usar la batería guardada como referencia
+            return readBattery(stack);
+        }
+        
         long eff = (long) base - elapsed;
         return (int) Math.max(0L, eff);
     }
@@ -262,10 +283,11 @@ public class DebrisResonatorItem extends Item {
                     setCmdStateFloatsFlags(stack, "searching", base, (float) now, true);
                     ensureSoundCycleStart(stack, (ServerWorld) world, user);
                     writeBool(stack, KEY_TARGET_LOCKED, false);
-                    writeLong(stack, KEY_NEXT_SCAN_AT, now);
+                    UUID userId = user.getUuid();
+                    nextScanCache.put(userId, now);
+                    lastPingTierCache.put(userId, 0);
                     writeInt(stack, KEY_MODEL_TIER, 0);
                     writeLong(stack, KEY_LAST_MODEL_UPDATE_MS, 0L);
-                    writeInt(stack, "res_last_ping_tier", 0);
                     removeKey(stack, KEY_FAR_SINCE_MS);
                     removeKey(stack, KEY_MISSING_SINCE_MS);
                     world.playSound(null, user.getX(), user.getY(), user.getZ(),
@@ -295,12 +317,37 @@ public class DebrisResonatorItem extends Item {
     public void inventoryTick(ItemStack stack, ServerWorld world, Entity entity, @Nullable EquipmentSlot slot) {
         if (!(entity instanceof PlayerEntity player)) return;
 
+        // Verificar si está en cooldown y ya terminó
+        State currentState = readState(stack);
+        if (currentState == State.OFF) {
+            long now = TimeBridge.nowSeconds();
+            long cdUntil = readLong(stack, KEY_SCAN_COOLDOWN_UNTIL, 0L);
+            // Si estaba en cooldown pero ya terminó, cambiar a estado apagado normal
+            if (cdUntil > 0L && now >= cdUntil) {
+                removeKey(stack, KEY_SCAN_COOLDOWN_UNTIL);
+                stack.remove(DataComponentTypes.CUSTOM_MODEL_DATA); // Estado OFF normal
+            }
+        }
 
         if (readState(stack) == State.SEARCHING) {
+            // Verificar si hay datos de floats válidos para cálculo dinámico
+            float base = getCmdFloat(stack, CMD_F_BASE, -1);
+            float since = getCmdFloat(stack, CMD_F_SINCE, -1);
+            
+            // Si los floats están corruptos o faltantes, auto-corregir
+            if (base < 0 || since < 0) {
+                // Recuperar usando la batería guardada como base
+                int savedBattery = readBattery(stack);
+                float nowSeconds = TimeBridge.nowSeconds();
+                setCmdStateFloatsFlags(stack, readState(stack) == State.SEARCHING ? getModelStateString(stack) : "searching", 
+                                     savedBattery, nowSeconds, getCmdFlag(stack, CMD_FLAG_LOCKED, false));
+            }
+            
             int eff = calcEffectiveBatteryLive(stack);
             if (eff <= 0) {
                 commitBatteryFromFloats(stack);
                 writeState(stack, State.DEPLETED);
+                clearSoundCycle(player);
                 long now = TimeBridge.nowSeconds();
                 writeLong(stack, KEY_SCAN_COOLDOWN_UNTIL, now + COOLDOWN_SELF);
                 clearTarget(stack);
@@ -320,9 +367,19 @@ public class DebrisResonatorItem extends Item {
         boolean locked = readBool(stack, KEY_TARGET_LOCKED, false);
         if (!locked) {
             if (!isNether(world)) { geigerPing(stack, world, player, 0); return; }
-            long nextScan = readLong(stack, KEY_NEXT_SCAN_AT, 0L);
-            if (now < nextScan) { geigerPing(stack, world, player, 0); return; }
-            writeLong(stack, KEY_NEXT_SCAN_AT, now + SCAN_PERIOD_SECONDS);
+            
+            UUID playerId = player.getUuid();
+            long nextScanDeciseconds = nextScanCache.getOrDefault(playerId, 0L);
+            long nowDeciseconds = now * 10; // Convertir segundos a décimas de segundo
+            long scanPeriodDeciseconds = (long)(SCAN_PERIOD_SECONDS * 10); // 0.5 segundos = 5 décimas
+            
+            // Validación de salto temporal
+            if (nextScanDeciseconds > nowDeciseconds + scanPeriodDeciseconds + 100) { // 10 segundos en décimas
+                nextScanDeciseconds = 0L;
+            }
+            
+            if (nowDeciseconds < nextScanDeciseconds) { geigerPing(stack, world, player, 0); return; }
+            nextScanCache.put(playerId, nowDeciseconds + scanPeriodDeciseconds);
 
             BlockPos origin = player.getBlockPos();
             long seed = world.getSeed();
@@ -349,22 +406,7 @@ public class DebrisResonatorItem extends Item {
         updateGuidanceModelIfNeeded(stack, player.getX(), player.getY(), player.getZ(), target);
 
 
-        int tier = computeTier(Math.sqrt(target.getSquaredDistance(player.getX(), player.getY(), player.getZ())));
-        
-        int lastTier = readInt(stack, "res_last_ping_tier", -1);
-        if (lastTier != tier) {
-            writeLong(stack, "res_sound_cycle_start", world.getTime());
-            writeInt(stack, "res_last_ping_tier", tier);
-            world.playSound(null, player.getX(), player.getY(), player.getZ(),
-                    net.minecraft.sound.SoundEvents.BLOCK_NOTE_BLOCK_HAT.value(),
-                    net.minecraft.sound.SoundCategory.PLAYERS,
-                    0.6f, switch (tier) {
-                        case 3 -> PITCH_CLOSE;
-                        case 2 -> PITCH_MID;
-                        case 1 -> PITCH_FAR;
-                        default -> PITCH_SEARCHING;
-                    });
-        }
+        int tier = computeTier(player.getPos().distanceTo(target.toCenterPos()));
         
         geigerPing(stack, world, player, tier);
 
@@ -399,7 +441,10 @@ public class DebrisResonatorItem extends Item {
     }
 
     private static void liberateToCooldown(ItemStack stack, ServerWorld world, PlayerEntity player, int seconds) {
+        // Confirmar el estado actual de la batería antes de entrar en cooldown
+        commitBatteryFromFloats(stack);
         clearTarget(stack);
+        clearSoundCycle(player);
         writeLong(stack, KEY_SCAN_COOLDOWN_UNTIL, TimeBridge.nowSeconds() + seconds);
         setCooldownVisual(stack); // modelo "cooldown", estado lógico OFF
         world.playSound(null, player.getX(), player.getY(), player.getZ(),
@@ -526,85 +571,40 @@ public class DebrisResonatorItem extends Item {
         long last = readLong(stack, KEY_LAST_MODEL_UPDATE_MS, 0L);
         if (nowMs - last < MODEL_RATE_LIMIT_MS) return;
 
-        double dist = Math.sqrt(target.getSquaredDistance(px, py, pz));
-        int desiredTier = computeTier(dist); // 0=searching,1=far,2=mid,3=close
+        double dist = Math.sqrt(target.toCenterPos().squaredDistanceTo(px, py, pz));
+        int desiredTier = computeTier(dist); // 0=searching,1=too_far,2=far,3=mid,4=close
 
         int currentTier = readInt(stack, KEY_MODEL_TIER, 0);
         if (currentTier == desiredTier) return;
 
         switch (desiredTier) {
-            case 3 -> setModelString(stack, "on_close");
-            case 2 -> setModelString(stack, "on_mid");
-            case 1 -> setModelString(stack, "on_far");
+            case 4 -> setModelString(stack, "on_close");
+            case 3 -> setModelString(stack, "on_mid");
+            case 2 -> setModelString(stack, "on_far");
+            case 1 -> setModelString(stack, "on_too_far");
             default -> setModelString(stack, "searching");
         }
         writeInt(stack, KEY_MODEL_TIER, desiredTier);
         writeLong(stack, KEY_LAST_MODEL_UPDATE_MS, nowMs);
-        
-        removeKey(stack, "res_sound_cycle_start");
     }
 
     private static int computeTier(double dist) {
-        if (dist <= 4.0)  return 3; // close
-        if (dist <= 10.0) return 2; // mid
-        if (dist <= 16.0) return 1; // far
+        if (dist <= 4.5)  return 4; // close
+        if (dist <= 10.5) return 3; // mid
+        if (dist <= 16.5) return 2; // far
+        if (dist <= 32.5) return 1; // too_far (hasta RELEASE_DISTANCE)
         return 0; // searching
     }
 
 
     private static void ensureSoundCycleStart(ItemStack stack, ServerWorld world, PlayerEntity player) {
-            long cycleStart = readLong(stack, "res_sound_cycle_start", 0L);
-            if (cycleStart != 0L) return;
-
-
-            long currentTime = world.getTime();
-            writeLong(stack, "res_sound_cycle_start", currentTime);
-            
-
-            int currentTier = readInt(stack, KEY_MODEL_TIER, 0);
-            float pitch;
-            switch (currentTier) {
-                case 3 -> pitch = PITCH_CLOSE;
-                case 2 -> pitch = PITCH_MID;
-                case 1 -> pitch = PITCH_FAR;
-                default -> pitch = PITCH_SEARCHING;
-            }
-            
-            world.playSound(null, player.getX(), player.getY(), player.getZ(),
-                    net.minecraft.sound.SoundEvents.BLOCK_NOTE_BLOCK_HAT.value(),
-                    net.minecraft.sound.SoundCategory.PLAYERS,
-                    0.6f, pitch);
-        }
-        private static void geigerPing(ItemStack stack, ServerWorld world, PlayerEntity player, int tier) {
-
-        long cycleStart = readLong(stack, "res_sound_cycle_start", 0L);
-        if (cycleStart == 0L) {
-
-            cycleStart = world.getTime();
-            writeLong(stack, "res_sound_cycle_start", cycleStart);
-        }
-        
-        int periodTicks;
-        float pitch;
-        switch (tier) {
-            case 3 -> { periodTicks = Math.max(1, Math.round(PING_CLOSE_SECS   * 20)); pitch = PITCH_CLOSE; }
-            case 2 -> { periodTicks = Math.max(1, Math.round(PING_MID_SECS     * 20)); pitch = PITCH_MID; }
-            case 1 -> { periodTicks = Math.max(1, Math.round(PING_FAR_SECS     * 20)); pitch = PITCH_FAR; }
-            default -> { periodTicks = Math.max(1, Math.round(PING_SEARCHING_SECS * 20)); pitch = PITCH_SEARCHING; }
-        }
-        
-        long currentTime = world.getTime();
-        long elapsed = currentTime - cycleStart;
-        
-
-        long cyclePosition = elapsed % periodTicks;
-        
-        if (cyclePosition == 0) {
-            world.playSound(null, player.getX(), player.getY(), player.getZ(),
-                    net.minecraft.sound.SoundEvents.BLOCK_NOTE_BLOCK_HAT.value(),
-                    net.minecraft.sound.SoundCategory.PLAYERS,
-                    0.6f, pitch);
-        }
+        // Los sonidos ahora se manejan automáticamente por AnimationSoundSynchronizer en el cliente
+        // basándose en las animaciones CustomModelData
+    }
+    private static void geigerPing(ItemStack stack, ServerWorld world, PlayerEntity player, int tier) {
+        // Los sonidos ahora se manejan completamente por el AnimationSoundSynchronizer del lado cliente
+        // No reproducir sonidos desde el servidor para evitar conflictos
+        // La sincronización se basa en las animaciones CustomModelData automáticamente
     }
 
 
@@ -704,6 +704,7 @@ public class DebrisResonatorItem extends Item {
 
                     commitBatteryFromFloats(stack);
                     clearTarget(stack);
+                    clearSoundCycle(player);
                     writeLong(stack, KEY_SCAN_COOLDOWN_UNTIL, TimeBridge.nowSeconds() + COOLDOWN_SELF);
                     setCooldownVisual(stack);
 
