@@ -1,6 +1,17 @@
 # LateGame+
 ---
 
+> 
+> ### ✨ New Feature – Debris Resonator (V1.2.0)
+>
+> * Late-game locator for **Ancient Debris** powered by a configurable battery (default 30 minutes).
+> * Custom scan tiers and configurable cooldowns.
+> * Recharge in an Anvil with **Echo Shards** (full) or **Amethyst Shards** (1/60 each).
+> * Fully configurable through Mod Menu / YACL or the JSON config.
+>
+> ![debris_resonator_showcase_placeholder](https://i.imgur.com/zW9Eldb.gif)
+> **Gameplay Preview**
+
 
 ## ❤️ Support & Feedback
 
@@ -27,7 +38,56 @@ From **Netherite Apples** to **Warping Compasses**, **Unbreakable Anvils**, and 
 ## 📦 Feature Showcase
 
 <details>
-<summary>🔮 Lodestone Warp Compass</summary>
+<summary>Debris Resonator</summary>
+
+  Track **naturally generated Ancient Debris** in the Nether with a rechargeable locator.
+
+Key mechanics:
+* **Each** ancient debris has a **50% chance** to be "trackable" as a way to balance its power, additionally, ancient debris placed by players will **never** be tracked.
+  
+* **Tiered scan rings** communicate distance via animations and audio cues.
+
+  | Tier | Effective range | Feedback summary |
+  | --- | --- | --- |
+  | Close | 0 – 5 blocks | Fast pulses and a vivid green inner ring indicate the debris is right beside you. |
+  | Medium | 5 – 10 blocks | Steady rhythm with a yellow ring keeps you on track. |
+  | Far | 10 – 16 blocks (≈1 chunk) | Slower beat and red ring confirm you are still within range. |
+  | Too far | 16 – 32 blocks (≈2 chunks) | Low tone with a dim orange ring warns you are at the edge. |
+  | Out of range | > 32 blocks | Signal drops; the resonator disengages and applies the configured cooldown. |
+
+  ![debris_resonator_range](https://i.imgur.com/f8bkRfG.jpeg)
+  *Example*
+
+* Displays remaining battery even when powered off; configurable cooldowns after depletion or range loss.
+
+
+  | Cooldown type | Default duration | When it applies |
+  | --- | --- | --- |
+  | Successfully Mining the tracked Debris | 25 seconds | When you successfully mine the block that the debris resonator was tracking |
+  | Target missing | 10 seconds | The tracked debris disappears (Broken due to an external reason or a third party). |
+  | Distance limit | 60 seconds | You stray beyond the maximum tracking distance and the signal drops. |
+  
+* Activation is **Nether-only**; other dimensions show a warning message.
+* Recharge via **Echo Shard** (full battery, 5 XP) or **Amethyst Shards** (1/60 battery, 1 XP each) in an Anvil.
+
+
+
+Crafting Recipe:
+
+![debris_resonator_recipe](https://cdn.modrinth.com/data/cached_images/83c0d7b6b73eff92762d4bfd4b44534eaca11dc1.png)
+
+Configuration knobs (`debrisResonator*`):
+
+* Maximum battery seconds, cooldowns (self / missing target / far distance).
+* Vertical scan range.
+* Sound volume multiplier.
+
+</details>
+
+---
+
+<details>
+<summary>Lodestone Warp Compass</summary>
 
 Warp instantly back to your **lodestone-bound location**.  
 
@@ -52,7 +112,7 @@ Across Dimensions (config enabled):
 ---
 
 <details>
-<summary>🍎 Netherite Apple & 🍏 Enchanted Netherite Apple</summary>
+<summary> Netherite Apple & Enchanted Netherite Apple</summary>
 
 **Netherite Apple**  
 * Crafted directly or upgraded with a Netherite Smithing Template.  
@@ -73,7 +133,7 @@ Upgrade with Smithing Table:
 ---
 
 <details>
-<summary>🪓 Netherite Gear Upgrades</summary>
+<summary> Netherite Gear Upgrades</summary>
 
 * **Netherite Bow** – tougher, stronger, made for late raids.  
   ![netherite_bow_smithing](https://cdn.modrinth.com/data/cached_images/0ea423d16a6c073c3a7ac83fff31ad9959b7074b.png)  
@@ -86,7 +146,7 @@ Upgrade with Smithing Table:
 ---
 
 <details>
-<summary>🏹 Netherite Crossbow</summary>
+<summary> Netherite Crossbow</summary>
 
 Turn the vanilla crossbow into a **late-game powerhouse**.  
 
@@ -105,7 +165,7 @@ Turn the vanilla crossbow into a **late-game powerhouse**.
 ---
 
 <details>
-<summary>⚒️ Netherite Anvil</summary>
+<summary> Netherite Anvil</summary>
 
 The ultimate upgrade to your workstation.  
 
@@ -130,7 +190,7 @@ Vanilla Comparison:
 ---
 
 <details>
-<summary>☠️ Totem of Netherdying</summary>
+<summary> Totem of Netherdying</summary>
 
 A darker twist on the Totem of Undying.  
 
@@ -144,7 +204,7 @@ A darker twist on the Totem of Undying.
 ---
 
 <details>
-<summary>🪙 Netherite Nuggets</summary>
+<summary> Netherite Nuggets</summary>
 
   * Break ingots down into nuggets.  
   * Recombine nuggets into ingots.  
@@ -191,24 +251,25 @@ Fine-tune the mod to fit your playstyle:
 # 🗺️ Roadmap & Future Plans
 
 <details>
-<summary>✨ Misc Additions</summary>
+<summary> Misc Additions</summary>
 
   * Lodestone Waypoint Teleport ✅  
 
 </details>
 
 <details>
-  <summary>🔥 Netherite Additions</summary>
+  <summary> Netherite Additions</summary>
 
   * Netherite Anvil ✅  
-  * Netherite Crossbow ✅  
-  * Netherite Happy Ghast Harness (chest storage + armor).  
+  * Netherite Crossbow ✅
+  * Some kind of netherite compass ✅
+  * Netherite Happy Ghast Harness (chest storage + armor). 
   * Maybe: Netherite Horse Armor, Dog Armor.  
 
 </details>
 
 <details>
-  <summary>🌌 End / Void Additions</summary>
+  <summary> End / Void Additions</summary>
 
   * **Void Smithing Template** (rare End loot).  
   * **Void Infuser** (special workstation).  
@@ -224,6 +285,6 @@ Fine-tune the mod to fit your playstyle:
 
 ---
 
-⚔️ **LateGame+** gives you fresh reasons to keep playing once you’re fully geared. Tweak configs to match your progression style, and enjoy a true late-game Minecraft experience.
+ **LateGame+** gives you fresh reasons to keep playing once you’re fully geared. Tweak configs to match your progression style, and enjoy a true late-game Minecraft experience.
 
 ---

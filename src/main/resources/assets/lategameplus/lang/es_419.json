@@ -13,6 +13,7 @@
   "lategameplus.config.category.piglin": "Piglin Bruto",
   "lategameplus.config.category.repair": "Reparación",
   "lategameplus.config.category.lodestone": "Warp a magnetita",
+  "lategameplus.config.category.debris_resonator": "Resonador de escombros",
   "lategameplus.config.elytra.protection_level": "Nivel de protección de élytra",
   "lategameplus.config.elytra.protection_level.desc": "0 = desactivado, 1 = Oro, 2 = Hierro (por defecto), 3 = Diamante, 4 = Netherita. (Requiere \"/lategameplus reload\")",
   "lategameplus.config.totem.netherite_uses": "Usos del tótem de netherita",
@@ -38,5 +39,17 @@
   "lategameplus.config.crossbow.damage_multiplier": "Multiplicador de daño de la ballesta de netherita",
   "lategameplus.config.crossbow.damage_multiplier.desc": "Ajusta el daño de los proyectiles de la ballesta de netherita. 1.0 = ballesta normal, 1.5 = valor predeterminado.",
   "lategameplus.config.anvil.max_cost": "Tope de experiencia del yunque de netherita",
-  "lategameplus.config.anvil.max_cost.desc": "Nivel máximo que cobra el yunque antes de limitar el costo (20-39 niveles)."
+  "lategameplus.config.anvil.max_cost.desc": "Nivel máximo que cobra el yunque antes de limitar el costo (20-39 niveles).",
+  "lategameplus.config.debris.max_battery_seconds": "Batería máxima (segundos)",
+  "lategameplus.config.debris.max_battery_seconds.desc": "Tiempo total de funcionamiento del resonador mientras busca. Usa 0 para desactivarlo.",
+  "lategameplus.config.debris.cooldown_self_seconds": "Enfriamiento tras agotar batería (segundos)",
+  "lategameplus.config.debris.cooldown_self_seconds.desc": "Enfriamiento aplicado cuando la batería del resonador se agota.",
+  "lategameplus.config.debris.cooldown_other_seconds": "Enfriamiento si falta el objetivo (segundos)",
+  "lategameplus.config.debris.cooldown_other_seconds.desc": "Enfriamiento aplicado cuando el bloque rastreado desaparece antes de llegar.",
+  "lategameplus.config.debris.cooldown_far_seconds": "Enfriamiento por alejarse demasiado (segundos)",
+  "lategameplus.config.debris.cooldown_far_seconds.desc": "Enfriamiento aplicado cuando te alejas demasiado del bloque rastreado.",
+  "lategameplus.config.debris.range_y": "Rango vertical de escaneo (bloques)",
+  "lategameplus.config.debris.range_y.desc": "Número de bloques arriba y abajo que el resonador revisa al buscar.",
+  "lategameplus.config.debris.sound_volume": "Multiplicador de volumen",
+  "lategameplus.config.debris.sound_volume.desc": "Multiplica todos los sonidos del resonador (0 = silencio, 4 = cuatro veces más fuerte)."
 }

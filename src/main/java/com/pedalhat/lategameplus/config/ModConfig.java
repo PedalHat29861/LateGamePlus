@@ -15,4 +15,12 @@ public class ModConfig {
     public boolean lodestoneWarpCrossDim = false;   // allow across dimensions
 
     public int netheriteAnvilMaxLevelCost = 35;     // 20..39 levels
+
+    // Debris Resonator
+    public int debrisResonatorMaxBatterySeconds = 1800;   // >= 0
+    public int debrisResonatorCooldownSelfSeconds = 25;   // >= 0
+    public int debrisResonatorCooldownOtherSeconds = 10;  // >= 0
+    public int debrisResonatorCooldownFarSeconds = 60;    // >= 0
+    public int debrisResonatorRangeY = 2;                 // >= 0
+    public float debrisResonatorSoundVolume = 1.0f;       // 0..?
 }

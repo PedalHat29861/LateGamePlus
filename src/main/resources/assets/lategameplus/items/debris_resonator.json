@@ -1,0 +1,42 @@
+{
+  "model": {
+    "type": "minecraft:select",
+    "property": "minecraft:custom_model_data",
+    "index": 0,
+    "cases": [
+      {
+        "when": "cooldown",
+        "model": { "type": "minecraft:model", "model": "lategameplus:item/debris_resonator_cooldown" }
+      },
+      {
+        "when": "searching",
+        "model": { "type": "minecraft:model", "model": "lategameplus:item/debris_resonator_searching" }
+      },
+      {
+        "when": "on_close",
+        "model": { "type": "minecraft:model", "model": "lategameplus:item/debris_resonator_on_close" }
+      },
+      {
+        "when": "on_mid",
+        "model": { "type": "minecraft:model", "model": "lategameplus:item/debris_resonator_on_mid" }
+      },
+      {
+        "when": "on_far",
+        "model": { "type": "minecraft:model", "model": "lategameplus:item/debris_resonator_on_far" }
+      },
+      {
+        "when": "off",
+        "model": { "type": "minecraft:model", "model": "lategameplus:item/debris_resonator_off" }
+      },
+      {
+        "when": "depleted",
+        "model": { "type": "minecraft:model", "model": "lategameplus:item/debris_resonator_depleted" }
+      },
+      {
+        "when": "on_too_far",
+        "model": { "type": "minecraft:model", "model": "lategameplus:item/debris_resonator_on_too_far" }
+      }
+    ],
+    "fallback": { "type": "minecraft:model", "model": "lategameplus:item/debris_resonator_off" }
+  }
+}
