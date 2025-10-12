@@ -81,6 +81,8 @@ public class AnimationSoundSynchronizer {
                     currentModelData = 5; currentStateString = "on_far";
                 } else if (componentString.contains("on_too_far")) {
                     currentModelData = 6; currentStateString = "on_too_far";
+                } else if (componentString.contains("depleted")) {
+                    currentModelData = -1; currentStateString = "depleted";
                 } else {
                     
                     currentModelData = 0; currentStateString = "default";

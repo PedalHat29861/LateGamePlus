@@ -5,7 +5,8 @@
   "mixins": [
     "AnvilNuggetRepairMixin",
     "AnvilHandlerCapMixin",
-    "AnvilScreenHandlerAccessor"
+    "AnvilScreenHandlerAccessor",
+    "DebrisResonatorAnvilRechargeMixin"
   ],
   "injectors": {
     "defaultRequire": 1

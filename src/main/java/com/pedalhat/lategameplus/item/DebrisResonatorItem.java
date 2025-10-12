@@ -230,6 +230,38 @@ public class DebrisResonatorItem extends Item {
         writeInt(stack, KEY_BATTERY, MathHelper.clamp(seconds, 0, maxBatterySeconds()));
     }
 
+    public static int getBatterySeconds(ItemStack stack) {
+        return readBattery(stack);
+    }
+
+    public static void setBatterySeconds(ItemStack stack, int seconds) {
+        int clamped = MathHelper.clamp(seconds, 0, maxBatterySeconds());
+        writeBattery(stack, clamped);
+        State state = readState(stack);
+        if (state == State.SEARCHING) {
+            float nowSeconds = TimeBridge.nowSeconds();
+            boolean locked = getCmdFlag(stack, CMD_FLAG_LOCKED, false);
+            setCmdStateFloatsFlags(stack, getModelStateString(stack), clamped, nowSeconds, locked);
+        } else {
+            clearCmdFloatsFlagsKeepState(stack);
+            if (state == State.DEPLETED && clamped > 0) {
+                writeState(stack, State.OFF);
+                writeBool(stack, KEY_TARGET_LOCKED, false);
+            }
+        }
+    }
+
+    public static int getMaxBatterySeconds() {
+        return maxBatterySeconds();
+    }
+
+    public static void addBatterySeconds(ItemStack stack, int deltaSeconds) {
+        if (deltaSeconds <= 0) return;
+        int max = maxBatterySeconds();
+        int current = getBatterySeconds(stack);
+        setBatterySeconds(stack, Math.min(max, current + deltaSeconds));
+    }
+
 
 
     private static float getCmdFloat(ItemStack stack, int idx, float def) {
@@ -280,10 +312,7 @@ public class DebrisResonatorItem extends Item {
         long now = TimeBridge.nowSeconds();
         long elapsed = Math.max(0L, now - (long) since);
         
-        // Fix para salto temporal anormal (mundo recargado)
-        // Si el tiempo transcurrido es mayor que el tiempo base + margen, resetear
-        if (elapsed > base + 60) { // 60 segundos de margen
-            // Auto-corregir: usar la batería guardada como referencia
+        if (elapsed > base + 60) { 
             return readBattery(stack);
         }
         
@@ -307,6 +336,13 @@ public class DebrisResonatorItem extends Item {
             State st = readState(stack);
 
             if (st == State.OFF) {
+                if (world.getRegistryKey() != World.NETHER) {
+                    user.sendMessage(Text.translatable("item.lategameplus.debris_resonator.invalid_dimension").formatted(Formatting.GRAY), true);
+                    world.playSound(null, user.getX(), user.getY(), user.getZ(),
+                            SoundEvents.BLOCK_REDSTONE_TORCH_BURNOUT, SoundCategory.PLAYERS, 0.6f, 0.8f);
+                    return ActionResult.SUCCESS;
+                }
+
                 long cdUntil = readLong(stack, KEY_SCAN_COOLDOWN_UNTIL, 0L);
                 if (now < cdUntil) {
                     long remainingSecs = cdUntil - now;
@@ -321,7 +357,6 @@ public class DebrisResonatorItem extends Item {
                 int base = readBattery(stack);
                 if (base > 0) {
                     setCmdStateFloatsFlags(stack, "searching", base, (float) now, true);
-                    ensureSoundCycleStart(stack, (ServerWorld) world, user);
                     writeBool(stack, KEY_TARGET_LOCKED, false);
                     UUID userId = user.getUuid();
                     nextScanCache.put(userId, now);
@@ -357,26 +392,20 @@ public class DebrisResonatorItem extends Item {
     public void inventoryTick(ItemStack stack, ServerWorld world, Entity entity, @Nullable EquipmentSlot slot) {
         if (!(entity instanceof PlayerEntity player)) return;
 
-        // Verificar si está en cooldown y ya terminó
         State currentState = readState(stack);
         if (currentState == State.OFF) {
             long now = TimeBridge.nowSeconds();
             long cdUntil = readLong(stack, KEY_SCAN_COOLDOWN_UNTIL, 0L);
-            // Si estaba en cooldown pero ya terminó, cambiar a estado apagado normal
             if (cdUntil > 0L && now >= cdUntil) {
                 removeKey(stack, KEY_SCAN_COOLDOWN_UNTIL);
-                stack.remove(DataComponentTypes.CUSTOM_MODEL_DATA); // Estado OFF normal
+                stack.remove(DataComponentTypes.CUSTOM_MODEL_DATA);
             }
         }
 
         if (readState(stack) == State.SEARCHING) {
-            // Verificar si hay datos de floats válidos para cálculo dinámico
             float base = getCmdFloat(stack, CMD_F_BASE, -1);
             float since = getCmdFloat(stack, CMD_F_SINCE, -1);
-            
-            // Si los floats están corruptos o faltantes, auto-corregir
             if (base < 0 || since < 0) {
-                // Recuperar usando la batería guardada como base
                 int savedBattery = readBattery(stack);
                 float nowSeconds = TimeBridge.nowSeconds();
                 setCmdStateFloatsFlags(stack, readState(stack) == State.SEARCHING ? getModelStateString(stack) : "searching", 
@@ -406,19 +435,17 @@ public class DebrisResonatorItem extends Item {
 
         boolean locked = readBool(stack, KEY_TARGET_LOCKED, false);
         if (!locked) {
-            if (!isNether(world)) { geigerPing(stack, world, player, 0); return; }
+            if (!isNether(world)) { return; }
             
             UUID playerId = player.getUuid();
             long nextScanDeciseconds = nextScanCache.getOrDefault(playerId, 0L);
-            long nowDeciseconds = now * 10; // Convertir segundos a décimas de segundo
-            long scanPeriodDeciseconds = (long)(SCAN_PERIOD_SECONDS * 10); // 0.5 segundos = 5 décimas
-            
-            // Validación de salto temporal
-            if (nextScanDeciseconds > nowDeciseconds + scanPeriodDeciseconds + 100) { // 10 segundos en décimas
+            long nowDeciseconds = now * 10;
+            long scanPeriodDeciseconds = (long)(SCAN_PERIOD_SECONDS * 10);
+            if (nextScanDeciseconds > nowDeciseconds + scanPeriodDeciseconds + 100) {
                 nextScanDeciseconds = 0L;
             }
             
-            if (nowDeciseconds < nextScanDeciseconds) { geigerPing(stack, world, player, 0); return; }
+            if (nowDeciseconds < nextScanDeciseconds) { return; }
             nextScanCache.put(playerId, nowDeciseconds + scanPeriodDeciseconds);
 
             BlockPos origin = player.getBlockPos();
@@ -429,8 +456,6 @@ public class DebrisResonatorItem extends Item {
                 world.playSound(null, player.getX(), player.getY(), player.getZ(),
                         SoundEvents.BLOCK_AMETHYST_BLOCK_RESONATE, SoundCategory.PLAYERS, 0.6f, 1.2f);
                 updateGuidanceModelIfNeeded(stack, player.getX(), player.getY(), player.getZ(), found);
-            } else {
-                geigerPing(stack, world, player, 0);
             }
             return;
         }
@@ -438,19 +463,11 @@ public class DebrisResonatorItem extends Item {
         BlockPos target = readTargetPos(stack);
         if (target == null) {
             writeBool(stack, KEY_TARGET_LOCKED, false);
-            geigerPing(stack, world, player, 0);
             return;
         }
 
 
         updateGuidanceModelIfNeeded(stack, player.getX(), player.getY(), player.getZ(), target);
-
-
-        int tier = computeTier(player.getPos().distanceTo(target.toCenterPos()));
-        
-        geigerPing(stack, world, player, tier);
-
-
         boolean isStillThere = world.getBlockState(target).isOf(Blocks.ANCIENT_DEBRIS);
         long nowMs = System.currentTimeMillis();
 
@@ -459,14 +476,11 @@ public class DebrisResonatorItem extends Item {
             if (since == 0L) {
                 writeLong(stack, KEY_MISSING_SINCE_MS, nowMs);
             } else if (nowMs - since >= MISSING_GRACE_MS) {
-                // Desapareció por otros → cooldown 15s
                 liberateToCooldown(stack, world, player, cooldownOtherSeconds());
             }
         } else {
             removeKey(stack, KEY_MISSING_SINCE_MS);
         }
-
-        // Liberación por distancia (con gracia)
         double dist = player.getPos().distanceTo(target.toCenterPos());
         if (dist <= RELEASE_DISTANCE) {
             removeKey(stack, KEY_FAR_SINCE_MS);
@@ -481,12 +495,11 @@ public class DebrisResonatorItem extends Item {
     }
 
     private static void liberateToCooldown(ItemStack stack, ServerWorld world, PlayerEntity player, int seconds) {
-        // Confirmar el estado actual de la batería antes de entrar en cooldown
         commitBatteryFromFloats(stack);
         clearTarget(stack);
         clearSoundCycle(player);
         writeLong(stack, KEY_SCAN_COOLDOWN_UNTIL, TimeBridge.nowSeconds() + seconds);
-        setCooldownVisual(stack); // modelo "cooldown", estado lógico OFF
+        setCooldownVisual(stack);
         world.playSound(null, player.getX(), player.getY(), player.getZ(),
                 SoundEvents.BLOCK_AMETHYST_BLOCK_CHIME, SoundCategory.PLAYERS, 0.7f, 0.7f);
         world.spawnParticles(ParticleTypes.END_ROD, player.getX(), player.getBodyY(0.5), player.getZ(),
@@ -513,7 +526,6 @@ public class DebrisResonatorItem extends Item {
     }
 
     private static boolean isTrackable(ServerWorld world, BlockPos pos, long seed) {
-        // Verificar si es natural usando el algoritmo de generación de Minecraft
         boolean isNatural = isNaturallyGenerated(world, pos, seed);
 
         
@@ -534,45 +546,30 @@ public class DebrisResonatorItem extends Item {
         return trackable;
     }
     
-    /**
-     * Verifica si un Ancient Debris fue generado naturalmente.
-     * Combina verificación de registro de jugadores y algoritmo de generación.
-     */
     private static boolean isNaturallyGenerated(ServerWorld world, BlockPos pos, long seed) {
-        // Primero verificar si está en el registro de bloques colocados por jugadores
         String key = world.getRegistryKey().getValue().toString() + ":" + pos.toShortString();
         boolean isPlayerPlaced = DebrisResonatorHooks.playerPlacedDebris.contains(key);
         
         if (isPlayerPlaced) {
 
-            return false; // Fue colocado por un jugador
+            return false;
         }
-        
-        // Si no está en el registro de jugadores y estamos en el Nether con altura válida,
-        // asumir que es natural (la mayoría de casos)
+
         boolean result = isNaturallyGeneratedByAlgorithm(world, pos, seed);
 
         return result;
     }
-    
-    /**
-     * Verifica si un Ancient Debris fue generado naturalmente.
-     * Enfoque simplificado: Si está en el Nether en altura válida y no fue colocado por jugador, es natural.
-     */
+
     private static boolean isNaturallyGeneratedByAlgorithm(ServerWorld world, BlockPos pos, long seed) {
-        // Ancient Debris solo se genera naturalmente en el Nether
         if (!isNether(world)) {
             return false;
         }
         
-        // Verificar rango de altura válido para generación natural
         int y = pos.getY();
         if (y < 8 || y > 119) {
             return false;
         }
-        
-        // Si llegamos aquí y no está en el registro de jugadores, asumimos que es natural
-        // Este enfoque es más permisivo pero efectivo para prevenir exploits
+
         return true;
     }
 
@@ -633,23 +630,9 @@ public class DebrisResonatorItem extends Item {
         if (dist <= 4.5)  return 4; // close
         if (dist <= 10.5) return 3; // mid
         if (dist <= 16.5) return 2; // far
-        if (dist <= 32.5) return 1; // too_far (hasta RELEASE_DISTANCE)
+        if (dist <= 32.5) return 1; // too_far (until RELEASE_DISTANCE)
         return 0; // searching
     }
-
-
-    private static void ensureSoundCycleStart(ItemStack stack, ServerWorld world, PlayerEntity player) {
-        // Los sonidos ahora se manejan automáticamente por AnimationSoundSynchronizer en el cliente
-        // basándose en las animaciones CustomModelData
-    }
-    private static void geigerPing(ItemStack stack, ServerWorld world, PlayerEntity player, int tier) {
-        // Los sonidos ahora se manejan completamente por el AnimationSoundSynchronizer del lado cliente
-        // No reproducir sonidos desde el servidor para evitar conflictos
-        // La sincronización se basa en las animaciones CustomModelData automáticamente
-    }
-
-
-
     @Override
     public Text getName(ItemStack stack) {
         Text base = stack.getCustomName() != null ? stack.getName() : Text.translatable(getTranslationKey());
@@ -675,6 +658,12 @@ public class DebrisResonatorItem extends Item {
                         : Text.translatable("item.lategameplus.debris_resonator.cooldown_seconds_suffix", remainingSecs);
                 return Text.empty().append(base).append(" ").append(cooldownText.copy().formatted(Formatting.DARK_GRAY, Formatting.ITALIC));
             }
+
+            int secs = Math.max(0, readBattery(stack));
+            Text remainingText = (secs >= 60)
+                    ? Text.translatable("item.lategameplus.debris_resonator.off_minutes_suffix", Math.round(secs / 60f))
+                    : Text.translatable("item.lategameplus.debris_resonator.off_seconds_suffix", secs);
+            return Text.empty().append(base).append(" ").append(remainingText.copy().formatted(Formatting.GRAY, Formatting.ITALIC));
         }
         return base;
     }
