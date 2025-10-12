@@ -1,6 +1,16 @@
 # LateGame+
 ---
 
+> ### ✨ New Feature – Debris Resonator (1.21+)
+>
+> * Late-game locator for **Ancient Debris** powered by a configurable battery.
+> * Custom scan tiers and flexible cooldowns.
+> * Recharge in an Anvil with **Echo Shards** (full) or **Amethyst Shards** (1/30 each).
+> * Fully configurable through Mod Menu / YACL or the JSON config.
+
+![debris_resonator_showcase_placeholder](https://example.com/debris_resonator_showcase_placeholder.png)
+
+
 
 ## ❤️ Support & Feedback
 
@@ -27,7 +37,43 @@ From **Netherite Apples** to **Warping Compasses**, **Unbreakable Anvils**, and 
 ## 📦 Feature Showcase
 
 <details>
-<summary>🔮 Lodestone Warp Compass</summary>
+<summary>�️ Debris Resonator</summary>
+
+Track **naturally generated Ancient Debris** in the Nether with a rechargeable locator.
+
+Key mechanics:
+
+* **Tiered scan rings** communicate distance via CustomModelData animations.
+  ![debris_resonator_scan_rings_placeholder](https://example.com/debris_resonator_scan_rings_placeholder.png)
+* Activation is **Nether-only**; other dimensions show a warning message.
+* Recharge via **Echo Shard** (full battery, 5 XP) or **Amethyst Shards** (1/16 battery, 1 XP each) in the Netherite Anvil.
+  ![debris_resonator_repair_echoshard_placeholder](https://example.com/debris_resonator_repair_echoshard_placeholder.gif)
+  ![debris_resonator_repair_amethyst_placeholder](https://example.com/debris_resonator_repair_amethyst_placeholder.gif)
+* Displays remaining battery even when powered off; configurable cooldowns after depletion or range loss.
+
+Gameplay moments:
+
+* Searching and mining debris in survival:
+  ![debris_resonator_gameplay_mining_placeholder](https://example.com/debris_resonator_gameplay_mining_placeholder.gif)
+* Demonstration of the connection breaking when you leave range:
+  ![debris_resonator_disconnect_range_placeholder](https://example.com/debris_resonator_disconnect_range_placeholder.gif)
+
+Crafting Recipe:
+
+![debris_resonator_recipe_placeholder](https://example.com/debris_resonator_recipe_placeholder.png)
+
+Configuration knobs (`debrisResonator*`):
+
+* Maximum battery seconds, cooldowns (self / missing target / far distance).
+* Vertical scan range.
+* Sound volume multiplier.
+
+</details>
+
+---
+
+<details>
+<summary>�🔮 Lodestone Warp Compass</summary>
 
 Warp instantly back to your **lodestone-bound location**.  
 
