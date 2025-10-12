@@ -2,7 +2,7 @@
 ---
 
 > 
-> ### ✨ New Feature – Debris Resonator
+> ### ✨ New Feature – Debris Resonator (V1.2.0)
 >
 > * Late-game locator for **Ancient Debris** powered by a configurable battery (default 30 minutes).
 > * Custom scan tiers and configurable cooldowns.
@@ -43,7 +43,8 @@ From **Netherite Apples** to **Warping Compasses**, **Unbreakable Anvils**, and 
   Track **naturally generated Ancient Debris** in the Nether with a rechargeable locator.
 
 Key mechanics:
-
+* **Each** ancient debris has a **50% chance** to be "trackable" as a way to balance its power, additionally, ancient debris placed by players will **never** be tracked.
+  
 * **Tiered scan rings** communicate distance via animations and audio cues.
 
   | Tier | Effective range | Feedback summary |
@@ -62,7 +63,7 @@ Key mechanics:
 
   | Cooldown type | Default duration | When it applies |
   | --- | --- | --- |
-  | Successfully Mining the tracked Debris | 25 seconds | The resonator drains to 0 while actively tracking. |
+  | Successfully Mining the tracked Debris | 25 seconds | When you successfully mine the block that the debris resonator was tracking |
   | Target missing | 10 seconds | The tracked debris disappears (Broken due to an external reason or a third party). |
   | Distance limit | 60 seconds | You stray beyond the maximum tracking distance and the signal drops. |
   
@@ -72,6 +73,7 @@ Key mechanics:
 
 
 Crafting Recipe:
+
 ![debris_resonator_recipe](https://cdn.modrinth.com/data/cached_images/83c0d7b6b73eff92762d4bfd4b44534eaca11dc1.png)
 
 Configuration knobs (`debrisResonator*`):
