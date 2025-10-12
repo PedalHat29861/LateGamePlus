@@ -10,17 +10,14 @@
       "minecraft:netherite_scrap"
     ],
     "K": [
-      "minecraft:sculk_sensor"
+      "minecraft:calibrated_sculk_sensor"
     ],
     "E": [
       "minecraft:echo_shard"
-    ],
-    "A": [
-      "minecraft:amethyst_shard"
     ]
   },
   "pattern": [
-    "EAE",
+    "E E",
     "NSN",
     "EKE"
   ],
