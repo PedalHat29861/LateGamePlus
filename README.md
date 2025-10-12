@@ -8,9 +8,9 @@
 > * Custom scan tiers and configurable cooldowns.
 > * Recharge in an Anvil with **Echo Shards** (full) or **Amethyst Shards** (1/60 each).
 > * Fully configurable through Mod Menu / YACL or the JSON config.
-
-![debris_resonator_showcase_placeholder](https://i.imgur.com/zW9Eldb.gif)
-
+>
+> ![debris_resonator_showcase_placeholder](https://i.imgur.com/zW9Eldb.gif)
+> **Gameplay Preview**
 
 
 ## ❤️ Support & Feedback
