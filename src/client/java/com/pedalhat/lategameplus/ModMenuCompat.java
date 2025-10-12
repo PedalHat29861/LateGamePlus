@@ -154,6 +154,84 @@ public class ModMenuCompat implements ModMenuApi {
                     .step(1))
                 .build();
 
+            var debrisMaxBattery = Option.<Integer>createBuilder()
+                .name(Text.translatable("lategameplus.config.debris.max_battery_seconds"))
+                .description(OptionDescription.of(Text.translatable("lategameplus.config.debris.max_battery_seconds.desc")))
+                .binding(
+                    1800,
+                    () -> Math.max(0, cfg.debrisResonatorMaxBatterySeconds),
+                    v  -> cfg.debrisResonatorMaxBatterySeconds = Math.max(0, Math.min(86400, v))
+                )
+                .controller(opt -> IntegerFieldControllerBuilder.create(opt)
+                    .min(0)
+                    .max(86400))
+                .build();
+
+            var debrisCooldownSelf = Option.<Integer>createBuilder()
+                .name(Text.translatable("lategameplus.config.debris.cooldown_self_seconds"))
+                .description(OptionDescription.of(Text.translatable("lategameplus.config.debris.cooldown_self_seconds.desc")))
+                .binding(
+                    25,
+                    () -> Math.max(0, cfg.debrisResonatorCooldownSelfSeconds),
+                    v  -> cfg.debrisResonatorCooldownSelfSeconds = Math.max(0, Math.min(3600, v))
+                )
+                .controller(opt -> IntegerSliderControllerBuilder.create(opt)
+                    .range(0, 300)
+                    .step(1))
+                .build();
+
+            var debrisCooldownOther = Option.<Integer>createBuilder()
+                .name(Text.translatable("lategameplus.config.debris.cooldown_other_seconds"))
+                .description(OptionDescription.of(Text.translatable("lategameplus.config.debris.cooldown_other_seconds.desc")))
+                .binding(
+                    10,
+                    () -> Math.max(0, cfg.debrisResonatorCooldownOtherSeconds),
+                    v  -> cfg.debrisResonatorCooldownOtherSeconds = Math.max(0, Math.min(3600, v))
+                )
+                .controller(opt -> IntegerSliderControllerBuilder.create(opt)
+                    .range(0, 300)
+                    .step(1))
+                .build();
+
+            var debrisCooldownFar = Option.<Integer>createBuilder()
+                .name(Text.translatable("lategameplus.config.debris.cooldown_far_seconds"))
+                .description(OptionDescription.of(Text.translatable("lategameplus.config.debris.cooldown_far_seconds.desc")))
+                .binding(
+                    60,
+                    () -> Math.max(0, cfg.debrisResonatorCooldownFarSeconds),
+                    v  -> cfg.debrisResonatorCooldownFarSeconds = Math.max(0, Math.min(3600, v))
+                )
+                .controller(opt -> IntegerSliderControllerBuilder.create(opt)
+                    .range(0, 600)
+                    .step(1))
+                .build();
+
+            var debrisRangeY = Option.<Integer>createBuilder()
+                .name(Text.translatable("lategameplus.config.debris.range_y"))
+                .description(OptionDescription.of(Text.translatable("lategameplus.config.debris.range_y.desc")))
+                .binding(
+                    2,
+                    () -> Math.max(0, cfg.debrisResonatorRangeY),
+                    v  -> cfg.debrisResonatorRangeY = Math.max(0, Math.min(64, v))
+                )
+                .controller(opt -> IntegerSliderControllerBuilder.create(opt)
+                    .range(0, 32)
+                    .step(1))
+                .build();
+
+            var debrisVolume = Option.<Float>createBuilder()
+                .name(Text.translatable("lategameplus.config.debris.sound_volume"))
+                .description(OptionDescription.of(Text.translatable("lategameplus.config.debris.sound_volume.desc")))
+                .binding(
+                    1.0f,
+                    () -> Math.max(0f, cfg.debrisResonatorSoundVolume),
+                    v  -> cfg.debrisResonatorSoundVolume = Math.max(0f, Math.min(4f, v))
+                )
+                .controller(opt -> FloatSliderControllerBuilder.create(opt)
+                    .range(0f, 4f)
+                    .step(0.05f))
+                .build();
+
             var catGeneral = ConfigCategory.createBuilder()
                 .name(Text.translatable("lategameplus.config.category.general"))
                 .option(crossbowDamageMultiplier)
@@ -176,11 +254,22 @@ public class ModMenuCompat implements ModMenuApi {
                 .option(bruteNuggetMax)
                 .build();
 
+            var catDebris = ConfigCategory.createBuilder()
+                .name(Text.translatable("lategameplus.config.category.debris_resonator"))
+                .option(debrisMaxBattery)
+                .option(debrisCooldownSelf)
+                .option(debrisCooldownOther)
+                .option(debrisCooldownFar)
+                .option(debrisRangeY)
+                .option(debrisVolume)
+                .build();
+
             return YetAnotherConfigLib.createBuilder()
                 .title(Text.literal("LateGamePlus"))
                 .category(catGeneral)
                 .category(catLodestone)
                 .category(catPiglin)
+                .category(catDebris)
                 .save(() -> {
                     if (cfg.piglinBruteNuggetMin > cfg.piglinBruteNuggetMax) {
                         int tmp = cfg.piglinBruteNuggetMin;
@@ -189,6 +278,12 @@ public class ModMenuCompat implements ModMenuApi {
                     }
                     cfg.netheriteCrossbowDamageMultiplier = Math.max(0f, Math.min(5f, cfg.netheriteCrossbowDamageMultiplier));
                     cfg.netheriteAnvilMaxLevelCost = Math.max(20, Math.min(39, cfg.netheriteAnvilMaxLevelCost));
+                    cfg.debrisResonatorMaxBatterySeconds = Math.max(0, Math.min(86400, cfg.debrisResonatorMaxBatterySeconds));
+                    cfg.debrisResonatorCooldownSelfSeconds = Math.max(0, Math.min(3600, cfg.debrisResonatorCooldownSelfSeconds));
+                    cfg.debrisResonatorCooldownOtherSeconds = Math.max(0, Math.min(3600, cfg.debrisResonatorCooldownOtherSeconds));
+                    cfg.debrisResonatorCooldownFarSeconds = Math.max(0, Math.min(3600, cfg.debrisResonatorCooldownFarSeconds));
+                    cfg.debrisResonatorRangeY = Math.max(0, Math.min(64, cfg.debrisResonatorRangeY));
+                    cfg.debrisResonatorSoundVolume = Math.max(0f, Math.min(4f, cfg.debrisResonatorSoundVolume));
                     ConfigManager.save();
                 })
                 .build()

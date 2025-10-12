@@ -29,6 +29,7 @@
   "lategameplus.config.category.piglin": "Piglin Brute",
   "lategameplus.config.category.repair": "Repair",
   "lategameplus.config.category.lodestone": "Lodestone Warp",
+  "lategameplus.config.category.debris_resonator": "Debris Resonator",
   "lategameplus.config.elytra.protection_level": "Elytra protection tier",
   "lategameplus.config.elytra.protection_level.desc": "0 = disabled, 1 = Gold, 2 = Iron (default), 3 = Diamond, 4 = Netherite. (Requires \"/lategameplus reload\" to apply)",
   "lategameplus.config.totem.netherite_uses": "Netherite Totem uses",
@@ -52,5 +53,17 @@
   "lategameplus.config.crossbow.damage_multiplier": "Netherite Crossbow damage multiplier",
   "lategameplus.config.crossbow.damage_multiplier.desc": "Scales the damage dealt by Netherite Crossbow projectiles. 1.0 = vanilla damage, 1.5 = default.",
   "lategameplus.config.anvil.max_cost": "Netherite Anvil XP cap",
-  "lategameplus.config.anvil.max_cost.desc": "Maximum level cost the Netherite Anvil will charge before capping (20-39 levels)."
+  "lategameplus.config.anvil.max_cost.desc": "Maximum level cost the Netherite Anvil will charge before capping (20-39 levels).",
+  "lategameplus.config.debris.max_battery_seconds": "Max battery (seconds)",
+  "lategameplus.config.debris.max_battery_seconds.desc": "Total operating time of the Debris Resonator while searching. Set to 0 to disable.",
+  "lategameplus.config.debris.cooldown_self_seconds": "Cooldown after depletion (seconds)",
+  "lategameplus.config.debris.cooldown_self_seconds.desc": "Cooldown applied when the resonator battery runs out.",
+  "lategameplus.config.debris.cooldown_other_seconds": "Cooldown on missing target (seconds)",
+  "lategameplus.config.debris.cooldown_other_seconds.desc": "Cooldown applied when the tracked debris disappears before you reach it.",
+  "lategameplus.config.debris.cooldown_far_seconds": "Cooldown when too far (seconds)",
+  "lategameplus.config.debris.cooldown_far_seconds.desc": "Cooldown applied when you stray too far from the tracked debris.",
+  "lategameplus.config.debris.range_y": "Vertical scan range (blocks)",
+  "lategameplus.config.debris.range_y.desc": "How many blocks above and below the player the resonator scans for debris.",
+  "lategameplus.config.debris.sound_volume": "Sound volume multiplier",
+  "lategameplus.config.debris.sound_volume.desc": "Multiplies every Debris Resonator sound (0 = mute, 4 = four times louder)."
 }

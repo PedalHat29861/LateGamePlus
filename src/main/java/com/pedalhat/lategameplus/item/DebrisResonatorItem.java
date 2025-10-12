@@ -1,5 +1,6 @@
 package com.pedalhat.lategameplus.item;
 
+import com.pedalhat.lategameplus.config.ConfigManager;
 import com.pedalhat.lategameplus.util.TimeBridge;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.minecraft.block.Blocks;
@@ -33,16 +34,56 @@ import java.util.function.Consumer;
 
 public class DebrisResonatorItem extends Item {
 
-    private static final int  MAX_BATTERY_SECONDS   = 900;
-    private static final double  SCAN_PERIOD_SECONDS= 0.5;
-    private static final int  RANGE_XZ              = 16;
-    private static final int  RANGE_Y               = 2;
-    private static final int  RELEASE_DISTANCE      = 32;
-    private static final long RELEASE_GRACE_MS      = 1500;
-    private static final int  COOLDOWN_SELF         = 25;
-    private static final int  COOLDOWN_OTHER        = 10;
-    private static final int  COOLDOWN_FAR          = 60;
-    private static final long MODEL_RATE_LIMIT_MS   = 500;
+    private static final int  DEFAULT_MAX_BATTERY_SECONDS   = 1800; // 30 mins
+    private static final double  SCAN_PERIOD_SECONDS        = 0.5;
+    private static final int  RANGE_XZ                      = 16;
+    private static final int  DEFAULT_RANGE_Y               = 2;
+    private static final int  RELEASE_DISTANCE              = 32;
+    private static final long RELEASE_GRACE_MS              = 1500;
+    private static final int  DEFAULT_COOLDOWN_SELF         = 25;
+    private static final int  DEFAULT_COOLDOWN_OTHER        = 10;
+    private static final int  DEFAULT_COOLDOWN_FAR          = 60;
+    private static final long MODEL_RATE_LIMIT_MS           = 500;
+
+    private static int maxBatterySeconds() {
+        int value = ConfigManager.get().debrisResonatorMaxBatterySeconds;
+        if (value < 0) {
+            value = DEFAULT_MAX_BATTERY_SECONDS;
+        }
+        return MathHelper.clamp(value, 0, 24 * 60 * 60);
+    }
+
+    private static int cooldownSelfSeconds() {
+        int value = ConfigManager.get().debrisResonatorCooldownSelfSeconds;
+        if (value < 0) {
+            value = DEFAULT_COOLDOWN_SELF;
+        }
+        return MathHelper.clamp(value, 0, 3600);
+    }
+
+    private static int cooldownOtherSeconds() {
+        int value = ConfigManager.get().debrisResonatorCooldownOtherSeconds;
+        if (value < 0) {
+            value = DEFAULT_COOLDOWN_OTHER;
+        }
+        return MathHelper.clamp(value, 0, 3600);
+    }
+
+    private static int cooldownFarSeconds() {
+        int value = ConfigManager.get().debrisResonatorCooldownFarSeconds;
+        if (value < 0) {
+            value = DEFAULT_COOLDOWN_FAR;
+        }
+        return MathHelper.clamp(value, 0, 3600);
+    }
+
+    private static int rangeY() {
+        int value = ConfigManager.get().debrisResonatorRangeY;
+        if (value < 0) {
+            value = DEFAULT_RANGE_Y;
+        }
+        return MathHelper.clamp(value, 0, 64);
+    }
 
 
 
@@ -65,7 +106,6 @@ public class DebrisResonatorItem extends Item {
     private static final String KEY_MISSING_SINCE_MS        = "res_missing_since_ms";
     private static final long   MISSING_GRACE_MS            = 100L;
 
-    // Cache estático para evitar escrituras NBT innecesarias
     private static final Map<UUID, Long> soundCycleCache = new ConcurrentHashMap<>();
     private static final Map<UUID, Long> nextScanCache = new ConcurrentHashMap<>();
     private static final Map<UUID, Integer> lastPingTierCache = new ConcurrentHashMap<>();
@@ -183,11 +223,11 @@ public class DebrisResonatorItem extends Item {
 
 
     private static int readBattery(ItemStack stack) {
-        return readInt(stack, KEY_BATTERY, MAX_BATTERY_SECONDS);
+        return readInt(stack, KEY_BATTERY, maxBatterySeconds());
     }
 
     private static void writeBattery(ItemStack stack, int seconds) {
-        writeInt(stack, KEY_BATTERY, MathHelper.clamp(seconds, 0, MAX_BATTERY_SECONDS));
+        writeInt(stack, KEY_BATTERY, MathHelper.clamp(seconds, 0, maxBatterySeconds()));
     }
 
 
@@ -349,7 +389,7 @@ public class DebrisResonatorItem extends Item {
                 writeState(stack, State.DEPLETED);
                 clearSoundCycle(player);
                 long now = TimeBridge.nowSeconds();
-                writeLong(stack, KEY_SCAN_COOLDOWN_UNTIL, now + COOLDOWN_SELF);
+                writeLong(stack, KEY_SCAN_COOLDOWN_UNTIL, now + cooldownSelfSeconds());
                 clearTarget(stack);
                 world.playSound(null, player.getX(), player.getY(), player.getZ(),
                         SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.PLAYERS, 0.9f, 0.9f);
@@ -420,7 +460,7 @@ public class DebrisResonatorItem extends Item {
                 writeLong(stack, KEY_MISSING_SINCE_MS, nowMs);
             } else if (nowMs - since >= MISSING_GRACE_MS) {
                 // Desapareció por otros → cooldown 15s
-                liberateToCooldown(stack, world, player, COOLDOWN_OTHER);
+                liberateToCooldown(stack, world, player, cooldownOtherSeconds());
             }
         } else {
             removeKey(stack, KEY_MISSING_SINCE_MS);
@@ -435,7 +475,7 @@ public class DebrisResonatorItem extends Item {
             if (farSince == 0L) {
                 writeLong(stack, KEY_FAR_SINCE_MS, nowMs);
             } else if (nowMs - farSince >= RELEASE_GRACE_MS) {
-                liberateToCooldown(stack, world, player, COOLDOWN_FAR);
+                liberateToCooldown(stack, world, player, cooldownFarSeconds());
             }
         }
     }
@@ -458,7 +498,8 @@ public class DebrisResonatorItem extends Item {
     }
 
     private static BlockPos scanForDebris(ServerWorld world, BlockPos origin, long worldSeed) {
-        for (int dy = -RANGE_Y; dy <= RANGE_Y; dy++) {
+        int verticalRange = rangeY();
+        for (int dy = -verticalRange; dy <= verticalRange; dy++) {
             for (int dx = -RANGE_XZ; dx <= RANGE_XZ; dx++) {
                 for (int dz = -RANGE_XZ; dz <= RANGE_XZ; dz++) {
                     BlockPos p = origin.add(dx, dy, dz);
@@ -642,18 +683,18 @@ public class DebrisResonatorItem extends Item {
 
     @Override
     public boolean isItemBarVisible(ItemStack stack) {
-        return calcEffectiveBatteryLive(stack) < MAX_BATTERY_SECONDS;
+        return calcEffectiveBatteryLive(stack) < maxBatterySeconds();
     }
 
     @Override
     public int getItemBarStep(ItemStack stack) {
         int bat = calcEffectiveBatteryLive(stack);
-        return Math.round(13.0f * bat / (float) MAX_BATTERY_SECONDS);
+        return Math.round(13.0f * bat / (float) Math.max(1, maxBatterySeconds()));
     }
 
     @Override
     public int getItemBarColor(ItemStack stack) {
-        float f = Math.max(0.0F, calcEffectiveBatteryLive(stack) / (float) MAX_BATTERY_SECONDS);
+        float f = Math.max(0.0F, calcEffectiveBatteryLive(stack) / (float) Math.max(1, maxBatterySeconds()));
         return MathHelper.hsvToRgb(f / 3.0F, 1.0F, 1.0F);
     }
 
@@ -705,7 +746,7 @@ public class DebrisResonatorItem extends Item {
                     commitBatteryFromFloats(stack);
                     clearTarget(stack);
                     clearSoundCycle(player);
-                    writeLong(stack, KEY_SCAN_COOLDOWN_UNTIL, TimeBridge.nowSeconds() + COOLDOWN_SELF);
+                    writeLong(stack, KEY_SCAN_COOLDOWN_UNTIL, TimeBridge.nowSeconds() + cooldownSelfSeconds());
                     setCooldownVisual(stack);
 
                     world.playSound(null, player.getX(), player.getY(), player.getZ(),

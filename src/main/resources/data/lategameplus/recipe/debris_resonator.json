@@ -1,0 +1,32 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "netherite",
+  "key": {
+    "S": [
+      "minecraft:nether_star"
+    ],
+    "N": [
+      "minecraft:netherite_scrap"
+    ],
+    "K": [
+      "minecraft:sculk_sensor"
+    ],
+    "E": [
+      "minecraft:echo_shard"
+    ],
+    "A": [
+      "minecraft:amethyst_shard"
+    ]
+  },
+  "pattern": [
+    "EAE",
+    "NSN",
+    "EKE"
+  ],
+  "result": {
+    "count": 1,
+    "id": "lategameplus:debris_resonator"
+  },
+  "show_notification": true
+}

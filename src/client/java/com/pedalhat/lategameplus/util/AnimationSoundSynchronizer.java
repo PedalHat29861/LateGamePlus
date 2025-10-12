@@ -1,10 +1,12 @@
 package com.pedalhat.lategameplus.util;
 
+import com.pedalhat.lategameplus.config.ConfigManager;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.util.math.MathHelper;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,6 +16,14 @@ public class AnimationSoundSynchronizer {
     private static int lastCustomModelData = -1;
     private static String lastStateString = "";
     private static int animationTick = 0;
+
+    private static float volumeMultiplier() {
+        float value = ConfigManager.get().debrisResonatorSoundVolume;
+        if (Float.isNaN(value) || Float.isInfinite(value)) {
+            value = 1.0f;
+        }
+        return MathHelper.clamp(value, 0.0f, 4.0f);
+    }
     
     static {
         
@@ -125,26 +135,28 @@ public class AnimationSoundSynchronizer {
     }
     
     private static void playAnimationSound(PlayerEntity player, AnimationConfig config) {
-        
-        if (config.soundEvent != null) {
-            
-            MinecraftClient client = MinecraftClient.getInstance();
-            
-            if (client != null && client.getSoundManager() != null) {
-                
-                
-                net.minecraft.client.sound.PositionedSoundInstance soundInstance = 
-                    net.minecraft.client.sound.PositionedSoundInstance.master(
-                        config.soundEvent, 
-                        config.pitch, 
-                        config.volume 
-                    );
-                
-                client.getSoundManager().play(soundInstance);
-            } else {
-            }
-        } else {
+        if (config.soundEvent == null) {
+            return;
         }
+
+        float adjustedVolume = config.volume * volumeMultiplier();
+        if (adjustedVolume <= 0.0f) {
+            return;
+        }
+
+        MinecraftClient client = MinecraftClient.getInstance();
+        if (client == null || client.getSoundManager() == null) {
+            return;
+        }
+
+        net.minecraft.client.sound.PositionedSoundInstance soundInstance =
+                net.minecraft.client.sound.PositionedSoundInstance.master(
+                        config.soundEvent,
+                        config.pitch,
+                        adjustedVolume
+                );
+
+        client.getSoundManager().play(soundInstance);
     }
     
     
