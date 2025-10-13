@@ -481,7 +481,7 @@ public class DebrisResonatorItem extends Item {
         } else {
             removeKey(stack, KEY_MISSING_SINCE_MS);
         }
-        double dist = player.getPos().distanceTo(target.toCenterPos());
+        double dist = player.getEntityPos().distanceTo(target.toCenterPos());
         if (dist <= RELEASE_DISTANCE) {
             removeKey(stack, KEY_FAR_SINCE_MS);
         } else {

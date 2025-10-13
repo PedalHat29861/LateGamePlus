@@ -70,14 +70,14 @@ public class LodestoneWarpItem extends Item {
         }
 
         GlobalPos gpos = maybeTarget.get();
-        ServerWorld targetWorld = player.getServer().getWorld(gpos.dimension());
+        ServerWorld targetWorld = player.getEntityWorld().getServer().getWorld(gpos.dimension());
         if (targetWorld == null) {
             player.playSound(SoundEvents.BLOCK_NOTE_BLOCK_BASS.value(), 1f, 0.5f);
             return stack;
         }
 
         if (!ConfigManager.get().lodestoneWarpCrossDim
-            && !player.getWorld().getRegistryKey().equals(targetWorld.getRegistryKey())) {
+            && !player.getEntityWorld().getRegistryKey().equals(targetWorld.getRegistryKey())) {
             player.playSound(SoundEvents.BLOCK_NOTE_BLOCK_BASS.value(), 1f, 0.5f);
             return stack;
         }
@@ -114,7 +114,7 @@ public class LodestoneWarpItem extends Item {
 
         int cooldown = Math.max(0, ConfigManager.get().lodestoneWarpCooldownTicks);
         player.getItemCooldownManager().set(stack, cooldown);
-        player.getServer().execute(() -> player.getItemCooldownManager().set(stack, cooldown));
+        player.getEntityWorld().getServer().execute(() -> player.getItemCooldownManager().set(stack, cooldown));
 
         if (!player.isCreative()) {
             stack.setDamage(stack.getDamage() + 1);

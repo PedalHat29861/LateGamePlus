@@ -75,7 +75,7 @@ public final class ModEvents {
                     living.addStatusEffect(new StatusEffectInstance(StatusEffects.REGENERATION, 900, 2));
                     living.addStatusEffect(new StatusEffectInstance(StatusEffects.ABSORPTION, 150, 1));
                     living.addStatusEffect(new StatusEffectInstance(StatusEffects.FIRE_RESISTANCE, 800, 0));
-                    living.getWorld().sendEntityStatus(living, (byte) 35);
+                    living.getEntityWorld().sendEntityStatus(living, (byte) 35);
 
                     return false;
                 }
