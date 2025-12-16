@@ -7,7 +7,13 @@
     "AnvilHandlerCapMixin",
     "AnvilScreenHandlerAccessor",
     "DebrisResonatorAnvilRechargeMixin",
-    "HappyGhastEntityMixin"
+    "HappyGhastEntityMixin",
+    "LivingEntityDropStorageMixin"
+  ],
+  "client": [
+    "client.HappyGhastEntityRenderStateMixin",
+    "client.HappyGhastEntityRendererMixin",
+    "client.LivingEntityRendererAccessor"
   ],
   "injectors": {
     "defaultRequire": 1
