@@ -9,5 +9,7 @@ import net.minecraft.util.Identifier;
 public final class LGPItemTags {
     public static final TagKey<Item> CROSSBOWS =
         TagKey.of(RegistryKeys.ITEM, Identifier.of(LateGamePlus.MOD_ID, "crossbows"));
+    public static final TagKey<Item> NETHERITE_HARNESSES =
+        TagKey.of(RegistryKeys.ITEM, Identifier.of(LateGamePlus.MOD_ID, "netherite_harnesses"));
     private LGPItemTags() {}
 }

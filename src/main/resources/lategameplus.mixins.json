@@ -6,7 +6,8 @@
     "AnvilNuggetRepairMixin",
     "AnvilHandlerCapMixin",
     "AnvilScreenHandlerAccessor",
-    "DebrisResonatorAnvilRechargeMixin"
+    "DebrisResonatorAnvilRechargeMixin",
+    "HappyGhastEntityMixin"
   ],
   "injectors": {
     "defaultRequire": 1
