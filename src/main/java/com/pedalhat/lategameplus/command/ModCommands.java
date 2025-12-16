@@ -5,6 +5,8 @@ import com.pedalhat.lategameplus.config.ConfigManager;
 import com.pedalhat.lategameplus.registry.ModItems;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.command.CommandRegistryAccess;
+import net.minecraft.command.DefaultPermissions;
+import net.minecraft.command.permission.LeveledPermissionPredicate;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
@@ -27,15 +29,17 @@ public final class ModCommands {
                                          CommandManager.RegistrationEnvironment env) {
 
         dispatcher.register(CommandManager.literal("lategameplus")
-            .requires(src -> src.hasPermissionLevel(2))
+            .requires(src -> src.getPermissions().hasPermission(DefaultPermissions.GAMEMASTERS))
             .then(CommandManager.literal("reload")
                 .executes(ctx -> {
                     var server = ctx.getSource().getServer();
                     var src = ctx.getSource();
                     ConfigManager.load();
+                    var opSource = server.getCommandSource()
+                        .withPermissions(LeveledPermissionPredicate.OWNERS);
                     server.getCommandManager()
                         .getDispatcher()
-                        .execute("reload", server.getCommandSource().withLevel(4));
+                        .execute("reload", opSource);
 
                     ctx.getSource().sendFeedback(
                         () -> Text.literal("LGP: config reloaded and datapacks /reload executed."),

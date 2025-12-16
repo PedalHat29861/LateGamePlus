@@ -40,9 +40,9 @@ public class DebrisResonatorItem extends Item {
     private static final int  DEFAULT_RANGE_Y               = 2;
     private static final int  RELEASE_DISTANCE              = 32;
     private static final long RELEASE_GRACE_MS              = 1500;
-    private static final int  DEFAULT_COOLDOWN_SELF         = 25;
-    private static final int  DEFAULT_COOLDOWN_OTHER        = 10;
-    private static final int  DEFAULT_COOLDOWN_FAR          = 60;
+    private static final int  DEFAULT_COOLDOWN_SELF         = 5;
+    private static final int  DEFAULT_COOLDOWN_OTHER        = 1;
+    private static final int  DEFAULT_COOLDOWN_FAR          = 30;
     private static final long MODEL_RATE_LIMIT_MS           = 500;
 
     private static int maxBatterySeconds() {

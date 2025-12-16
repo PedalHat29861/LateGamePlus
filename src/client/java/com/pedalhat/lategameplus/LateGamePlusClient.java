@@ -4,14 +4,11 @@ import com.pedalhat.lategameplus.util.AnimationSoundSynchronizer;
 import com.pedalhat.lategameplus.util.TimeBridge;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.resource.ResourceType;
 
 public class LateGamePlusClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
-        ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES);
 
         TimeBridge.setNowSupplier(() -> {
             MinecraftClient mc = MinecraftClient.getInstance();
