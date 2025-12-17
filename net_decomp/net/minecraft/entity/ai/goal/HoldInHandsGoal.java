@@ -1,0 +1,58 @@
+/*
+ * Decompiled with CFR 0.152.
+ * 
+ * Could not load the following classes:
+ *  org.jspecify.annotations.Nullable
+ */
+package net.minecraft.entity.ai.goal;
+
+import java.util.function.Predicate;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.goal.Goal;
+import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.sound.SoundEvent;
+import net.minecraft.util.Hand;
+import org.jspecify.annotations.Nullable;
+
+public class HoldInHandsGoal<T extends MobEntity>
+extends Goal {
+    private final T actor;
+    private final ItemStack item;
+    private final Predicate<? super T> condition;
+    private final @Nullable SoundEvent sound;
+
+    public HoldInHandsGoal(T actor, ItemStack item, @Nullable SoundEvent sound, Predicate<? super T> condition) {
+        this.actor = actor;
+        this.item = item;
+        this.sound = sound;
+        this.condition = condition;
+    }
+
+    @Override
+    public boolean canStart() {
+        return this.condition.test(this.actor);
+    }
+
+    @Override
+    public boolean shouldContinue() {
+        return ((LivingEntity)this.actor).isUsingItem();
+    }
+
+    @Override
+    public void start() {
+        ((LivingEntity)this.actor).equipStack(EquipmentSlot.MAINHAND, this.item.copy());
+        ((LivingEntity)this.actor).setCurrentHand(Hand.MAIN_HAND);
+    }
+
+    @Override
+    public void stop() {
+        ((LivingEntity)this.actor).equipStack(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
+        if (this.sound != null) {
+            ((Entity)this.actor).playSound(this.sound, 1.0f, ((Entity)this.actor).getRandom().nextFloat() * 0.2f + 0.9f);
+        }
+    }
+}
+

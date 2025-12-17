@@ -6,7 +6,13 @@
     "AnvilNuggetRepairMixin",
     "AnvilHandlerCapMixin",
     "AnvilScreenHandlerAccessor",
-    "DebrisResonatorAnvilRechargeMixin"
+    "DebrisResonatorAnvilRechargeMixin",
+    "HappyGhastEntityMixin",
+    "LivingEntityDropStorageMixin",
+    "WolfEntityMixin"
+  ],
+  "client": [
+    "client.LivingEntityRendererAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

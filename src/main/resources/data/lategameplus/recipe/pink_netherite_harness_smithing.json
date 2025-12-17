@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smithing_transform",
+  "template": "minecraft:netherite_upgrade_smithing_template",
+  "base": "minecraft:pink_harness",
+  "addition": "minecraft:netherite_ingot",
+  "result": {
+    "id": "lategameplus:pink_netherite_harness"
+  }
+}

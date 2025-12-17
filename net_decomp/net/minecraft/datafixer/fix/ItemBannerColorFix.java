@@ -1,0 +1,75 @@
+/*
+ * Decompiled with CFR 0.152.
+ * 
+ * Could not load the following classes:
+ *  com.google.common.collect.ImmutableMap
+ *  com.mojang.datafixers.DSL
+ *  com.mojang.datafixers.DataFix
+ *  com.mojang.datafixers.OpticFinder
+ *  com.mojang.datafixers.TypeRewriteRule
+ *  com.mojang.datafixers.Typed
+ *  com.mojang.datafixers.schemas.Schema
+ *  com.mojang.datafixers.types.Type
+ *  com.mojang.datafixers.util.Pair
+ *  com.mojang.serialization.Dynamic
+ */
+package net.minecraft.datafixer.fix;
+
+import com.google.common.collect.ImmutableMap;
+import com.mojang.datafixers.DSL;
+import com.mojang.datafixers.DataFix;
+import com.mojang.datafixers.OpticFinder;
+import com.mojang.datafixers.TypeRewriteRule;
+import com.mojang.datafixers.Typed;
+import com.mojang.datafixers.schemas.Schema;
+import com.mojang.datafixers.types.Type;
+import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.Dynamic;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Stream;
+import net.minecraft.datafixer.TypeReferences;
+import net.minecraft.datafixer.schema.IdentifierNormalizingSchema;
+
+public class ItemBannerColorFix
+extends DataFix {
+    public ItemBannerColorFix(Schema schema, boolean bl) {
+        super(schema, bl);
+    }
+
+    public TypeRewriteRule makeRule() {
+        Type type = this.getInputSchema().getType(TypeReferences.ITEM_STACK);
+        OpticFinder opticFinder = DSL.fieldFinder((String)"id", (Type)DSL.named((String)TypeReferences.ITEM_NAME.typeName(), IdentifierNormalizingSchema.getIdentifierType()));
+        OpticFinder opticFinder2 = type.findField("tag");
+        OpticFinder opticFinder3 = opticFinder2.type().findField("BlockEntityTag");
+        return this.fixTypeEverywhereTyped("ItemBannerColorFix", type, itemStackTyped -> {
+            Optional optional = itemStackTyped.getOptional(opticFinder);
+            if (optional.isPresent() && Objects.equals(((Pair)optional.get()).getSecond(), "minecraft:banner")) {
+                Typed typed;
+                Optional optional3;
+                Dynamic dynamic = (Dynamic)itemStackTyped.get(DSL.remainderFinder());
+                Optional optional2 = itemStackTyped.getOptionalTyped(opticFinder2);
+                if (optional2.isPresent() && (optional3 = (typed = (Typed)optional2.get()).getOptionalTyped(opticFinder3)).isPresent()) {
+                    Typed typed2 = (Typed)optional3.get();
+                    Dynamic dynamic2 = (Dynamic)typed.get(DSL.remainderFinder());
+                    Dynamic dynamic3 = (Dynamic)typed2.getOrCreate(DSL.remainderFinder());
+                    if (dynamic3.get("Base").asNumber().result().isPresent()) {
+                        Dynamic dynamic5;
+                        Dynamic dynamic4;
+                        dynamic = dynamic.set("Damage", dynamic.createShort((short)(dynamic3.get("Base").asInt(0) & 0xF)));
+                        Optional optional4 = dynamic2.get("display").result();
+                        if (optional4.isPresent() && Objects.equals(dynamic4 = (Dynamic)optional4.get(), dynamic5 = dynamic4.createMap((Map)ImmutableMap.of((Object)dynamic4.createString("Lore"), (Object)dynamic4.createList(Stream.of(dynamic4.createString("(+NBT"))))))) {
+                            return itemStackTyped.set(DSL.remainderFinder(), (Object)dynamic);
+                        }
+                        dynamic3.remove("Base");
+                        return itemStackTyped.set(DSL.remainderFinder(), (Object)dynamic).set(opticFinder2, typed.set(opticFinder3, typed2.set(DSL.remainderFinder(), (Object)dynamic3)));
+                    }
+                }
+                return itemStackTyped.set(DSL.remainderFinder(), (Object)dynamic);
+            }
+            return itemStackTyped;
+        });
+    }
+}
+

@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "lategameplus:item/netherite_harness/red_netherite_harness"
+  }
+}

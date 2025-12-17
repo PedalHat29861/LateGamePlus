@@ -1,0 +1,100 @@
+Summary for C:\Users\PedalHat29861\.gradle\caches\fabric-loom\minecraftMaven\net\minecraft\minecraft-common\1.21.11-net.fabricmc.yarn.1_21_11.1.21.11+build.3-v2\minecraft-common-1.21.11-net.fabricmc.yarn.1_21_11.1.21.11+build.3-v2.jar
+Decompiled with CFR 0.152
+
+
+net.minecraft.entity.passive.RabbitEntity
+----------------------------
+
+createChild(net.minecraft.server.world.ServerWorld net.minecraft.entity.passive.PassiveEntity )
+  Unable to fully structure code
+
+
+net.minecraft.entity.LivingEntity
+----------------------------
+
+tickMovement()
+  Unable to fully structure code
+
+
+net.minecraft.entity.vehicle.VehicleEntity
+----------------------------
+
+damage(net.minecraft.server.world.ServerWorld net.minecraft.entity.damage.DamageSource float )
+  Unable to fully structure code
+
+
+net.minecraft.entity.projectile.thrown.EnderPearlEntity
+----------------------------
+
+tick()
+  Unable to fully structure code
+
+
+net.minecraft.entity.TypedEntityData
+----------------------------
+
+applyToBlockEntity(net.minecraft.block.entity.BlockEntity net.minecraft.registry.RegistryWrapper$WrapperLookup )
+  Exception : org.benf.cfr.reader.util.ConfusedCFRException: Tried to end blocks [5[CATCHBLOCK]], but top level block is 2[TRYBLOCK]
+
+
+net.minecraft.item.MaceItem
+----------------------------
+
+method_58661(net.minecraft.entity.Entity net.minecraft.entity.Entity net.minecraft.entity.LivingEntity )
+  Unable to fully structure code
+
+
+net.minecraft.block.BeehiveBlock
+----------------------------
+
+onUseWithItem(net.minecraft.item.ItemStack net.minecraft.block.BlockState net.minecraft.world.World net.minecraft.util.math.BlockPos net.minecraft.entity.player.PlayerEntity net.minecraft.util.Hand net.minecraft.util.hit.BlockHitResult )
+  Unable to fully structure code
+
+
+net.minecraft.world.gen.feature.TreeFeature
+----------------------------
+
+placeLogsAndLeaves(net.minecraft.world.WorldAccess net.minecraft.util.math.BlockBox java.util.Set<net.minecraft.util.math.BlockPos> java.util.Set<net.minecraft.util.math.BlockPos> java.util.Set<net.minecraft.util.math.BlockPos> )
+  Unable to fully structure code
+
+
+net.minecraft.predicate.entity.EntityFlagsPredicate
+----------------------------
+
+test(net.minecraft.entity.Entity )
+  Unable to fully structure code
+
+
+net.minecraft.nbt.NbtList
+----------------------------
+
+scanList(java.io.DataInput net.minecraft.nbt.scanner.NbtScanner net.minecraft.nbt.NbtSizeTracker )
+  Exception : org.benf.cfr.reader.util.ConfusedCFRException: Tried to end blocks [4[SWITCH], 8[CASE]], but top level block is 9[SWITCH]
+
+
+net.minecraft.server.command.DataCommand
+----------------------------
+
+executeGet(net.minecraft.server.command.ServerCommandSource net.minecraft.command.DataCommandObject net.minecraft.command.argument.NbtPathArgumentType$NbtPath )
+  Loose catch block
+
+
+net.minecraft.server.command.ExecuteCommand
+----------------------------
+
+enqueueExecutions(T java.util.List<T> java.util.function.Function<T, T> java.util.function.IntPredicate com.mojang.brigadier.context.ContextChain<T> net.minecraft.nbt.NbtCompound net.minecraft.command.ExecutionControl<T> net.minecraft.command.ArgumentGetter<com.mojang.brigadier.context.CommandContext<T>, java.util.Collection<net.minecraft.server.function.CommandFunction<T>>> net.minecraft.command.ExecutionFlags )
+  Exception : org.benf.cfr.reader.util.ConfusedCFRException: Started 2 blocks at once
+
+
+net.minecraft.server.network.ChunkDataSender
+----------------------------
+
+makeBatch(net.minecraft.server.world.ServerChunkLoadingManager net.minecraft.util.math.ChunkPos )
+  Unable to fully structure code
+
+
+net.minecraft.util.NetworkUtils
+----------------------------
+
+download(java.nio.file.Path java.net.URL java.util.Map<java.lang.String, java.lang.String> com.google.common.hash.HashFunction com.google.common.hash.HashCode int java.net.Proxy net.minecraft.util.NetworkUtils$DownloadListener )
+  Loose catch block
