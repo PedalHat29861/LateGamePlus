@@ -1,0 +1,13 @@
+{
+  "layers": {
+    "wolf_body": [
+      {
+        "texture": "lategameplus:netherite_armadillo_scute"
+      },
+      {
+        "dyeable": {},
+        "texture": "lategameplus:netherite_armadillo_scute_overlay"
+      }
+    ]
+  }
+}

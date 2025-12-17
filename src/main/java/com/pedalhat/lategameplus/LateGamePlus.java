@@ -7,9 +7,11 @@ import com.pedalhat.lategameplus.event.ModEvents;
 import com.pedalhat.lategameplus.item.DebrisResonatorItem;
 import com.pedalhat.lategameplus.recipe.ModRecipes;
 import com.pedalhat.lategameplus.registry.ModBlocks;
+import com.pedalhat.lategameplus.registry.ModItemGroups;
 import com.pedalhat.lategameplus.registry.ModItems;
 
 import net.fabricmc.api.ModInitializer;
+import net.minecraft.block.cauldron.CauldronBehavior;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.item.ItemGroups;
@@ -29,11 +31,18 @@ public class LateGamePlus implements ModInitializer {
         LOGGER.info("Hello Fabric world! Late Game Plus is initializing...");
         ModItems.init(cfg);
         ModBlocks.init();
+        ModItemGroups.init();
         ModEvents.register(cfg);
         ModCommands.register();
         ModRecipes.init();
         DebrisResonatorItem.DebrisResonatorHooks.init();
-        
+
+        var wolfArmorCleaning = CauldronBehavior.WATER_CAULDRON_BEHAVIOR.map().get(Items.WOLF_ARMOR);
+        if (wolfArmorCleaning != null) {
+            CauldronBehavior.WATER_CAULDRON_BEHAVIOR.map()
+                .put(ModItems.NETHERITE_WOLF_ARMOR, wolfArmorCleaning);
+        }
+
         LOGGER.info("Initialization complete, have fun!");
 
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.INGREDIENTS)
@@ -48,8 +57,12 @@ public class LateGamePlus implements ModInitializer {
                 .register(e -> e.addAfter(Items.BOW, ModItems.NETHERITE_BOW));
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.COMBAT)
                 .register(e -> e.addAfter(Items.CROSSBOW, ModItems.NETHERITE_CROSSBOW));
+        ItemGroupEvents.modifyEntriesEvent(ItemGroups.COMBAT)
+                .register(e -> e.addAfter(Items.WOLF_ARMOR, ModItems.NETHERITE_WOLF_ARMOR));
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.TOOLS)
                 .register(e -> e.addAfter(Items.ELYTRA, ModItems.NETHERITE_ELYTRA));
+        ItemGroupEvents.modifyEntriesEvent(ItemGroups.TOOLS)
+                .register(e -> e.addAfter(Items.PINK_HARNESS, ModItems.orderedNetheriteHarnesses()));
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.TOOLS)
                 .register(e -> e.addAfter(Items.COMPASS, ModItems.LODESTONE_WARP));
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.FUNCTIONAL)

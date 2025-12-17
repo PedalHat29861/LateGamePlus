@@ -388,6 +388,7 @@ public class DebrisResonatorItem extends Item {
 
 
 
+    @SuppressWarnings("null")
     @Override
     public void inventoryTick(ItemStack stack, ServerWorld world, Entity entity, @Nullable EquipmentSlot slot) {
         if (!(entity instanceof PlayerEntity player)) return;

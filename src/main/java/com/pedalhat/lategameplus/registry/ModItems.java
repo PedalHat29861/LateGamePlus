@@ -7,19 +7,28 @@ import com.pedalhat.lategameplus.item.LodestoneWarpItem;
 import com.pedalhat.lategameplus.item.NetheriteBowItem;
 import com.pedalhat.lategameplus.item.NetheriteCrossbowItem;
 import com.pedalhat.lategameplus.item.DebrisResonatorItem;
+import com.pedalhat.lategameplus.tag.LGPItemTags;
 
 import net.minecraft.component.ComponentMap;
 import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.AttributeModifierSlot;
+import net.minecraft.component.type.AttributeModifiersComponent;
 import net.minecraft.component.type.ConsumableComponents;
 import net.minecraft.component.type.EquippableComponent;
 import net.minecraft.component.type.FoodComponent;
 import net.minecraft.component.type.RepairableComponent;
 import net.minecraft.component.type.NbtComponent;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.attribute.EntityAttributeModifier;
+import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
+import net.minecraft.item.equipment.ArmorMaterial;
+import net.minecraft.item.equipment.ArmorMaterials;
+import net.minecraft.item.equipment.EquipmentType;
 import net.minecraft.item.consume.ApplyEffectsConsumeEffect;
 import net.minecraft.item.equipment.EquipmentAssetKeys;
 import net.minecraft.registry.Registries;
@@ -29,6 +38,12 @@ import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntryList;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Rarity;
+import net.minecraft.util.DyeColor;
+import net.minecraft.sound.SoundEvents;
+
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.Arrays;
 
 public class ModItems {
     private static ComponentMap getChestplateAttributesForLevel(int lvl) {
@@ -73,6 +88,80 @@ public class ModItems {
     public static Item LODESTONE_WARP;
     public static Item VOID_CRYSTAL;
     public static Item DEBRIS_RESONATOR;
+    public static Item NETHERITE_WOLF_ARMOR;
+    public static Map<DyeColor, Item> NETHERITE_HARNESSES;
+
+    private static final RegistryKey<net.minecraft.item.equipment.EquipmentAsset> NETHERITE_WOLF_ARMOR_ASSET =
+        RegistryKey.of(EquipmentAssetKeys.REGISTRY_KEY, Identifier.of(LateGamePlus.MOD_ID, "netherite_armadillo_scute"));
+    private static final ArmorMaterial NETHERITE_WOLF_ARMOR_MATERIAL =
+        new ArmorMaterial(
+            ArmorMaterials.ARMADILLO_SCUTE.durability() * 2,
+            Map.of(EquipmentType.BODY, 22),
+            ArmorMaterials.NETHERITE.enchantmentValue(),
+            SoundEvents.ITEM_ARMOR_EQUIP_WOLF,
+            ArmorMaterials.NETHERITE.toughness(),
+            ArmorMaterials.NETHERITE.knockbackResistance(),
+            LGPItemTags.REPAIRS_NETHERITE_WOLF_ARMOR,
+            NETHERITE_WOLF_ARMOR_ASSET
+        );
+
+    private static AttributeModifiersComponent createHarnessAttributes(String name) {
+        return AttributeModifiersComponent.builder()
+            .add(
+                EntityAttributes.ARMOR,
+                new EntityAttributeModifier(
+                    Identifier.of(LateGamePlus.MOD_ID, name + "_armor"),
+                    10.0,
+                    EntityAttributeModifier.Operation.ADD_VALUE
+                ),
+                AttributeModifierSlot.BODY
+            ).build();
+    }
+
+    private static RegistryKey<net.minecraft.item.equipment.EquipmentAsset> harnessAsset(DyeColor color) {
+        return RegistryKey.of(
+            EquipmentAssetKeys.REGISTRY_KEY,
+            Identifier.of(LateGamePlus.MOD_ID, color.asString() + "_netherite_harness")
+        );
+    }
+
+    private static EquippableComponent createHarnessEquippable(DyeColor color) {
+        RegistryEntryList<EntityType<?>> allowed = RegistryEntryList.of(
+            Registries.ENTITY_TYPE.getEntry(EntityType.HAPPY_GHAST)
+        );
+
+        return EquippableComponent.builder(EquipmentSlot.BODY)
+                .equipSound(SoundEvents.ENTITY_HAPPY_GHAST_EQUIP)
+                .model(harnessAsset(color))
+                .allowedEntities(allowed)
+                .equipOnInteract(true)
+                .canBeSheared(true)
+                .shearingSound(Registries.SOUND_EVENT.getEntry(SoundEvents.ENTITY_HAPPY_GHAST_UNEQUIP))
+                .build();
+    }
+
+    private static Item registerHarness(DyeColor color) {
+        String name = color.asString() + "_netherite_harness";
+        return register(name,
+            new Item(
+                settings(name)
+                    .maxCount(1)
+                    .fireproof()
+                    .component(DataComponentTypes.EQUIPPABLE, createHarnessEquippable(color))
+                    .component(DataComponentTypes.ATTRIBUTE_MODIFIERS, createHarnessAttributes(name))
+            )
+        );
+    }
+
+    public static Item[] orderedNetheriteHarnesses() {
+        if (NETHERITE_HARNESSES == null || NETHERITE_HARNESSES.isEmpty()) {
+            return new Item[0];
+        }
+        return Arrays.stream(DyeColor.values())
+            .map(NETHERITE_HARNESSES::get)
+            .filter(java.util.Objects::nonNull)
+            .toArray(Item[]::new);
+    }
 
     public static void init(ModConfig cfg) {
         NETHERITE_NUGGET = register("netherite_nugget",
@@ -174,6 +263,14 @@ public class ModItems {
             )
         );
 
+        NETHERITE_WOLF_ARMOR = register("netherite_wolf_armor",
+            new Item(
+                settings("netherite_wolf_armor")
+                    .wolfArmor(NETHERITE_WOLF_ARMOR_MATERIAL)
+                    .fireproof()
+            )
+        );
+
         LODESTONE_WARP = register("lodestone_warp",
             new LodestoneWarpItem(
                 settings("lodestone_warp")
@@ -191,5 +288,9 @@ public class ModItems {
             )
         );
 
+        NETHERITE_HARNESSES = new EnumMap<>(DyeColor.class);
+        for (DyeColor color : DyeColor.values()) {
+            NETHERITE_HARNESSES.put(color, registerHarness(color));
+        }
     }
 }

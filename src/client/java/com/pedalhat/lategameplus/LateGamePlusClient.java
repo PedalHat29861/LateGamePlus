@@ -13,14 +13,10 @@ public class LateGamePlusClient implements ClientModInitializer {
         TimeBridge.setNowSupplier(() -> {
             MinecraftClient mc = MinecraftClient.getInstance();
             if (mc != null && mc.world != null) {
-                // segundos de juego (pausables). Si no hay mundo, cae a wall-clock.
                 return mc.world.getTime() / 20L;
             }
-            // fallback si no hay mundo (menús)
             return System.currentTimeMillis() / 1000L;
         });
-
-        // Registrar el tick handler para el AnimationSoundSynchronizer
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             AnimationSoundSynchronizer.tick();
         });
