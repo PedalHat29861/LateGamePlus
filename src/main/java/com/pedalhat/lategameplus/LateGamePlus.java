@@ -7,6 +7,7 @@ import com.pedalhat.lategameplus.event.ModEvents;
 import com.pedalhat.lategameplus.item.DebrisResonatorItem;
 import com.pedalhat.lategameplus.recipe.ModRecipes;
 import com.pedalhat.lategameplus.registry.ModBlocks;
+import com.pedalhat.lategameplus.registry.ModItemGroups;
 import com.pedalhat.lategameplus.registry.ModItems;
 
 import net.fabricmc.api.ModInitializer;
@@ -30,6 +31,7 @@ public class LateGamePlus implements ModInitializer {
         LOGGER.info("Hello Fabric world! Late Game Plus is initializing...");
         ModItems.init(cfg);
         ModBlocks.init();
+        ModItemGroups.init();
         ModEvents.register(cfg);
         ModCommands.register();
         ModRecipes.init();

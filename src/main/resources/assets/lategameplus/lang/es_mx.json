@@ -84,5 +84,6 @@
   "lategameplus.config.debris.range_y": "Rango vertical de escaneo (bloques)",
   "lategameplus.config.debris.range_y.desc": "Número de bloques arriba y abajo que el resonador revisa al buscar.",
   "lategameplus.config.debris.sound_volume": "Multiplicador de volumen",
-  "lategameplus.config.debris.sound_volume.desc": "Multiplica todos los sonidos del resonador (0 = silencio, 4 = cuatro veces más fuerte)."
+  "lategameplus.config.debris.sound_volume.desc": "Multiplica todos los sonidos del resonador (0 = silencio, 4 = cuatro veces más fuerte).",
+  "itemGroup.lategameplus.lategameplus": "Late Game Plus"
 }

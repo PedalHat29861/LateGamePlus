@@ -96,7 +96,7 @@ public class ModItems {
     private static final ArmorMaterial NETHERITE_WOLF_ARMOR_MATERIAL =
         new ArmorMaterial(
             ArmorMaterials.ARMADILLO_SCUTE.durability() * 2,
-            Map.of(EquipmentType.BODY, 44),
+            Map.of(EquipmentType.BODY, 22),
             ArmorMaterials.NETHERITE.enchantmentValue(),
             SoundEvents.ITEM_ARMOR_EQUIP_WOLF,
             ArmorMaterials.NETHERITE.toughness(),
