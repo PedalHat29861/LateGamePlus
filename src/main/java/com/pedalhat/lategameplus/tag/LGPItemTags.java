@@ -11,5 +11,7 @@ public final class LGPItemTags {
         TagKey.of(RegistryKeys.ITEM, Identifier.of(LateGamePlus.MOD_ID, "crossbows"));
     public static final TagKey<Item> NETHERITE_HARNESSES =
         TagKey.of(RegistryKeys.ITEM, Identifier.of(LateGamePlus.MOD_ID, "netherite_harnesses"));
+    public static final TagKey<Item> REPAIRS_NETHERITE_WOLF_ARMOR =
+        TagKey.of(RegistryKeys.ITEM, Identifier.of(LateGamePlus.MOD_ID, "repairs_netherite_wolf_armor"));
     private LGPItemTags() {}
 }

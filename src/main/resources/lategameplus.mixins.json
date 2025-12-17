@@ -8,7 +8,8 @@
     "AnvilScreenHandlerAccessor",
     "DebrisResonatorAnvilRechargeMixin",
     "HappyGhastEntityMixin",
-    "LivingEntityDropStorageMixin"
+    "LivingEntityDropStorageMixin",
+    "WolfEntityMixin"
   ],
   "client": [
     "client.LivingEntityRendererAccessor"

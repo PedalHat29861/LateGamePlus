@@ -7,6 +7,7 @@ import com.pedalhat.lategameplus.item.LodestoneWarpItem;
 import com.pedalhat.lategameplus.item.NetheriteBowItem;
 import com.pedalhat.lategameplus.item.NetheriteCrossbowItem;
 import com.pedalhat.lategameplus.item.DebrisResonatorItem;
+import com.pedalhat.lategameplus.tag.LGPItemTags;
 
 import net.minecraft.component.ComponentMap;
 import net.minecraft.component.DataComponentTypes;
@@ -25,6 +26,9 @@ import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
+import net.minecraft.item.equipment.ArmorMaterial;
+import net.minecraft.item.equipment.ArmorMaterials;
+import net.minecraft.item.equipment.EquipmentType;
 import net.minecraft.item.consume.ApplyEffectsConsumeEffect;
 import net.minecraft.item.equipment.EquipmentAssetKeys;
 import net.minecraft.registry.Registries;
@@ -84,7 +88,22 @@ public class ModItems {
     public static Item LODESTONE_WARP;
     public static Item VOID_CRYSTAL;
     public static Item DEBRIS_RESONATOR;
+    public static Item NETHERITE_WOLF_ARMOR;
     public static Map<DyeColor, Item> NETHERITE_HARNESSES;
+
+    private static final RegistryKey<net.minecraft.item.equipment.EquipmentAsset> NETHERITE_WOLF_ARMOR_ASSET =
+        RegistryKey.of(EquipmentAssetKeys.REGISTRY_KEY, Identifier.of(LateGamePlus.MOD_ID, "netherite_armadillo_scute"));
+    private static final ArmorMaterial NETHERITE_WOLF_ARMOR_MATERIAL =
+        new ArmorMaterial(
+            ArmorMaterials.ARMADILLO_SCUTE.durability() * 2,
+            Map.of(EquipmentType.BODY, 44),
+            ArmorMaterials.NETHERITE.enchantmentValue(),
+            SoundEvents.ITEM_ARMOR_EQUIP_WOLF,
+            ArmorMaterials.NETHERITE.toughness(),
+            ArmorMaterials.NETHERITE.knockbackResistance(),
+            LGPItemTags.REPAIRS_NETHERITE_WOLF_ARMOR,
+            NETHERITE_WOLF_ARMOR_ASSET
+        );
 
     private static AttributeModifiersComponent createHarnessAttributes(String name) {
         return AttributeModifiersComponent.builder()
@@ -241,6 +260,14 @@ public class ModItems {
                 .rarity(Rarity.UNCOMMON)
                 .maxCount(1)
                 .maxDamage(Math.max(1, ConfigManager.get().netheriteTotemUses))
+            )
+        );
+
+        NETHERITE_WOLF_ARMOR = register("netherite_wolf_armor",
+            new Item(
+                settings("netherite_wolf_armor")
+                    .wolfArmor(NETHERITE_WOLF_ARMOR_MATERIAL)
+                    .fireproof()
             )
         );
 
