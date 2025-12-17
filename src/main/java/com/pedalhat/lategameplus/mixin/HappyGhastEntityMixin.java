@@ -165,9 +165,10 @@ public abstract class HappyGhastEntityMixin extends AnimalEntity implements LGPC
         }
         int slots = this.lategameplus$chestCount == 1 ? 27 : 54;
         Inventory view = this.lategameplus$wrapInventory(slots);
-        Text title = this.lategameplus$chestCount == 1
+        Text fallback = this.lategameplus$chestCount == 1
             ? Text.translatable("container.chest")
             : Text.translatable("container.chestDouble");
+        Text title = this.hasCustomName() ? this.getDisplayName() : fallback;
 
         serverPlayer.openHandledScreen(new SimpleNamedScreenHandlerFactory(
             (syncId, playerInventory, ignoredPlayer) -> this.lategameplus$chestCount == 1
