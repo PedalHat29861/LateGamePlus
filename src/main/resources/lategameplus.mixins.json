@@ -11,8 +11,6 @@
     "LivingEntityDropStorageMixin"
   ],
   "client": [
-    "client.HappyGhastEntityRenderStateMixin",
-    "client.HappyGhastEntityRendererMixin",
     "client.LivingEntityRendererAccessor"
   ],
   "injectors": {
