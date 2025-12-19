@@ -68,6 +68,8 @@
   "lategameplus.config.lodestone.warp_cooldown.desc": "传送后需等待的时间，才能再次使用。",
   "lategameplus.config.lodestone.warp_across_dimensions": "允许跨维度传送",
   "lategameplus.config.lodestone.warp_across_dimensions.desc": "启用后，传送可跨越维度。",
+  "lategameplus.config.lodestone.warp_reusable": "使用时不消耗",
+  "lategameplus.config.lodestone.warp_reusable.desc": "启用后，磁石传送不会被消耗，可重复使用。",
   "lategameplus.config.lodestone.warp_cooldown_seconds": "冷却时间 (秒)",
   "lategameplus.config.lodestone.warp_cooldown_seconds.desc": "传送后需等待的时间，才能再次使用。",
   "lategameplus.config.crossbow.damage_multiplier": "下界合金弩伤害倍率",

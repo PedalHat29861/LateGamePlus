@@ -1,6 +1,7 @@
 package com.pedalhat.lategameplus.item;
 
 import com.pedalhat.lategameplus.config.ConfigManager;
+import com.pedalhat.lategameplus.config.ModConfig;
 
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.LodestoneTrackerComponent;
@@ -62,6 +63,8 @@ public class LodestoneWarpItem extends Item {
             return stack;
         }
 
+        ModConfig cfg = ConfigManager.get();
+
         LodestoneTrackerComponent tracker = stack.get(DataComponentTypes.LODESTONE_TRACKER);
         Optional<GlobalPos> maybeTarget = (tracker == null) ? Optional.empty() : tracker.target();
         if (maybeTarget.isEmpty()) {
@@ -76,7 +79,7 @@ public class LodestoneWarpItem extends Item {
             return stack;
         }
 
-        if (!ConfigManager.get().lodestoneWarpCrossDim
+        if (!cfg.lodestoneWarpCrossDim
             && !player.getEntityWorld().getRegistryKey().equals(targetWorld.getRegistryKey())) {
             player.playSound(SoundEvents.BLOCK_NOTE_BLOCK_BASS.value(), 1f, 0.5f);
             return stack;
@@ -112,11 +115,11 @@ public class LodestoneWarpItem extends Item {
             0.8f, 1f
         );
 
-        int cooldown = Math.max(0, ConfigManager.get().lodestoneWarpCooldownTicks);
+        int cooldown = Math.max(0, cfg.lodestoneWarpCooldownTicks);
         player.getItemCooldownManager().set(stack, cooldown);
         player.getEntityWorld().getServer().execute(() -> player.getItemCooldownManager().set(stack, cooldown));
 
-        if (!player.isCreative()) {
+        if (!player.isCreative() && !cfg.lodestoneWarpReusable) {
             stack.setDamage(stack.getDamage() + 1);
             if (stack.getDamage() >= stack.getMaxDamage()) stack.decrement(1);
         }

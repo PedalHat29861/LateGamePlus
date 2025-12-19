@@ -68,6 +68,8 @@
   "lategameplus.config.lodestone.warp_cooldown.desc": "Zeit nach Warp, bevor das Item erneut benutzt werden kann.",
   "lategameplus.config.lodestone.warp_across_dimensions": "Dimensionsübergreifender Warp",
   "lategameplus.config.lodestone.warp_across_dimensions.desc": "Wenn aktiviert, kann Warp zwischen Dimensionen springen.",
+  "lategameplus.config.lodestone.warp_reusable": "Beim Benutzen nicht verbrauchen",
+  "lategameplus.config.lodestone.warp_reusable.desc": "Wenn aktiviert, wird der Lodestone-Warp beim Benutzen nicht verbraucht.",
   "lategameplus.config.lodestone.warp_cooldown_seconds": "Abklingzeit (Sekunden)",
   "lategameplus.config.lodestone.warp_cooldown_seconds.desc": "Zeit nach Warp, bevor das Item erneut benutzt werden kann.",
   "lategameplus.config.crossbow.damage_multiplier": "Schadensmultiplikator der Netherit-Armbrust",
