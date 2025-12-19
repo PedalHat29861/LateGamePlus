@@ -3,6 +3,7 @@ package com.pedalhat.lategameplus;
 import com.pedalhat.lategameplus.command.ModCommands;
 import com.pedalhat.lategameplus.config.ConfigManager;
 import com.pedalhat.lategameplus.config.ModConfig;
+import com.pedalhat.lategameplus.entity.ModEntities;
 import com.pedalhat.lategameplus.event.ModEvents;
 import com.pedalhat.lategameplus.item.DebrisResonatorItem;
 import com.pedalhat.lategameplus.recipe.ModRecipes;
@@ -35,6 +36,7 @@ public class LateGamePlus implements ModInitializer {
         ModEvents.register(cfg);
         ModCommands.register();
         ModRecipes.init();
+        ModEntities.init();
         DebrisResonatorItem.DebrisResonatorHooks.init();
 
         var wolfArmorCleaning = CauldronBehavior.WATER_CAULDRON_BEHAVIOR.map().get(Items.WOLF_ARMOR);
