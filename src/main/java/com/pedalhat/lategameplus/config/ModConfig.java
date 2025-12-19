@@ -13,6 +13,7 @@ public class ModConfig {
 
     public int lodestoneWarpCooldownTicks = 80;    // IN TPS; 1s = 20 TPS
     public boolean lodestoneWarpCrossDim = false;   // allow across dimensions
+    public boolean lodestoneWarpReusable = false;   // if true, the item is not consumed
 
     public int netheriteAnvilMaxLevelCost = 35;     // 20..39 levels
 

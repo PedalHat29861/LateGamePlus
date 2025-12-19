@@ -27,6 +27,7 @@ public abstract class TotemFloatingDisplayMixin {
     }
 
 
+    @SuppressWarnings("null")
     private static void netex$maybeHandleTotem(EntityStatusS2CPacket pkt, CallbackInfo ci) {
         if (pkt.getStatus() != EntityStatuses.USE_TOTEM_OF_UNDYING) return;
 

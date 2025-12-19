@@ -70,6 +70,8 @@
   "lategameplus.config.lodestone.warp_cooldown.desc": "Time to wait after warping before the item can be used again.",
   "lategameplus.config.lodestone.warp_across_dimensions": "Allow cross-dimension warp",
   "lategameplus.config.lodestone.warp_across_dimensions.desc": "If enabled, warp can jump between dimensions.",
+  "lategameplus.config.lodestone.warp_reusable": "Do not consume on use",
+  "lategameplus.config.lodestone.warp_reusable.desc": "If enabled, the Lodestone Warp is reusable and not consumed.",
   "lategameplus.config.lodestone.warp_cooldown_seconds": "Cooldown (seconds)",
   "lategameplus.config.lodestone.warp_cooldown_seconds.desc": "Time to wait after warping before the item can be used again.",
   "lategameplus.config.crossbow.damage_multiplier": "Netherite Crossbow damage multiplier",

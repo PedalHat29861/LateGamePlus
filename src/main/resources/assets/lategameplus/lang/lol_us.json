@@ -77,6 +77,8 @@
   "lategameplus.config.lodestone.warp_cooldown.desc": "How long u wait ‘til u can teleporty again.",
   "lategameplus.config.lodestone.warp_across_dimensions": "Warp ‘cross dimensionz?",
   "lategameplus.config.lodestone.warp_across_dimensions.desc": "Enable = YAY go anywhere. Disable = NOPE stay home.",
+  "lategameplus.config.lodestone.warp_reusable": "Keep da warp item",
+  "lategameplus.config.lodestone.warp_reusable.desc": "If on, ur warp compass no get nommed when u use it. Infinite zoomies.",
   "lategameplus.config.lodestone.warp_cooldown_seconds": "Nap tiem (seconds)",
   "lategameplus.config.lodestone.warp_cooldown_seconds.desc": "How long u gotta rest before zoomy teleport again.",
 

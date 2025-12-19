@@ -66,6 +66,7 @@ public class AnimationSoundSynchronizer {
         if (resonatorStack.contains(DataComponentTypes.CUSTOM_MODEL_DATA)) {
             try {
                 
+                @SuppressWarnings("null")
                 String componentString = resonatorStack.get(DataComponentTypes.CUSTOM_MODEL_DATA).toString();
                 
                 
