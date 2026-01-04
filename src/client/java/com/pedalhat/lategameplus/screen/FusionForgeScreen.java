@@ -13,6 +13,8 @@ public class FusionForgeScreen extends HandledScreen<FusionForgeScreenHandler> {
 
     public FusionForgeScreen(FusionForgeScreenHandler handler, PlayerInventory inventory, Text title) {
         super(handler, inventory, title);
+        this.titleY = 6;
+        this.playerInventoryTitleY = 85;
         this.backgroundWidth = 176;
         this.backgroundHeight = 179;
     }

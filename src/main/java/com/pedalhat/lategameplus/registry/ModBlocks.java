@@ -73,7 +73,7 @@ public final class ModBlocks {
         FUSION_FORGE = registerWithItem(
             "fusion_forge",
             new FusionForgeBlock(fusionForgeSettings),
-            Rarity.UNCOMMON,
+            Rarity.COMMON,
             true
         );
     }
