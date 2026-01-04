@@ -9,6 +9,7 @@
   "item.lategameplus.netherite_crossbow": "Blackbeard's Boomstick",
   "item.lategameplus.netherite_wolf_armor": "Blackbeard's Wolf Mail",
   "item.lategameplus.netherite_anvil": "Netherforge Anvil",
+  "item.lategameplus.fusion_forge": "Fusion Forge",
   "item.lategameplus.debris_resonator": "Debris Sniffer",
   "item.lategameplus.debris_resonator.searching_minutes": "%s (%s min o’ huntin’)",
   "item.lategameplus.debris_resonator.searching_seconds": "%s (%s sec o’ huntin’)",
@@ -42,9 +43,10 @@
   "item.lategameplus.red_netherite_harness": "Red Blackbeard's Riggin’",
   "item.lategameplus.black_netherite_harness": "Black Blackbeard's Riggin’",
 
-  "tag.item.lategameplus.netherite_harnesses": "Blackbeard's Riggin’",
-  "itemGroup.lategameplus.lategameplus": "End o’ the Voyage Plus",
+  "tag.item.lategameplus.netherite_harnesses": "Blackbeard's Riggin'",
+  "itemGroup.lategameplus.lategameplus": "End o' the Voyage Plus",
   "block.lategameplus.netherite_anvil": "Netherforge Anvil",
+  "block.lategameplus.fusion_forge": "Fusion Forge",
 
   "lategameplus.config.category.general": "Cap’n’s Orders",
   "lategameplus.config.category.elytra": "Shiny Sails",

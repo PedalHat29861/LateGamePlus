@@ -1,6 +1,7 @@
 package com.pedalhat.lategameplus.registry;
 
 import com.pedalhat.lategameplus.LateGamePlus;
+import com.pedalhat.lategameplus.block.FusionForgeBlock;
 import com.pedalhat.lategameplus.block.NetheriteAnvilBlock;
 
 import net.minecraft.block.Block;
@@ -42,6 +43,7 @@ public final class ModBlocks {
     }
 
     public static Block NETHERITE_ANVIL;
+    public static Block FUSION_FORGE;
 
     public static void init() {
         // Block tuning: anvil sounds, netherite hardness/resistance (50F/1200F),
@@ -58,6 +60,20 @@ public final class ModBlocks {
             "netherite_anvil",
             new NetheriteAnvilBlock(netheriteAnvilSettings),
             Rarity.COMMON,
+            true
+        );
+
+        AbstractBlock.Settings fusionForgeSettings = AbstractBlock.Settings
+            .create()
+            .sounds(BlockSoundGroup.METAL)
+            .strength(4.5F, 1200.0F)
+            .requiresTool()
+            .registryKey(blockKey("fusion_forge"));
+
+        FUSION_FORGE = registerWithItem(
+            "fusion_forge",
+            new FusionForgeBlock(fusionForgeSettings),
+            Rarity.UNCOMMON,
             true
         );
     }

@@ -9,6 +9,7 @@
   "item.lategameplus.netherite_crossbow": "Netherite Crossbow",
   "item.lategameplus.netherite_wolf_armor": "Netherite Wolf Armor",
   "item.lategameplus.netherite_anvil": "Netherite Anvil",
+  "item.lategameplus.fusion_forge": "Fusion Forge",
   "item.lategameplus.debris_resonator": "Debris Resonator",
   "item.lategameplus.debris_resonator.searching_minutes": "%s (%s min)",
   "item.lategameplus.debris_resonator.searching_seconds": "%s (%s s)",
@@ -44,6 +45,7 @@
   "itemGroup.lategameplus.lategameplus": "Late Game Plus",
   
   "block.lategameplus.netherite_anvil": "Netherite Anvil",
+  "block.lategameplus.fusion_forge": "Fusion Forge",
   
   "lategameplus.config.category.general": "General",
   "lategameplus.config.category.elytra": "Netherite Elytra",

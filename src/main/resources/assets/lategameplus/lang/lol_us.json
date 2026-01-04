@@ -9,6 +9,7 @@
   "item.lategameplus.netherite_crossbow": "Chunky PewPew Launcher",
   "item.lategameplus.netherite_wolf_armor": "Netherite Puppo Armor",
   "item.lategameplus.netherite_anvil": "Shiny Smashy Anvil",
+  "item.lategameplus.fusion_forge": "Fusion Forge",
   "item.lategameplus.debris_resonator": "Debris Beepy Boi",
 
   "item.lategameplus.debris_resonator.searching_minutes": "%s (%s min sniffin’ fer shiniez)",
@@ -46,6 +47,7 @@
   "tag.item.lategameplus.netherite_harnesses": "Netherite Harness Thingiez",
   "itemGroup.lategameplus.lategameplus": "Late Game PluzZ :3",
   "block.lategameplus.netherite_anvil": "Shiny Smashy Anvil",
+  "block.lategameplus.fusion_forge": "Fusion Forge",
 
   "lategameplus.config.category.general": "Stuffz n’ Thingiez",
   "lategameplus.config.category.elytra": "Shiny Wingz",

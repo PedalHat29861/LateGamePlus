@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "state=idle": { "model": "lategameplus:block/fusion_forge" },
+    "state=nether": { "model": "lategameplus:block/fusion_forge_nether" },
+    "state=nether_working": { "model": "lategameplus:block/fusion_forge_nether_working" }
+  }
+}
