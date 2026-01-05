@@ -29,6 +29,7 @@ public class FusionForgeScreenHandler extends ScreenHandler {
     private final Inventory inventory;
     private final FuelRegistry fuelRegistry;
     private final PropertyDelegate propertyDelegate;
+    private final FusionForgeBlockEntity blockEntity;
 
     public FusionForgeScreenHandler(int syncId, PlayerInventory playerInventory) {
         this(syncId, playerInventory, new SimpleInventory(SLOT_COUNT), new ArrayPropertyDelegate(PROPERTY_COUNT));
@@ -42,6 +43,7 @@ public class FusionForgeScreenHandler extends ScreenHandler {
         this.inventory = inventory;
         this.fuelRegistry = playerInventory.player.getEntityWorld().getFuelRegistry();
         this.propertyDelegate = propertyDelegate;
+        this.blockEntity = inventory instanceof FusionForgeBlockEntity fusionForge ? fusionForge : null;
         inventory.onOpen(playerInventory.player);
         addProperties(propertyDelegate);
 
@@ -63,6 +65,14 @@ public class FusionForgeScreenHandler extends ScreenHandler {
             @Override
             public boolean canInsert(ItemStack stack) {
                 return false;
+            }
+
+            @Override
+            public void onTakeItem(PlayerEntity player, ItemStack stack) {
+                super.onTakeItem(player, stack);
+                if (blockEntity != null) {
+                    blockEntity.onOutputTaken(player);
+                }
             }
         });
 

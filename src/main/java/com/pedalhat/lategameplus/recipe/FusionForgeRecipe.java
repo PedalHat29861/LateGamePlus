@@ -15,7 +15,8 @@ import java.util.List;
 import java.util.Optional;
 
 public record FusionForgeRecipe(Ingredient inputA, Ingredient inputB, Ingredient catalyst, ItemStack output,
-                                int cookTime, int fuelCost) implements Recipe<FusionForgeRecipeInput> {
+                                int cookTime, int fuelCost, float experience)
+    implements Recipe<FusionForgeRecipeInput> {
 
     @Override
     public boolean matches(FusionForgeRecipeInput input, World world) {
@@ -77,5 +78,9 @@ public record FusionForgeRecipe(Ingredient inputA, Ingredient inputB, Ingredient
 
     public int getFuelCost() {
         return fuelCost;
+    }
+
+    public float getExperience() {
+        return experience;
     }
 }

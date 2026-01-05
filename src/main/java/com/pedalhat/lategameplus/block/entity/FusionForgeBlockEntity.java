@@ -11,6 +11,7 @@ import com.pedalhat.lategameplus.screen.FusionForgeScreenHandler;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.ExperienceOrbEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.inventory.Inventory;
@@ -24,6 +25,7 @@ import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ArrayPropertyDelegate;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.storage.ReadView;
@@ -32,6 +34,8 @@ import net.minecraft.text.Text;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 public class FusionForgeBlockEntity extends BlockEntity implements NamedScreenHandlerFactory, SidedInventory {
@@ -74,6 +78,7 @@ public class FusionForgeBlockEntity extends BlockEntity implements NamedScreenHa
     private int fuelCost = DEFAULT_FUEL_COST;
     private int fuelTicks;
     private int fuelMaxTicks;
+    private float storedExperience;
     private boolean hadCatalyst;
     private int idleDelayTicks;
     private int debugCooldown;
@@ -89,6 +94,7 @@ public class FusionForgeBlockEntity extends BlockEntity implements NamedScreenHa
         cookTime = view.getInt("cook_time", 0);
         fuelTicks = view.getInt("fuel_ticks", 0);
         fuelMaxTicks = view.getInt("fuel_max", 0);
+        storedExperience = view.getFloat("stored_exp", 0.0f);
         idleDelayTicks = view.getInt("idle_delay", 0);
         hadCatalyst = hasCatalyst();
     }
@@ -100,6 +106,7 @@ public class FusionForgeBlockEntity extends BlockEntity implements NamedScreenHa
         view.putInt("cook_time", cookTime);
         view.putInt("fuel_ticks", fuelTicks);
         view.putInt("fuel_max", fuelMaxTicks);
+        view.putFloat("stored_exp", storedExperience);
         view.putInt("idle_delay", idleDelayTicks);
     }
 
@@ -434,8 +441,17 @@ public class FusionForgeBlockEntity extends BlockEntity implements NamedScreenHa
         } else {
             output.increment(result.getCount());
         }
+        addExperience(recipe);
 
         consumeInputs(recipe);
+    }
+
+    private void addExperience(FusionForgeRecipe recipe) {
+        float perCraft = recipe.getExperience();
+        if (perCraft <= 0.0f) {
+            return;
+        }
+        storedExperience += perCraft;
     }
 
     private void consumeInputs(FusionForgeRecipe recipe) {
@@ -501,5 +517,49 @@ public class FusionForgeBlockEntity extends BlockEntity implements NamedScreenHa
             }
         }
         return count;
+    }
+
+    public void onOutputTaken(PlayerEntity player) {
+        if (storedExperience <= 0.0f) {
+            return;
+        }
+        World world = getWorld();
+        if (!(world instanceof ServerWorld serverWorld)) {
+            return;
+        }
+        int xp = popStoredExperience(serverWorld);
+        if (xp > 0) {
+            ExperienceOrbEntity.spawn(serverWorld, player.getEntityPos(), xp);
+        }
+    }
+
+    public void dropStoredExperience(ServerWorld world) {
+        if (storedExperience <= 0.0f) {
+            return;
+        }
+        int xp = popStoredExperience(world);
+        if (xp > 0) {
+            ExperienceOrbEntity.spawn(world, Vec3d.ofCenter(pos), xp);
+        }
+    }
+
+    @Override
+    public void onBlockReplaced(BlockPos pos, BlockState oldState) {
+        super.onBlockReplaced(pos, oldState);
+        World world = getWorld();
+        if (world instanceof ServerWorld serverWorld) {
+            dropStoredExperience(serverWorld);
+        }
+    }
+
+    private int popStoredExperience(ServerWorld world) {
+        int whole = MathHelper.floor(storedExperience);
+        float fractional = storedExperience - whole;
+        if (fractional > 0.0f && world.random.nextFloat() < fractional) {
+            whole += 1;
+        }
+        storedExperience = 0.0f;
+        markDirty();
+        return whole;
     }
 }

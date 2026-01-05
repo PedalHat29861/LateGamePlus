@@ -7,6 +7,7 @@
     "id": "lategameplus:netherite_nugget",
     "count": 4
   },
-  "cook_time": 200,
+  "experience": 10,
+  "cook_time": 150,
   "fuel_cost": 1600
 }
