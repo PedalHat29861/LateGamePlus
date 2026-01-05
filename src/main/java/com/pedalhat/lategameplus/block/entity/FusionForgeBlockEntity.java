@@ -2,8 +2,11 @@ package com.pedalhat.lategameplus.block.entity;
 
 import com.pedalhat.lategameplus.block.FusionForgeBlock;
 import com.pedalhat.lategameplus.block.FusionForgeState;
+import com.pedalhat.lategameplus.LateGamePlus;
 import com.pedalhat.lategameplus.registry.ModBlockEntities;
-import com.pedalhat.lategameplus.registry.ModItems;
+import com.pedalhat.lategameplus.recipe.FusionForgeRecipe;
+import com.pedalhat.lategameplus.recipe.FusionForgeRecipeInput;
+import com.pedalhat.lategameplus.recipe.ModRecipes;
 import com.pedalhat.lategameplus.screen.FusionForgeScreenHandler;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
@@ -15,6 +18,8 @@ import net.minecraft.inventory.SidedInventory;
 import net.minecraft.item.FuelRegistry;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.recipe.RecipeEntry;
+import net.minecraft.recipe.ServerRecipeManager;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
@@ -31,9 +36,8 @@ import net.minecraft.world.World;
 
 public class FusionForgeBlockEntity extends BlockEntity implements NamedScreenHandlerFactory, SidedInventory {
     public static final int INVENTORY_SIZE = 5;
-    private static final int COOK_TIME_TOTAL = 200;
-    private static final int FUEL_PER_CRAFT = 1600;
-    private static final int FUEL_PER_TICK = FUEL_PER_CRAFT / COOK_TIME_TOTAL;
+    private static final int DEFAULT_COOK_TIME = 200;
+    private static final int DEFAULT_FUEL_COST = 1600;
     private static final int IDLE_DELAY_TICKS = 20;
     private static final int[] TOP_SLOTS = {FusionForgeScreenHandler.INPUT_A_SLOT};
     private static final int[] BOTTOM_SLOTS = {FusionForgeScreenHandler.OUTPUT_SLOT};
@@ -47,7 +51,7 @@ public class FusionForgeBlockEntity extends BlockEntity implements NamedScreenHa
         public int get(int index) {
             return switch (index) {
                 case 0 -> cookTime;
-                case 1 -> COOK_TIME_TOTAL;
+                case 1 -> cookTimeTotal;
                 case 2 -> fuelTicks;
                 case 3 -> fuelMaxTicks;
                 default -> 0;
@@ -58,7 +62,7 @@ public class FusionForgeBlockEntity extends BlockEntity implements NamedScreenHa
         public void set(int index, int value) {
             switch (index) {
                 case 0 -> cookTime = value;
-                case 1 -> { }
+                case 1 -> cookTimeTotal = value;
                 case 2 -> fuelTicks = value;
                 case 3 -> fuelMaxTicks = value;
                 default -> { }
@@ -66,10 +70,13 @@ public class FusionForgeBlockEntity extends BlockEntity implements NamedScreenHa
         }
     };
     private int cookTime;
+    private int cookTimeTotal = DEFAULT_COOK_TIME;
+    private int fuelCost = DEFAULT_FUEL_COST;
     private int fuelTicks;
     private int fuelMaxTicks;
     private boolean hadCatalyst;
     private int idleDelayTicks;
+    private int debugCooldown;
 
     public FusionForgeBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.FUSION_FORGE, pos, state);
@@ -199,7 +206,7 @@ public class FusionForgeBlockEntity extends BlockEntity implements NamedScreenHa
     }
 
     @Override
-    public boolean canInsert(int slot, ItemStack stack, Direction direction) {
+    public boolean canInsert(int slot, ItemStack stack, @SuppressWarnings("null") Direction direction) {
         if (direction == null) {
             return isValid(slot, stack);
         }
@@ -235,9 +242,15 @@ public class FusionForgeBlockEntity extends BlockEntity implements NamedScreenHa
         }
 
         boolean dirty = false;
+        FusionForgeRecipe recipe = blockEntity.getRecipe(world);
+        if (blockEntity.updateRecipeValues(recipe)) {
+            dirty = true;
+        }
+        int fuelPerTick = blockEntity.getFuelPerTick();
         boolean hasCatalyst = blockEntity.hasCatalyst();
-        boolean canCraft = hasCatalyst && blockEntity.canCraft();
+        boolean canCraft = hasCatalyst && recipe != null && blockEntity.canCraft(recipe);
         boolean workingThisTick = false;
+        blockEntity.logRecipeDebug(recipe, hasCatalyst);
 
         if (hasCatalyst && !blockEntity.hadCatalyst) {
             world.playSound(null, pos, SoundEvents.BLOCK_BEACON_ACTIVATE, SoundCategory.BLOCKS, 0.6f, 1.0f);
@@ -257,19 +270,19 @@ public class FusionForgeBlockEntity extends BlockEntity implements NamedScreenHa
                 dirty = true;
             }
         } else if (canCraft) {
-            if (blockEntity.fuelTicks < FUEL_PER_TICK) {
+            if (blockEntity.fuelTicks < fuelPerTick) {
                 if (blockEntity.consumeFuel(world.getFuelRegistry())) {
                     dirty = true;
                 }
             }
-            if (blockEntity.fuelTicks >= FUEL_PER_TICK) {
-                blockEntity.fuelTicks -= FUEL_PER_TICK;
+            if (blockEntity.fuelTicks >= fuelPerTick) {
+                blockEntity.fuelTicks -= fuelPerTick;
                 blockEntity.cookTime++;
                 workingThisTick = true;
                 dirty = true;
-                if (blockEntity.cookTime >= COOK_TIME_TOTAL) {
+                if (blockEntity.cookTime >= blockEntity.cookTimeTotal) {
                     blockEntity.cookTime = 0;
-                    blockEntity.craftOnce();
+                    blockEntity.craftOnce(recipe);
                     blockEntity.idleDelayTicks = IDLE_DELAY_TICKS;
                     dirty = true;
                 }
@@ -337,50 +350,101 @@ public class FusionForgeBlockEntity extends BlockEntity implements NamedScreenHa
         return true;
     }
 
-    private boolean canCraft() {
-        if (!hasInputs()) {
+    private FusionForgeRecipe getRecipe(World world) {
+        if (!(world.getRecipeManager() instanceof ServerRecipeManager recipeManager)) {
+            if (debugCooldown == 0) {
+                LateGamePlus.LOGGER.warn("FusionForge: RecipeManager is {}, cannot query fusion_forge recipes.",
+                    world.getRecipeManager().getClass().getName());
+                debugCooldown = 80;
+            }
+            return null;
+        }
+        FusionForgeRecipeInput input = createRecipeInput();
+        FusionForgeRecipe match = recipeManager.getFirstMatch(ModRecipes.FUSION_FORGE, input, world)
+            .map(RecipeEntry::value)
+            .orElse(null);
+        if (match != null) {
+            return match;
+        }
+        FusionForgeRecipe fallback = findRecipeFallback(recipeManager, input, world);
+        if (fallback != null) {
+            return fallback;
+        }
+        if (debugCooldown == 0) {
+            int recipeCount = countFusionForgeRecipes(recipeManager);
+            LateGamePlus.LOGGER.warn("FusionForge: no recipe match. Loaded fusion_forge recipes={}", recipeCount);
+            debugCooldown = 80;
+        }
+        return null;
+    }
+
+    private FusionForgeRecipeInput createRecipeInput() {
+        return new FusionForgeRecipeInput(
+            inventory.get(FusionForgeScreenHandler.INPUT_A_SLOT),
+            inventory.get(FusionForgeScreenHandler.INPUT_B_SLOT),
+            inventory.get(FusionForgeScreenHandler.CATALYST_SLOT)
+        );
+    }
+
+    private boolean updateRecipeValues(FusionForgeRecipe recipe) {
+        int newCookTime = recipe != null ? Math.max(1, recipe.getCookTime()) : DEFAULT_COOK_TIME;
+        int newFuelCost = recipe != null ? Math.max(1, recipe.getFuelCost()) : DEFAULT_FUEL_COST;
+        boolean changed = false;
+        if (cookTimeTotal != newCookTime) {
+            cookTimeTotal = newCookTime;
+            changed = true;
+        }
+        if (fuelCost != newFuelCost) {
+            fuelCost = newFuelCost;
+            changed = true;
+        }
+        if (cookTime > cookTimeTotal) {
+            cookTime = cookTimeTotal;
+            changed = true;
+        }
+        return changed;
+    }
+
+    private int getFuelPerTick() {
+        int total = Math.max(1, cookTimeTotal);
+        int cost = Math.max(1, fuelCost);
+        return Math.max(1, cost / total);
+    }
+
+    private boolean canCraft(FusionForgeRecipe recipe) {
+        if (recipe == null) {
             return false;
         }
         ItemStack output = inventory.get(FusionForgeScreenHandler.OUTPUT_SLOT);
+        ItemStack result = recipe.getOutput();
         if (output.isEmpty()) {
             return true;
         }
-        if (!output.isOf(ModItems.NETHERITE_NUGGET)) {
+        if (!ItemStack.areItemsAndComponentsEqual(output, result)) {
             return false;
         }
-        return output.getCount() + 3 <= output.getMaxCount();
+        return output.getCount() + result.getCount() <= output.getMaxCount();
     }
 
-    private boolean hasInputs() {
-        ItemStack a = inventory.get(FusionForgeScreenHandler.INPUT_A_SLOT);
-        ItemStack b = inventory.get(FusionForgeScreenHandler.INPUT_B_SLOT);
-        boolean first = a.isOf(Items.NETHERITE_SCRAP) && b.isOf(Items.GOLD_INGOT);
-        boolean second = a.isOf(Items.GOLD_INGOT) && b.isOf(Items.NETHERITE_SCRAP);
-        return first || second;
-    }
-
-    private void craftOnce() {
+    private void craftOnce(FusionForgeRecipe recipe) {
+        ItemStack result = recipe.getOutput();
         ItemStack output = inventory.get(FusionForgeScreenHandler.OUTPUT_SLOT);
         if (output.isEmpty()) {
-            inventory.set(FusionForgeScreenHandler.OUTPUT_SLOT, new ItemStack(ModItems.NETHERITE_NUGGET, 3));
+            inventory.set(FusionForgeScreenHandler.OUTPUT_SLOT, result.copy());
         } else {
-            output.increment(3);
+            output.increment(result.getCount());
         }
 
-        consumeInputs();
+        consumeInputs(recipe);
     }
 
-    private void consumeInputs() {
+    private void consumeInputs(FusionForgeRecipe recipe) {
         ItemStack a = inventory.get(FusionForgeScreenHandler.INPUT_A_SLOT);
         ItemStack b = inventory.get(FusionForgeScreenHandler.INPUT_B_SLOT);
-        if (a.isOf(Items.NETHERITE_SCRAP)) {
+        boolean direct = recipe.getInputA().test(a) && recipe.getInputB().test(b);
+        boolean swapped = recipe.getInputA().test(b) && recipe.getInputB().test(a);
+        if (direct || swapped) {
             a.decrement(1);
-        } else if (b.isOf(Items.NETHERITE_SCRAP)) {
-            b.decrement(1);
-        }
-        if (a.isOf(Items.GOLD_INGOT)) {
-            a.decrement(1);
-        } else if (b.isOf(Items.GOLD_INGOT)) {
             b.decrement(1);
         }
     }
@@ -391,5 +455,51 @@ public class FusionForgeBlockEntity extends BlockEntity implements NamedScreenHa
             return state.get(FusionForgeBlock.FACING);
         }
         return Direction.NORTH;
+    }
+
+    private void logRecipeDebug(FusionForgeRecipe recipe, boolean hasCatalyst) {
+        if (debugCooldown > 0) {
+            debugCooldown--;
+            return;
+        }
+        ItemStack inputA = inventory.get(FusionForgeScreenHandler.INPUT_A_SLOT);
+        ItemStack inputB = inventory.get(FusionForgeScreenHandler.INPUT_B_SLOT);
+        if (!hasCatalyst || (inputA.isEmpty() && inputB.isEmpty())) {
+            return;
+        }
+        if (recipe == null) {
+            LateGamePlus.LOGGER.warn(
+                "FusionForge: no recipe match. A={}, B={}, catalyst={}",
+                inputA, inputB, inventory.get(FusionForgeScreenHandler.CATALYST_SLOT)
+            );
+            debugCooldown = 80;
+            return;
+        }
+        if (!canCraft(recipe)) {
+            LateGamePlus.LOGGER.warn(
+                "FusionForge: recipe found but output blocked. Output={}, result={}",
+                inventory.get(FusionForgeScreenHandler.OUTPUT_SLOT), recipe.getOutput()
+            );
+            debugCooldown = 80;
+        }
+    }
+
+    private FusionForgeRecipe findRecipeFallback(ServerRecipeManager recipeManager, FusionForgeRecipeInput input, World world) {
+        for (RecipeEntry<?> entry : recipeManager.values()) {
+            if (entry.value() instanceof FusionForgeRecipe recipe && recipe.matches(input, world)) {
+                return recipe;
+            }
+        }
+        return null;
+    }
+
+    private int countFusionForgeRecipes(ServerRecipeManager recipeManager) {
+        int count = 0;
+        for (RecipeEntry<?> entry : recipeManager.values()) {
+            if (entry.value() instanceof FusionForgeRecipe) {
+                count++;
+            }
+        }
+        return count;
     }
 }

@@ -2,6 +2,7 @@ package com.pedalhat.lategameplus.registry;
 
 import com.pedalhat.lategameplus.LateGamePlus;
 import com.pedalhat.lategameplus.block.FusionForgeBlock;
+import com.pedalhat.lategameplus.block.FusionForgeState;
 import com.pedalhat.lategameplus.block.NetheriteAnvilBlock;
 
 import net.minecraft.block.Block;
@@ -68,6 +69,17 @@ public final class ModBlocks {
             .sounds(BlockSoundGroup.METAL)
             .strength(4.5F, 1200.0F)
             .requiresTool()
+            .luminance(state -> {
+                if (!state.contains(FusionForgeBlock.STATE)) {
+                    return 0;
+                }
+                FusionForgeState forgeState = state.get(FusionForgeBlock.STATE);
+                return switch (forgeState) {
+                    case NETHER_WORKING -> 15;
+                    case NETHER_DISABLED -> 10;
+                    case DISABLED -> 0;
+                };
+            })
             .registryKey(blockKey("fusion_forge"));
 
         FUSION_FORGE = registerWithItem(

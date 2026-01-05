@@ -3,6 +3,7 @@ package com.pedalhat.lategameplus.recipe;
 import com.pedalhat.lategameplus.LateGamePlus;
 
 import net.minecraft.recipe.RecipeSerializer;
+import net.minecraft.recipe.RecipeType;
 import net.minecraft.recipe.SpecialCraftingRecipe;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
@@ -19,6 +20,21 @@ public class ModRecipes {
             Registry.register(Registries.RECIPE_SERIALIZER,
                     Identifier.of(LateGamePlus.MOD_ID, "crafting_special_lodestone_warp"),
                     new SpecialCraftingRecipe.SpecialRecipeSerializer<>(WarpFromLodestoneCompassRecipe::new));
+
+    public static final RecipeType<FusionForgeRecipe> FUSION_FORGE =
+            Registry.register(Registries.RECIPE_TYPE,
+                    Identifier.of(LateGamePlus.MOD_ID, "fusion_forge"),
+                    new RecipeType<>() {
+                        @Override
+                        public String toString() {
+                            return LateGamePlus.MOD_ID + ":fusion_forge";
+                        }
+                    });
+
+    public static final RecipeSerializer<FusionForgeRecipe> FUSION_FORGE_SERIALIZER =
+            Registry.register(Registries.RECIPE_SERIALIZER,
+                    Identifier.of(LateGamePlus.MOD_ID, "fusion_forge"),
+                    new FusionForgeRecipeSerializer());
 
     // No custom smithing serializer is needed; we patch smithing craft via mixin for NBT copy.
 
