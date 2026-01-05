@@ -9,6 +9,8 @@ import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.FuelRegistry;
+import net.minecraft.screen.ArrayPropertyDelegate;
+import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 
@@ -18,40 +20,46 @@ public class FusionForgeScreenHandler extends ScreenHandler {
     public static final int FUEL_SLOT = 2;
     public static final int CATALYST_SLOT = 3;
     public static final int OUTPUT_SLOT = 4;
+    private static final int PROPERTY_COUNT = 4;
+    private static final int ARROW_PIXELS = 24;
+    private static final int FLAME_PIXELS = 14;
 
     public static final int SLOT_COUNT = FusionForgeBlockEntity.INVENTORY_SIZE;
 
     private final Inventory inventory;
     private final FuelRegistry fuelRegistry;
+    private final PropertyDelegate propertyDelegate;
 
     public FusionForgeScreenHandler(int syncId, PlayerInventory playerInventory) {
-        this(syncId, playerInventory, new SimpleInventory(SLOT_COUNT));
+        this(syncId, playerInventory, new SimpleInventory(SLOT_COUNT), new ArrayPropertyDelegate(PROPERTY_COUNT));
     }
 
-    public FusionForgeScreenHandler(int syncId, PlayerInventory playerInventory, Inventory inventory) {
+    public FusionForgeScreenHandler(int syncId, PlayerInventory playerInventory, Inventory inventory,
+                                    PropertyDelegate propertyDelegate) {
         super(ModScreenHandlers.FUSION_FORGE, syncId);
         checkSize(inventory, SLOT_COUNT);
+        checkDataCount(propertyDelegate, PROPERTY_COUNT);
         this.inventory = inventory;
         this.fuelRegistry = playerInventory.player.getEntityWorld().getFuelRegistry();
+        this.propertyDelegate = propertyDelegate;
         inventory.onOpen(playerInventory.player);
+        addProperties(propertyDelegate);
 
-        int topY = 18;
-        int leftX = 43;
-        addSlot(new Slot(inventory, INPUT_A_SLOT, leftX, topY));
-        addSlot(new Slot(inventory, INPUT_B_SLOT, leftX + 18, topY));
-        addSlot(new Slot(inventory, FUEL_SLOT, leftX + 36, topY) {
+        addSlot(new Slot(inventory, INPUT_A_SLOT, 49, 22));
+        addSlot(new Slot(inventory, INPUT_B_SLOT, 86, 22));
+        addSlot(new Slot(inventory, FUEL_SLOT, 68, 57) {
             @Override
             public boolean canInsert(ItemStack stack) {
                 return fuelRegistry.isFuel(stack);
             }
         });
-        addSlot(new Slot(inventory, CATALYST_SLOT, leftX + 54, topY) {
+        addSlot(new Slot(inventory, CATALYST_SLOT, 19, 50) {
             @Override
             public boolean canInsert(ItemStack stack) {
                 return stack.isOf(Items.NETHER_STAR);
             }
         });
-        addSlot(new Slot(inventory, OUTPUT_SLOT, leftX + 72, topY) {
+        addSlot(new Slot(inventory, OUTPUT_SLOT, 142, 42) {
             @Override
             public boolean canInsert(ItemStack stack) {
                 return false;
@@ -107,5 +115,28 @@ public class FusionForgeScreenHandler extends ScreenHandler {
 
         slot.onTakeItem(player, original);
         return newStack;
+    }
+
+    public int getCookProgress() {
+        int cookTime = propertyDelegate.get(0);
+        int cookTimeTotal = propertyDelegate.get(1);
+        if (cookTimeTotal <= 0 || cookTime <= 0) {
+            return 0;
+        }
+        int progress = cookTime * ARROW_PIXELS / cookTimeTotal;
+        return Math.min(progress, ARROW_PIXELS);
+    }
+
+    public int getFuelProgress() {
+        int fuelTicks = propertyDelegate.get(2);
+        int fuelMaxTicks = propertyDelegate.get(3);
+        if (fuelMaxTicks <= 0 || fuelTicks <= 0) {
+            return 0;
+        }
+        int progress = fuelTicks * FLAME_PIXELS / fuelMaxTicks;
+        if (progress > FLAME_PIXELS) {
+            return FLAME_PIXELS;
+        }
+        return Math.max(progress, 0);
     }
 }
