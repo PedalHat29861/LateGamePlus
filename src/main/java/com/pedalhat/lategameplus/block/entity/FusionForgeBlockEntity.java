@@ -19,6 +19,7 @@ import net.minecraft.inventory.SidedInventory;
 import net.minecraft.item.FuelRegistry;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.particle.ParticleTypes;
 import net.minecraft.recipe.RecipeEntry;
 import net.minecraft.recipe.ServerRecipeManager;
 import net.minecraft.screen.NamedScreenHandlerFactory;
@@ -255,12 +256,25 @@ public class FusionForgeBlockEntity extends BlockEntity implements NamedScreenHa
         }
         int fuelPerTick = blockEntity.getFuelPerTick();
         boolean hasCatalyst = blockEntity.hasCatalyst();
-        boolean canCraft = hasCatalyst && recipe != null && blockEntity.canCraft(recipe);
+        boolean canCraft = recipe != null && blockEntity.canCraft(recipe);
         boolean workingThisTick = false;
-        blockEntity.logRecipeDebug(recipe, hasCatalyst);
+        blockEntity.logRecipeDebug(recipe);
 
         if (hasCatalyst && !blockEntity.hadCatalyst) {
             world.playSound(null, pos, SoundEvents.BLOCK_BEACON_ACTIVATE, SoundCategory.BLOCKS, 0.6f, 1.0f);
+            if (world instanceof ServerWorld serverWorld) {
+                serverWorld.spawnParticles(
+                    ParticleTypes.ENCHANT,
+                    pos.getX() + 0.5,
+                    pos.getY() + 0.8,
+                    pos.getZ() + 0.5,
+                    24,
+                    0.6,
+                    0.6,
+                    0.6,
+                    0.1
+                );
+            }
             blockEntity.hadCatalyst = true;
         }
         if (!hasCatalyst && blockEntity.hadCatalyst) {
@@ -271,12 +285,7 @@ public class FusionForgeBlockEntity extends BlockEntity implements NamedScreenHa
             }
         }
 
-        if (!hasCatalyst) {
-            if (blockEntity.cookTime != 0) {
-                blockEntity.cookTime = 0;
-                dirty = true;
-            }
-        } else if (canCraft) {
+        if (canCraft) {
             if (blockEntity.fuelTicks < fuelPerTick) {
                 if (blockEntity.consumeFuel(world.getFuelRegistry())) {
                     dirty = true;
@@ -312,16 +321,16 @@ public class FusionForgeBlockEntity extends BlockEntity implements NamedScreenHa
             dirty = true;
         }
 
-        boolean showWorking = hasCatalyst && canCraft && (workingThisTick || blockEntity.cookTime > 0 || blockEntity.idleDelayTicks > 0);
-        FusionForgeState targetState = !hasCatalyst
-            ? FusionForgeState.DISABLED
-            : (showWorking
-                ? FusionForgeState.NETHER_WORKING
-                : FusionForgeState.NETHER_DISABLED);
+        boolean showWorking = canCraft && (workingThisTick || blockEntity.cookTime > 0 || blockEntity.idleDelayTicks > 0);
+        FusionForgeState targetState = hasCatalyst
+            ? (showWorking ? FusionForgeState.NETHER_WORKING : FusionForgeState.NETHER_DISABLED)
+            : (showWorking ? FusionForgeState.WORKING : FusionForgeState.DISABLED);
 
         FusionForgeState previousState = state.get(FusionForgeBlock.STATE);
         if (previousState != targetState) {
-            if (targetState == FusionForgeState.DISABLED) {
+            if (targetState == FusionForgeState.DISABLED
+                && (previousState == FusionForgeState.NETHER_DISABLED
+                    || previousState == FusionForgeState.NETHER_WORKING)) {
                 world.playSound(null, pos, SoundEvents.BLOCK_BEACON_DEACTIVATE, SoundCategory.BLOCKS, 0.6f, 1.0f);
             }
             world.setBlockState(pos, state.with(FusionForgeBlock.STATE, targetState), net.minecraft.block.Block.NOTIFY_LISTENERS);
@@ -388,8 +397,7 @@ public class FusionForgeBlockEntity extends BlockEntity implements NamedScreenHa
     private FusionForgeRecipeInput createRecipeInput() {
         return new FusionForgeRecipeInput(
             inventory.get(FusionForgeScreenHandler.INPUT_A_SLOT),
-            inventory.get(FusionForgeScreenHandler.INPUT_B_SLOT),
-            inventory.get(FusionForgeScreenHandler.CATALYST_SLOT)
+            inventory.get(FusionForgeScreenHandler.INPUT_B_SLOT)
         );
     }
 
@@ -424,22 +432,28 @@ public class FusionForgeBlockEntity extends BlockEntity implements NamedScreenHa
         }
         ItemStack output = inventory.get(FusionForgeScreenHandler.OUTPUT_SLOT);
         ItemStack result = recipe.getOutput();
+        int multiplier = hasCatalyst() ? 2 : 1;
+        int totalCount = result.getCount() * multiplier;
         if (output.isEmpty()) {
             return true;
         }
         if (!ItemStack.areItemsAndComponentsEqual(output, result)) {
             return false;
         }
-        return output.getCount() + result.getCount() <= output.getMaxCount();
+        return output.getCount() + totalCount <= output.getMaxCount();
     }
 
     private void craftOnce(FusionForgeRecipe recipe) {
         ItemStack result = recipe.getOutput();
+        int multiplier = hasCatalyst() ? 2 : 1;
+        int totalCount = result.getCount() * multiplier;
         ItemStack output = inventory.get(FusionForgeScreenHandler.OUTPUT_SLOT);
         if (output.isEmpty()) {
-            inventory.set(FusionForgeScreenHandler.OUTPUT_SLOT, result.copy());
+            ItemStack toInsert = result.copy();
+            toInsert.setCount(totalCount);
+            inventory.set(FusionForgeScreenHandler.OUTPUT_SLOT, toInsert);
         } else {
-            output.increment(result.getCount());
+            output.increment(totalCount);
         }
         addExperience(recipe);
 
@@ -451,7 +465,7 @@ public class FusionForgeBlockEntity extends BlockEntity implements NamedScreenHa
         if (perCraft <= 0.0f) {
             return;
         }
-        storedExperience += perCraft;
+        storedExperience += perCraft * (hasCatalyst() ? 2 : 1);
     }
 
     private void consumeInputs(FusionForgeRecipe recipe) {
@@ -473,14 +487,14 @@ public class FusionForgeBlockEntity extends BlockEntity implements NamedScreenHa
         return Direction.NORTH;
     }
 
-    private void logRecipeDebug(FusionForgeRecipe recipe, boolean hasCatalyst) {
+    private void logRecipeDebug(FusionForgeRecipe recipe) {
         if (debugCooldown > 0) {
             debugCooldown--;
             return;
         }
         ItemStack inputA = inventory.get(FusionForgeScreenHandler.INPUT_A_SLOT);
         ItemStack inputB = inventory.get(FusionForgeScreenHandler.INPUT_B_SLOT);
-        if (!hasCatalyst || (inputA.isEmpty() && inputB.isEmpty())) {
+        if (inputA.isEmpty() && inputB.isEmpty()) {
             return;
         }
         if (recipe == null) {

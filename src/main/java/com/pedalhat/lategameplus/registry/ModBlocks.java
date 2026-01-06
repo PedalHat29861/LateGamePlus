@@ -77,6 +77,7 @@ public final class ModBlocks {
                 return switch (forgeState) {
                     case NETHER_WORKING -> 15;
                     case NETHER_DISABLED -> 10;
+                    case WORKING -> 13;
                     case DISABLED -> 0;
                 };
             })

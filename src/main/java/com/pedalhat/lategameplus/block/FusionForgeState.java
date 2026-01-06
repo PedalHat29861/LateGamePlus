@@ -4,6 +4,7 @@ import net.minecraft.util.StringIdentifiable;
 
 public enum FusionForgeState implements StringIdentifiable {
     DISABLED("disabled"),
+    WORKING("working"),
     NETHER_DISABLED("nether_disabled"),
     NETHER_WORKING("nether_working");
 

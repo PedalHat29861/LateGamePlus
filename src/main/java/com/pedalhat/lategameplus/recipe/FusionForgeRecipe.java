@@ -14,7 +14,7 @@ import net.minecraft.world.World;
 import java.util.List;
 import java.util.Optional;
 
-public record FusionForgeRecipe(Ingredient inputA, Ingredient inputB, Ingredient catalyst, ItemStack output,
+public record FusionForgeRecipe(Ingredient inputA, Ingredient inputB, ItemStack output,
                                 int cookTime, int fuelCost, float experience)
     implements Recipe<FusionForgeRecipeInput> {
 
@@ -24,7 +24,7 @@ public record FusionForgeRecipe(Ingredient inputA, Ingredient inputB, Ingredient
         ItemStack stackB = input.inputB();
         boolean direct = inputA.test(stackA) && inputB.test(stackB);
         boolean swapped = inputA.test(stackB) && inputB.test(stackA);
-        return (direct || swapped) && catalyst.test(input.catalyst());
+        return direct || swapped;
     }
 
     @Override
@@ -46,8 +46,7 @@ public record FusionForgeRecipe(Ingredient inputA, Ingredient inputB, Ingredient
     public IngredientPlacement getIngredientPlacement() {
         return IngredientPlacement.forMultipleSlots(List.of(
             Optional.of(inputA),
-            Optional.of(inputB),
-            Optional.of(catalyst)
+            Optional.of(inputB)
         ));
     }
 
@@ -66,10 +65,6 @@ public record FusionForgeRecipe(Ingredient inputA, Ingredient inputB, Ingredient
 
     public Ingredient getInputB() {
         return inputB;
-    }
-
-    public Ingredient getCatalyst() {
-        return catalyst;
     }
 
     public int getCookTime() {

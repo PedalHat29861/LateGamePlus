@@ -24,6 +24,10 @@ import net.minecraft.util.BlockRotation;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.random.Random;
+import net.minecraft.particle.ParticleTypes;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.world.World;
 
 public class FusionForgeBlock extends BlockWithEntity {
@@ -110,5 +114,38 @@ public class FusionForgeBlock extends BlockWithEntity {
             }
         }
         super.onStateReplaced(state, world, pos, moved);
+    }
+
+    @Override
+    public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random random) {
+        FusionForgeState forgeState = state.get(STATE);
+        if (forgeState != FusionForgeState.NETHER_WORKING && forgeState != FusionForgeState.WORKING) {
+            return;
+        }
+        double baseX = pos.getX() + 0.5;
+        double baseY = pos.getY();
+        double baseZ = pos.getZ() + 0.5;
+        if (random.nextDouble() < 0.1) {
+            world.playSoundClient(baseX, baseY, baseZ, SoundEvents.BLOCK_BLASTFURNACE_FIRE_CRACKLE,
+                SoundCategory.BLOCKS, 1.0f, 1.0f, false);
+        }
+        Direction direction = state.get(FACING);
+        Direction.Axis axis = direction.getAxis();
+        double pixel = 1.0 / 16.0;
+        double offset = 0.52 - 2.0 * pixel;
+        double xOffset = axis == Direction.Axis.X ? direction.getOffsetX() * offset : 0.0;
+        double zOffset = axis == Direction.Axis.Z ? direction.getOffsetZ() * offset : 0.0;
+        double spread = 8.0 * pixel;
+        double jitterX = (random.nextDouble() - 0.5) * spread;
+        double jitterZ = (random.nextDouble() - 0.5) * spread;
+        double yOffset = random.nextDouble() * 6.0 / 16.0 + 3.0 * pixel;
+
+        world.addParticleClient(ParticleTypes.SMOKE, baseX + xOffset + jitterX, baseY + yOffset, baseZ + zOffset + jitterZ, 0.0, 0.0, 0.0);
+        world.addParticleClient(ParticleTypes.FLAME, baseX + xOffset + jitterX, baseY + yOffset, baseZ + zOffset + jitterZ, 0.0, 0.0, 0.0);
+
+        if (random.nextFloat() < 0.6f) {
+            double extraY = random.nextDouble() * 4.0 / 16.0 + 3.0 * pixel;
+            world.addParticleClient(ParticleTypes.SMALL_FLAME, baseX + xOffset + jitterX, baseY + extraY, baseZ + zOffset + jitterZ, 0.0, 0.0, 0.0);
+        }
     }
 }
