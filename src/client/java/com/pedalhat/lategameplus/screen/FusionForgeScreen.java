@@ -9,11 +9,11 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 public class FusionForgeScreen extends HandledScreen<FusionForgeScreenHandler> {
-    private static final Identifier TEXTURE = Identifier.of(LateGamePlus.MOD_ID, "textures/gui/fusion_forge.png");
+    private static final Identifier TEXTURE = Identifier.of(LateGamePlus.MOD_ID, "textures/gui/container/fusion_forge.png");
     private static final Identifier BURN_PROGRESS_TEXTURE =
-        Identifier.of(LateGamePlus.MOD_ID, "textures/gui/burn_progress.png");
+        Identifier.of(LateGamePlus.MOD_ID, "textures/gui/sprites/burn_progress.png");
     private static final Identifier LIT_PROGRESS_TEXTURE =
-        Identifier.of(LateGamePlus.MOD_ID, "textures/gui/lit_progress.png");
+        Identifier.of(LateGamePlus.MOD_ID, "textures/gui/sprites/lit_progress.png");
     private static final int ARROW_U = 0;
     private static final int ARROW_V = 0;
     private static final int ARROW_WIDTH = 24;
@@ -29,7 +29,8 @@ public class FusionForgeScreen extends HandledScreen<FusionForgeScreenHandler> {
 
     public FusionForgeScreen(FusionForgeScreenHandler handler, PlayerInventory inventory, Text title) {
         super(handler, inventory, title);
-        this.titleY = 6;
+        this.titleY = 8;
+        this.titleX = 12;
         this.playerInventoryTitleY = 85;
         this.backgroundWidth = 176;
         this.backgroundHeight = 179;
