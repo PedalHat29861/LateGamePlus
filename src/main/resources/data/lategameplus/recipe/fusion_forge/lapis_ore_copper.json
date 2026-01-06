@@ -1,0 +1,12 @@
+{
+    "type": "lategameplus:fusion_forge",
+    "input_a": "#minecraft:lapis_ores",
+    "input_b": "minecraft:copper_ingot",
+    "result": {
+        "id": "minecraft:lapis_lazuli",
+        "count": 12
+    },
+    "experience": 2,
+    "cook_time": 100,
+    "fuel_cost": 400
+}

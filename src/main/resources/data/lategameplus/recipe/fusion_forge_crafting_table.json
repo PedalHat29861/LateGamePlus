@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "fusion_forge",
+  "pattern": [
+    "BSB",
+    "BFB",
+    "CCC"
+  ],
+  "key": {
+    "F": [
+      "minecraft:blast_furnace"
+    ],
+    "C": [
+      "minecraft:crying_obsidian"
+    ],
+    "B": [
+      "minecraft:cracked_polished_blackstone_bricks",
+      "minecraft:polished_blackstone_bricks"
+    ],
+    "S": [
+      "minecraft:netherite_scrap"
+    ]
+  },
+  "result": {
+    "count": 1,
+    "id": "lategameplus:fusion_forge"
+  },
+  "show_notification": true
+}

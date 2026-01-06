@@ -36,6 +36,7 @@ public final class ModItemGroups {
                 entries.add(ModItems.LODESTONE_WARP);
                 entries.add(ModItems.DEBRIS_RESONATOR);
                 entries.add(ModBlocks.NETHERITE_ANVIL);
+                entries.add(ModBlocks.FUSION_FORGE);
             })
             .build());
     }
