@@ -7,6 +7,6 @@
         "count": 3
     },
     "experience": 6,
-    "cook_time": 400,
-    "fuel_cost": 200
+    "cook_time": 200,
+    "fuel_cost": 1000
 }
