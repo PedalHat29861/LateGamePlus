@@ -1,0 +1,12 @@
+{
+    "type": "lategameplus:fusion_forge",
+    "input_a": "#minecraft:redstone_ores",
+    "input_b": "minecraft:copper_ingot",
+    "result": {
+        "id": "minecraft:redstone",
+        "count": 7
+    },
+    "experience": 0.7,
+    "cook_time": 100,
+    "fuel_cost": 400
+}

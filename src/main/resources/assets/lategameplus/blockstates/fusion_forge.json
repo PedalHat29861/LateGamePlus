@@ -1,0 +1,20 @@
+{
+  "variants": {
+    "state=disabled,facing=north": { "model": "lategameplus:block/fusion_forge_disabled" },
+    "state=disabled,facing=east": { "model": "lategameplus:block/fusion_forge_disabled", "y": 90 },
+    "state=disabled,facing=south": { "model": "lategameplus:block/fusion_forge_disabled", "y": 180 },
+    "state=disabled,facing=west": { "model": "lategameplus:block/fusion_forge_disabled", "y": 270 },
+    "state=working,facing=north": { "model": "lategameplus:block/fusion_forge_working" },
+    "state=working,facing=east": { "model": "lategameplus:block/fusion_forge_working", "y": 90 },
+    "state=working,facing=south": { "model": "lategameplus:block/fusion_forge_working", "y": 180 },
+    "state=working,facing=west": { "model": "lategameplus:block/fusion_forge_working", "y": 270 },
+    "state=nether_disabled,facing=north": { "model": "lategameplus:block/fusion_forge_nether_disabled" },
+    "state=nether_disabled,facing=east": { "model": "lategameplus:block/fusion_forge_nether_disabled", "y": 90 },
+    "state=nether_disabled,facing=south": { "model": "lategameplus:block/fusion_forge_nether_disabled", "y": 180 },
+    "state=nether_disabled,facing=west": { "model": "lategameplus:block/fusion_forge_nether_disabled", "y": 270 },
+    "state=nether_working,facing=north": { "model": "lategameplus:block/fusion_forge_nether_working" },
+    "state=nether_working,facing=east": { "model": "lategameplus:block/fusion_forge_nether_working", "y": 90 },
+    "state=nether_working,facing=south": { "model": "lategameplus:block/fusion_forge_nether_working", "y": 180 },
+    "state=nether_working,facing=west": { "model": "lategameplus:block/fusion_forge_nether_working", "y": 270 }
+  }
+}

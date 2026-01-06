@@ -115,6 +115,17 @@ public class ModMenuCompat implements ModMenuApi {
                 .controller(BooleanControllerBuilder::create)
                 .build();
 
+            var lodestoneWarpReusable = Option.<Boolean>createBuilder()
+                .name(Text.translatable("lategameplus.config.lodestone.warp_reusable"))
+                .description(OptionDescription.of(Text.translatable("lategameplus.config.lodestone.warp_reusable.desc")))
+                .binding(
+                    false,
+                    () -> cfg.lodestoneWarpReusable,
+                    v  -> cfg.lodestoneWarpReusable = v
+                )
+                .controller(BooleanControllerBuilder::create)
+                .build();
+
             var bruteDropChance = Option.<Integer>createBuilder()
                 .name(Text.translatable("lategameplus.config.piglin_brute.drop_chance_percent"))
                 .description(OptionDescription.of(Text.translatable("lategameplus.config.piglin_brute.drop_chance_percent.desc")))
@@ -245,6 +256,7 @@ public class ModMenuCompat implements ModMenuApi {
                 .name(Text.translatable("lategameplus.config.category.lodestone"))
                 .option(lodestoneWarpCooldownSeconds)
                 .option(lodestoneWarpCrossDim)
+                .option(lodestoneWarpReusable)
                 .build();
 
             var catPiglin = ConfigCategory.createBuilder()

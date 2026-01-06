@@ -9,6 +9,7 @@
   "item.lategameplus.netherite_crossbow": "Blackbeard's Boomstick",
   "item.lategameplus.netherite_wolf_armor": "Blackbeard's Wolf Mail",
   "item.lategameplus.netherite_anvil": "Netherforge Anvil",
+  "item.lategameplus.fusion_forge": "Fusion Forge",
   "item.lategameplus.debris_resonator": "Debris Sniffer",
   "item.lategameplus.debris_resonator.searching_minutes": "%s (%s min o’ huntin’)",
   "item.lategameplus.debris_resonator.searching_seconds": "%s (%s sec o’ huntin’)",
@@ -42,9 +43,10 @@
   "item.lategameplus.red_netherite_harness": "Red Blackbeard's Riggin’",
   "item.lategameplus.black_netherite_harness": "Black Blackbeard's Riggin’",
 
-  "tag.item.lategameplus.netherite_harnesses": "Blackbeard's Riggin’",
-  "itemGroup.lategameplus.lategameplus": "End o’ the Voyage Plus",
+  "tag.item.lategameplus.netherite_harnesses": "Blackbeard's Riggin'",
+  "itemGroup.lategameplus.lategameplus": "End o' the Voyage Plus",
   "block.lategameplus.netherite_anvil": "Netherforge Anvil",
+  "block.lategameplus.fusion_forge": "Fusion Forge",
 
   "lategameplus.config.category.general": "Cap’n’s Orders",
   "lategameplus.config.category.elytra": "Shiny Sails",
@@ -73,9 +75,11 @@
   "lategameplus.config.repair.nugget_percent.desc": "Each shiny mends yer gear. Ingot = 25%, nugget ≈ 5.6%. Reload the seas.",
 
   "lategameplus.config.lodestone.warp_cooldown": "Cooldown (rum swigs)",
-  "lategameplus.config.lodestone.warp_cooldown.desc": "How long ye wait ‘til the compass obeys again.",
-  "lategameplus.config.lodestone.warp_across_dimensions": "Warp ‘cross all seas?",
+  "lategameplus.config.lodestone.warp_cooldown.desc": "How long ye wait 'til the compass obeys again.",
+  "lategameplus.config.lodestone.warp_across_dimensions": "Warp 'cross all seas?",
   "lategameplus.config.lodestone.warp_across_dimensions.desc": "Enable = sail any sea. Disable = stuck like a landlubber.",
+  "lategameplus.config.lodestone.warp_reusable": "Don't spend the warp trinket",
+  "lategameplus.config.lodestone.warp_reusable.desc": "Hoist this to keep the Lodestone Warp after ye use it, savvy?",
   "lategameplus.config.lodestone.warp_cooldown_seconds": "Cooldown (rum seconds)",
   "lategameplus.config.lodestone.warp_cooldown_seconds.desc": "Wait fer yer compass, scallywag.",
 

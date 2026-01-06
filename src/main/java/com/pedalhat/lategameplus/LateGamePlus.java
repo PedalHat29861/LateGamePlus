@@ -7,8 +7,10 @@ import com.pedalhat.lategameplus.event.ModEvents;
 import com.pedalhat.lategameplus.item.DebrisResonatorItem;
 import com.pedalhat.lategameplus.recipe.ModRecipes;
 import com.pedalhat.lategameplus.registry.ModBlocks;
+import com.pedalhat.lategameplus.registry.ModBlockEntities;
 import com.pedalhat.lategameplus.registry.ModItemGroups;
 import com.pedalhat.lategameplus.registry.ModItems;
+import com.pedalhat.lategameplus.registry.ModScreenHandlers;
 
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.block.cauldron.CauldronBehavior;
@@ -31,6 +33,8 @@ public class LateGamePlus implements ModInitializer {
         LOGGER.info("Hello Fabric world! Late Game Plus is initializing...");
         ModItems.init(cfg);
         ModBlocks.init();
+        ModBlockEntities.init();
+        ModScreenHandlers.init();
         ModItemGroups.init();
         ModEvents.register(cfg);
         ModCommands.register();
@@ -66,7 +70,11 @@ public class LateGamePlus implements ModInitializer {
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.TOOLS)
                 .register(e -> e.addAfter(Items.COMPASS, ModItems.LODESTONE_WARP));
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.FUNCTIONAL)
-                .register(e -> e.addAfter(Items.ANVIL, ModBlocks.NETHERITE_ANVIL.asItem()));
+                .register(e -> e.addAfter(
+                    Items.ANVIL,
+                    ModBlocks.NETHERITE_ANVIL.asItem(),
+                    ModBlocks.FUSION_FORGE.asItem()
+                ));
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.TOOLS)
                 .register(e -> e.addAfter(ModItems.LODESTONE_WARP, ModItems.DEBRIS_RESONATOR));
         
