@@ -67,3 +67,11 @@ replay_pid*
 # Decompiled
 net/
 net_decomp/
+
+# Krita files
+*.kra
+
+# Temporary krita files
+*.kra~
+*.png~
+*.jpg~
