@@ -1,9 +1,9 @@
 {
     "type": "lategameplus:fusion_forge",
-    "input_a": "#minecraft:emerald_ores",
-    "input_b": "minecraft:copper_ingot",
+    "input_a": "#lategameplus:chainmail_armor",
+    "input_b": "minecraft:iron_ingot",
     "result": {
-        "id": "minecraft:emerald",
+        "id": "minecraft:iron_ingot",
         "count": 2
     },
     "experience": 1,

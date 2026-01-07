@@ -1,0 +1,12 @@
+{
+    "type": "lategameplus:fusion_forge",
+    "input_a": "#lategameplus:netherite_gear",
+    "input_b": "minecraft:gold_ingot",
+    "result": {
+        "id": "lategameplus:netherite_nugget",
+        "count": 4
+    },
+    "experience": 1,
+    "cook_time": 150,
+    "fuel_cost": 1600
+}

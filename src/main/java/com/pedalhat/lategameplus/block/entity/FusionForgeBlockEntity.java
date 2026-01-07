@@ -2,7 +2,6 @@ package com.pedalhat.lategameplus.block.entity;
 
 import com.pedalhat.lategameplus.block.FusionForgeBlock;
 import com.pedalhat.lategameplus.block.FusionForgeState;
-import com.pedalhat.lategameplus.LateGamePlus;
 import com.pedalhat.lategameplus.registry.ModBlockEntities;
 import com.pedalhat.lategameplus.recipe.FusionForgeRecipe;
 import com.pedalhat.lategameplus.recipe.FusionForgeRecipeInput;
@@ -82,7 +81,6 @@ public class FusionForgeBlockEntity extends BlockEntity implements NamedScreenHa
     private float storedExperience;
     private boolean hadCatalyst;
     private int idleDelayTicks;
-    private int debugCooldown;
 
     public FusionForgeBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.FUSION_FORGE, pos, state);
@@ -258,7 +256,6 @@ public class FusionForgeBlockEntity extends BlockEntity implements NamedScreenHa
         boolean hasCatalyst = blockEntity.hasCatalyst();
         boolean canCraft = recipe != null && blockEntity.canCraft(recipe);
         boolean workingThisTick = false;
-        blockEntity.logRecipeDebug(recipe);
 
         if (hasCatalyst && !blockEntity.hadCatalyst) {
             world.playSound(null, pos, SoundEvents.BLOCK_BEACON_ACTIVATE, SoundCategory.BLOCKS, 0.6f, 1.0f);
@@ -368,11 +365,6 @@ public class FusionForgeBlockEntity extends BlockEntity implements NamedScreenHa
 
     private FusionForgeRecipe getRecipe(World world) {
         if (!(world.getRecipeManager() instanceof ServerRecipeManager recipeManager)) {
-            if (debugCooldown == 0) {
-                LateGamePlus.LOGGER.warn("FusionForge: RecipeManager is {}, cannot query fusion_forge recipes.",
-                    world.getRecipeManager().getClass().getName());
-                debugCooldown = 80;
-            }
             return null;
         }
         FusionForgeRecipeInput input = createRecipeInput();
@@ -385,11 +377,6 @@ public class FusionForgeBlockEntity extends BlockEntity implements NamedScreenHa
         FusionForgeRecipe fallback = findRecipeFallback(recipeManager, input, world);
         if (fallback != null) {
             return fallback;
-        }
-        if (debugCooldown == 0) {
-            int recipeCount = countFusionForgeRecipes(recipeManager);
-            LateGamePlus.LOGGER.warn("FusionForge: no recipe match. Loaded fusion_forge recipes={}", recipeCount);
-            debugCooldown = 80;
         }
         return null;
     }
@@ -487,33 +474,6 @@ public class FusionForgeBlockEntity extends BlockEntity implements NamedScreenHa
         return Direction.NORTH;
     }
 
-    private void logRecipeDebug(FusionForgeRecipe recipe) {
-        if (debugCooldown > 0) {
-            debugCooldown--;
-            return;
-        }
-        ItemStack inputA = inventory.get(FusionForgeScreenHandler.INPUT_A_SLOT);
-        ItemStack inputB = inventory.get(FusionForgeScreenHandler.INPUT_B_SLOT);
-        if (inputA.isEmpty() && inputB.isEmpty()) {
-            return;
-        }
-        if (recipe == null) {
-            LateGamePlus.LOGGER.warn(
-                "FusionForge: no recipe match. A={}, B={}, catalyst={}",
-                inputA, inputB, inventory.get(FusionForgeScreenHandler.CATALYST_SLOT)
-            );
-            debugCooldown = 80;
-            return;
-        }
-        if (!canCraft(recipe)) {
-            LateGamePlus.LOGGER.warn(
-                "FusionForge: recipe found but output blocked. Output={}, result={}",
-                inventory.get(FusionForgeScreenHandler.OUTPUT_SLOT), recipe.getOutput()
-            );
-            debugCooldown = 80;
-        }
-    }
-
     private FusionForgeRecipe findRecipeFallback(ServerRecipeManager recipeManager, FusionForgeRecipeInput input, World world) {
         for (RecipeEntry<?> entry : recipeManager.values()) {
             if (entry.value() instanceof FusionForgeRecipe recipe && recipe.matches(input, world)) {
@@ -521,16 +481,6 @@ public class FusionForgeBlockEntity extends BlockEntity implements NamedScreenHa
             }
         }
         return null;
-    }
-
-    private int countFusionForgeRecipes(ServerRecipeManager recipeManager) {
-        int count = 0;
-        for (RecipeEntry<?> entry : recipeManager.values()) {
-            if (entry.value() instanceof FusionForgeRecipe) {
-                count++;
-            }
-        }
-        return count;
     }
 
     public void onOutputTaken(PlayerEntity player) {

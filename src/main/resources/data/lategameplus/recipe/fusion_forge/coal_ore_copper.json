@@ -6,7 +6,7 @@
     "id": "minecraft:coal",
     "count": 2
   },
-  "experience": 1.5,
+  "experience": 0.5,
   "cook_time": 80,
   "fuel_cost": 20
 }

@@ -1,12 +1,12 @@
 {
     "type": "lategameplus:fusion_forge",
-    "input_a": "minecraft:raw_iron",
-    "input_b": "minecraft:coal",
+    "input_a": "minecraft:damaged_anvil",
+    "input_b": "minecraft:iron_ingot",
     "result": {
         "id": "minecraft:iron_ingot",
-        "count": 3
+        "count": 9
     },
-    "experience": 1,
+    "experience": 10,
     "cook_time": 200,
     "fuel_cost": 1000
 }
