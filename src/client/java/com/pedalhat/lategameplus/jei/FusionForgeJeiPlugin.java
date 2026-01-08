@@ -4,12 +4,15 @@ import com.pedalhat.lategameplus.LateGamePlus;
 import com.pedalhat.lategameplus.recipe.FusionForgeRecipe;
 import com.pedalhat.lategameplus.recipe.ModRecipes;
 import com.pedalhat.lategameplus.registry.ModBlocks;
+import com.pedalhat.lategameplus.registry.ModScreenHandlers;
 import com.pedalhat.lategameplus.screen.FusionForgeScreen;
+import com.pedalhat.lategameplus.screen.FusionForgeScreenHandler;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
+import mezz.jei.api.registration.IRecipeTransferRegistration;
 import mezz.jei.api.registration.IGuiHandlerRegistration;
 import mezz.jei.api.recipe.types.IRecipeType;
 import mezz.jei.api.runtime.IJeiRuntime;
@@ -27,11 +30,14 @@ import java.util.List;
 @JeiPlugin
 public class FusionForgeJeiPlugin implements IModPlugin {
     public static final Identifier PLUGIN_ID = Identifier.of(LateGamePlus.MOD_ID, "jei_plugin");
-    public static final IRecipeType<FusionForgeRecipe> FUSION_FORGE_TYPE =
-        IRecipeType.create(Identifier.of(LateGamePlus.MOD_ID, "fusion_forge"), FusionForgeRecipe.class);
+    @SuppressWarnings("unchecked")
+    public static final IRecipeType<RecipeEntry<FusionForgeRecipe>> FUSION_FORGE_TYPE =
+        (IRecipeType<RecipeEntry<FusionForgeRecipe>>) (IRecipeType<?>)
+            IRecipeType.create(Identifier.of(LateGamePlus.MOD_ID, "fusion_forge"), RecipeEntry.class);
     private static IJeiRuntime runtime;
-    private static List<FusionForgeRecipe> cachedRecipes = List.of();
+    private static List<RecipeEntry<FusionForgeRecipe>> cachedRecipes = List.of();
 
+    @SuppressWarnings("null")
     @Override
     public Identifier getPluginUid() {
         return PLUGIN_ID;
@@ -45,7 +51,7 @@ public class FusionForgeJeiPlugin implements IModPlugin {
 
     @Override
     public void registerRecipes(IRecipeRegistration registration) {
-        List<FusionForgeRecipe> recipes = getFusionForgeRecipesFromClient();
+        List<RecipeEntry<FusionForgeRecipe>> recipes = getFusionForgeRecipesFromClient();
         LateGamePlus.LOGGER.info("[JEI] Initial Fusion Forge recipes: {}", recipes.size());
         if (!recipes.isEmpty()) {
             registration.addRecipes(FUSION_FORGE_TYPE, recipes);
@@ -59,7 +65,20 @@ public class FusionForgeJeiPlugin implements IModPlugin {
 
     @Override
     public void registerGuiHandlers(IGuiHandlerRegistration registration) {
-        registration.addRecipeClickArea(FusionForgeScreen.class, 105, 42, 24, 16, FUSION_FORGE_TYPE);
+        registration.addRecipeClickArea(FusionForgeScreen.class, 79, 34, 18, 16, FUSION_FORGE_TYPE);
+    }
+
+    @Override
+    public void registerRecipeTransferHandlers(IRecipeTransferRegistration registration) {
+        registration.addRecipeTransferHandler(
+            FusionForgeScreenHandler.class,
+            ModScreenHandlers.FUSION_FORGE,
+            FUSION_FORGE_TYPE,
+            FusionForgeScreenHandler.INPUT_A_SLOT,
+            2,
+            FusionForgeScreenHandler.SLOT_COUNT,
+            36
+        );
     }
 
     @Override
@@ -85,7 +104,7 @@ public class FusionForgeJeiPlugin implements IModPlugin {
             }
             return;
         }
-        List<FusionForgeRecipe> newRecipes = extractRecipes(recipes);
+        List<RecipeEntry<FusionForgeRecipe>> newRecipes = extractRecipes(recipes);
         LateGamePlus.LOGGER.info("[JEI] Fusion Forge recipes synchronized: {}", newRecipes.size());
         if (newRecipes.equals(cachedRecipes)) {
             return;
@@ -99,7 +118,7 @@ public class FusionForgeJeiPlugin implements IModPlugin {
         cachedRecipes = newRecipes;
     }
 
-    private static List<FusionForgeRecipe> getFusionForgeRecipesFromClient() {
+    private static List<RecipeEntry<FusionForgeRecipe>> getFusionForgeRecipesFromClient() {
         SynchronizedRecipes recipes = getSynchronizedRecipes();
         if (recipes == null) {
             return List.of();
@@ -107,6 +126,7 @@ public class FusionForgeJeiPlugin implements IModPlugin {
         return extractRecipes(recipes);
     }
 
+    @SuppressWarnings("null")
     private static SynchronizedRecipes getSynchronizedRecipes() {
         MinecraftClient client = MinecraftClient.getInstance();
         if (client == null) {
@@ -124,11 +144,7 @@ public class FusionForgeJeiPlugin implements IModPlugin {
         return null;
     }
 
-    private static List<FusionForgeRecipe> extractRecipes(SynchronizedRecipes recipes) {
-        return recipes.getAllOfType(ModRecipes.FUSION_FORGE).stream()
-            .map(RecipeEntry::value)
-            .filter(recipe -> recipe instanceof FusionForgeRecipe)
-            .map(recipe -> (FusionForgeRecipe) recipe)
-            .toList();
+    private static List<RecipeEntry<FusionForgeRecipe>> extractRecipes(SynchronizedRecipes recipes) {
+        return recipes.getAllOfType(ModRecipes.FUSION_FORGE).stream().toList();
     }
 }

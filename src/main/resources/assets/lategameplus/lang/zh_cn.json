@@ -97,5 +97,6 @@
   "lategameplus.config.debris.range_y": "垂直扫描范围（方块）",
   "lategameplus.config.debris.range_y.desc": "共振器在玩家上下扫描残骸的距离。",
   "lategameplus.config.debris.sound_volume": "音量倍数",
-  "lategameplus.config.debris.sound_volume.desc": "放大残骸共振器的所有声音（0 = 静音，4 = 四倍音量）"
+  "lategameplus.config.debris.sound_volume.desc": "放大残骸共振器的所有声音（0 = 静音，4 = 四倍音量）",
+  "tooltip.lategameplus.fusion_forge.catalyst_x2": "当使用下界之星作为催化剂时，\n配方产出翻倍。"
 }

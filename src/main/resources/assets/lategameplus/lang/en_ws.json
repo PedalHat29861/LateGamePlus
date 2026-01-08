@@ -97,5 +97,6 @@
   "lategameplus.config.debris.range_y": "Vertical sweep (blocks)",
   "lategameplus.config.debris.range_y.desc": "How many blocks above and below thee the resonator scans for debris.",
   "lategameplus.config.debris.sound_volume": "Volume multiplier",
-  "lategameplus.config.debris.sound_volume.desc": "Makes every Debris Resonator peal softer or louder (0 = mute, 4 = fourfold)."
+  "lategameplus.config.debris.sound_volume.desc": "Makes every Debris Resonator peal softer or louder (0 = mute, 4 = fourfold).",
+  "tooltip.lategameplus.fusion_forge.catalyst_x2": "When a nether star is used as a catalyst,\nrecipe output is doubled."
 }

@@ -97,5 +97,6 @@
   "lategameplus.config.debris.range_y": "Vertikaler Scanbereich (Blöcke)",
   "lategameplus.config.debris.range_y.desc": "Wie viele Blöcke über und unter dem Spieler der Resonator nach Schutt sucht.",
   "lategameplus.config.debris.sound_volume": "Lautstärke-Multiplikator",
-  "lategameplus.config.debris.sound_volume.desc": "Multipliziert jeden Klang des Schuttresonators (0 = stumm, 4 = viermal so laut)."
+  "lategameplus.config.debris.sound_volume.desc": "Multipliziert jeden Klang des Schuttresonators (0 = stumm, 4 = viermal so laut).",
+  "tooltip.lategameplus.fusion_forge.catalyst_x2": "Wenn ein Netherstern als Katalysator verwendet wird,\nwird die Rezeptausgabe verdoppelt."
 }

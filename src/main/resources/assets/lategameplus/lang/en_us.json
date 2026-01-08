@@ -54,6 +54,7 @@
   
   "block.lategameplus.netherite_anvil": "Netherite Anvil",
   "block.lategameplus.fusion_forge": "Fusion Forge",
+  "tooltip.lategameplus.fusion_forge.catalyst_x2": "When a nether star is used as a catalyst,\nrecipe output is doubled.",
   
   "lategameplus.config.category.general": "General",
   "lategameplus.config.category.elytra": "Netherite Elytra",

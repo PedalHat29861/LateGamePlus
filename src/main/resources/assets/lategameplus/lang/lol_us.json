@@ -109,5 +109,6 @@
   "lategameplus.config.debris.range_y": "Up-n-down sniff range (blocks)",
   "lategameplus.config.debris.range_y.desc": "How many blocks above/below u it sniffz fer debris.",
   "lategameplus.config.debris.sound_volume": "Beep volume multiplier",
-  "lategameplus.config.debris.sound_volume.desc": "Makez beeps louder/quieter (0 = shhh, 4 = four times LOUD)."
+  "lategameplus.config.debris.sound_volume.desc": "Makez beeps louder/quieter (0 = shhh, 4 = four times LOUD).",
+  "tooltip.lategameplus.fusion_forge.catalyst_x2": "NETHER ASTERISK??? MOR THINGIEZZ!!1!"
 }

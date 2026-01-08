@@ -16,8 +16,8 @@ public class FusionForgeRecipeSerializer implements RecipeSerializer<FusionForge
         Ingredient.CODEC.fieldOf("input_b").forGetter(FusionForgeRecipe::inputB),
         ItemStack.CODEC.fieldOf("result").forGetter(FusionForgeRecipe::output),
         Codec.INT.optionalFieldOf("cook_time", 200).forGetter(FusionForgeRecipe::cookTime),
-        Codec.INT.optionalFieldOf("fuel_cost", 1600).forGetter(FusionForgeRecipe::fuelCost),
-        Codec.FLOAT.optionalFieldOf("experience", 0.0f).forGetter(FusionForgeRecipe::experience)
+        Codec.INT.optionalFieldOf("fuel_cost", 8).forGetter(FusionForgeRecipe::fuelCost),
+        Codec.FLOAT.optionalFieldOf("experience", 0.1f).forGetter(FusionForgeRecipe::experience)
     ).apply(instance, FusionForgeRecipe::new));
 
     public static final PacketCodec<RegistryByteBuf, FusionForgeRecipe> PACKET_CODEC = PacketCodec.tuple(
