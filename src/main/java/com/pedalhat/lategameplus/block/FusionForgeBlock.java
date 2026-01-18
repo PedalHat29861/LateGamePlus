@@ -32,6 +32,7 @@ import net.minecraft.world.World;
 
 public class FusionForgeBlock extends BlockWithEntity {
     public static final MapCodec<FusionForgeBlock> CODEC = AbstractBlock.createCodec(FusionForgeBlock::new);
+    @SuppressWarnings("null")
     public static final EnumProperty<FusionForgeState> STATE = EnumProperty.of("state", FusionForgeState.class);
     public static final EnumProperty<Direction> FACING = Properties.HORIZONTAL_FACING;
 

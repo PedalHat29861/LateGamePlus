@@ -44,6 +44,14 @@
   "item.lategameplus.black_netherite_harness": "Black Blackbeard's Riggin’",
 
   "tag.item.lategameplus.netherite_harnesses": "Blackbeard's Riggin'",
+  "tag.item.lategameplus.netherite_gear": "Netherite Gear",
+  "tag.item.lategameplus.chainmail_armor": "Chainmail Armor",
+  "tag.item.lategameplus.diamond_items": "Diamond Items",
+  "tag.item.lategameplus.iron_items": "Iron Items",
+  "tag.item.lategameplus.gold_items": "Gold Items",
+  "tag.item.lategameplus.copper_items": "Copper Items",
+  "tag.item.lategameplus.crossbows": "Crossbows",
+  "tag.item.lategameplus.repairs_netherite_wolf_armor": "Repairs Netherite Wolf Armor",
   "itemGroup.lategameplus.lategameplus": "End o' the Voyage Plus",
   "block.lategameplus.netherite_anvil": "Netherforge Anvil",
   "block.lategameplus.fusion_forge": "Fusion Forge",
@@ -100,5 +108,6 @@
   "lategameplus.config.debris.range_y": "Up ‘n down sniffin’ range (blocks)",
   "lategameplus.config.debris.range_y.desc": "How far above ‘n below the sniffer smells shinies.",
   "lategameplus.config.debris.sound_volume": "Sniffin’ volume",
-  "lategameplus.config.debris.sound_volume.desc": "How loud the sniffer hollers. 0 = dead quiet, 4 = wakes the dead."
+  "lategameplus.config.debris.sound_volume.desc": "How loud the sniffer hollers. 0 = dead quiet, 4 = wakes the dead.",
+  "tooltip.lategameplus.fusion_forge.catalyst_x2": "When Star o' Nether is,\nMore treasure ye find."
 }

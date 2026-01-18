@@ -45,6 +45,14 @@
   "item.lategameplus.black_netherite_harness": "Black Netherite Happy-dle :D",
 
   "tag.item.lategameplus.netherite_harnesses": "Netherite Harness Thingiez",
+  "tag.item.lategameplus.netherite_gear": "Netherite Gear",
+  "tag.item.lategameplus.chainmail_armor": "Chainmail Armor",
+  "tag.item.lategameplus.diamond_items": "Diamond Items",
+  "tag.item.lategameplus.iron_items": "Iron Items",
+  "tag.item.lategameplus.gold_items": "Gold Items",
+  "tag.item.lategameplus.copper_items": "Copper Items",
+  "tag.item.lategameplus.crossbows": "Crossbows",
+  "tag.item.lategameplus.repairs_netherite_wolf_armor": "Repairs Netherite Wolf Armor",
   "itemGroup.lategameplus.lategameplus": "Late Game PluzZ :3",
   "block.lategameplus.netherite_anvil": "Shiny Smashy Anvil",
   "block.lategameplus.fusion_forge": "Fusion Forge",
@@ -101,5 +109,6 @@
   "lategameplus.config.debris.range_y": "Up-n-down sniff range (blocks)",
   "lategameplus.config.debris.range_y.desc": "How many blocks above/below u it sniffz fer debris.",
   "lategameplus.config.debris.sound_volume": "Beep volume multiplier",
-  "lategameplus.config.debris.sound_volume.desc": "Makez beeps louder/quieter (0 = shhh, 4 = four times LOUD)."
+  "lategameplus.config.debris.sound_volume.desc": "Makez beeps louder/quieter (0 = shhh, 4 = four times LOUD).",
+  "tooltip.lategameplus.fusion_forge.catalyst_x2": "NETHER ASTERISK??? MOR THINGIEZZ!!1!"
 }

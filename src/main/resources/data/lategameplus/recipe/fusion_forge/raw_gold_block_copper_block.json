@@ -1,0 +1,12 @@
+{
+    "type": "lategameplus:fusion_forge",
+    "input_a": "minecraft:raw_gold_block",
+    "input_b": "minecraft:copper_block",
+    "result": {
+        "id": "minecraft:gold_block",
+        "count": 3
+    },
+    "experience": 15,
+    "cook_time": 1800,
+    "fuel_cost": 9000
+}

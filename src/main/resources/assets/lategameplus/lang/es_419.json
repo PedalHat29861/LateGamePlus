@@ -42,6 +42,14 @@
   "item.lategameplus.red_netherite_harness": "Arnés de netherita rojo",
   "item.lategameplus.black_netherite_harness": "Arnés de netherita negro",
   "tag.item.lategameplus.netherite_harnesses": "Arneses de netherita",
+  "tag.item.lategameplus.netherite_gear": "Netherite Gear",
+  "tag.item.lategameplus.chainmail_armor": "Chainmail Armor",
+  "tag.item.lategameplus.diamond_items": "Diamond Items",
+  "tag.item.lategameplus.iron_items": "Iron Items",
+  "tag.item.lategameplus.gold_items": "Gold Items",
+  "tag.item.lategameplus.copper_items": "Copper Items",
+  "tag.item.lategameplus.crossbows": "Crossbows",
+  "tag.item.lategameplus.repairs_netherite_wolf_armor": "Repairs Netherite Wolf Armor",
   "itemGroup.lategameplus.lategameplus": "Late Game Plus",
   "block.lategameplus.netherite_anvil": "Yunque de netherita",
   "block.lategameplus.fusion_forge": "Forja de Fusion",
@@ -89,5 +97,6 @@
   "lategameplus.config.debris.range_y": "Rango vertical de escaneo (bloques)",
   "lategameplus.config.debris.range_y.desc": "Número de bloques arriba y abajo que el resonador revisa al buscar.",
   "lategameplus.config.debris.sound_volume": "Multiplicador de volumen",
-  "lategameplus.config.debris.sound_volume.desc": "Multiplica todos los sonidos del resonador (0 = silencio, 4 = cuatro veces más fuerte)."
+  "lategameplus.config.debris.sound_volume.desc": "Multiplica todos los sonidos del resonador (0 = silencio, 4 = cuatro veces más fuerte).",
+  "tooltip.lategameplus.fusion_forge.catalyst_x2": "Cuando se usa una estrella del Nether como catalizador,\nla producción de la receta se duplica."
 }

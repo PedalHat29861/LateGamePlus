@@ -16,6 +16,7 @@ import net.fabricmc.api.ModInitializer;
 import net.minecraft.block.cauldron.CauldronBehavior;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.fabricmc.fabric.api.recipe.v1.sync.RecipeSynchronization;
 import net.minecraft.item.ItemGroups;
 import net.minecraft.item.Items;
 import org.slf4j.Logger;
@@ -39,6 +40,7 @@ public class LateGamePlus implements ModInitializer {
         ModEvents.register(cfg);
         ModCommands.register();
         ModRecipes.init();
+        RecipeSynchronization.synchronizeRecipeSerializer(ModRecipes.FUSION_FORGE_SERIALIZER);
         DebrisResonatorItem.DebrisResonatorHooks.init();
 
         var wolfArmorCleaning = CauldronBehavior.WATER_CAULDRON_BEHAVIOR.map().get(Items.WOLF_ARMOR);
@@ -70,11 +72,9 @@ public class LateGamePlus implements ModInitializer {
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.TOOLS)
                 .register(e -> e.addAfter(Items.COMPASS, ModItems.LODESTONE_WARP));
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.FUNCTIONAL)
-                .register(e -> e.addAfter(
-                    Items.ANVIL,
-                    ModBlocks.NETHERITE_ANVIL.asItem(),
-                    ModBlocks.FUSION_FORGE.asItem()
-                ));
+                .register(e -> e.addAfter(Items.ANVIL,ModBlocks.NETHERITE_ANVIL.asItem()));
+        ItemGroupEvents.modifyEntriesEvent(ItemGroups.FUNCTIONAL)
+                .register(e -> e.addAfter(Items.CHIPPED_ANVIL,ModBlocks.FUSION_FORGE.asItem()));
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.TOOLS)
                 .register(e -> e.addAfter(ModItems.LODESTONE_WARP, ModItems.DEBRIS_RESONATOR));
         
