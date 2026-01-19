@@ -1,0 +1,46 @@
+{
+  "type": "minecraft:fishing",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:nether_brick",
+          "weight": 40,
+          "quality": -15
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:magma_block",
+          "weight": 30,
+          "quality": -10
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:magma_cream",
+          "weight": 20,
+          "quality": 3
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:glowstone_dust",
+          "weight": 10,
+          "quality": 2
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:basalt",
+          "weight": 20,
+          "quality": -5
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:crying_obsidian",
+          "weight": 10,
+          "quality": 2
+        }
+      ]
+    }
+  ]
+}

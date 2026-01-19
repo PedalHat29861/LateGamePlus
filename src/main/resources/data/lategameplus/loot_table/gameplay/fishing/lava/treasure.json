@@ -1,0 +1,51 @@
+{
+  "type": "minecraft:fishing",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:iron_ingot",
+          "weight": 100,
+          "quality": -10
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:gold_ingot",
+          "weight": 150,
+          "quality": 0
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:book",
+          "weight": 40,
+          "quality": 5,
+          "conditions": [],
+          "functions": [
+            {
+              "function": "minecraft:enchant_with_levels",
+              "levels": 35,
+              "options": [
+                "minecraft:fire_protection",
+                "minecraft:fire_aspect"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:netherite_upgrade_smithing_template",
+          "weight": 1,
+          "quality": 5
+        },
+        {
+          "type": "minecraft:item",
+          "name": "lategameplus:netherite_nugget",
+          "weight": 5,
+          "quality": 15
+        }
+      ]
+    }
+  ]
+}

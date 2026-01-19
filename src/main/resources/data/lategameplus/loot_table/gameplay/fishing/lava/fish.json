@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:fishing",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:warped_stem",
+          "weight": 50,
+          "quality": 0
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:crimson_stem",
+          "weight": 50,
+          "quality": 0
+        }
+      ]
+    }
+  ]
+}

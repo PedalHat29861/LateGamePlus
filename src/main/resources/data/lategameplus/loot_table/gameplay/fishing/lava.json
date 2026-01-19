@@ -2,11 +2,31 @@
   "type": "minecraft:fishing",
   "pools": [
     {
-      "rolls": 1.0,
+      "rolls": 1,
       "entries": [
         {
-          "type": "minecraft:item",
-          "name": "minecraft:dirt"
+          "type": "minecraft:loot_table",
+          "value": "lategameplus:gameplay/fishing/lava/fish",
+          "weight": 40,
+          "quality": -15
+        },
+        {
+          "type": "minecraft:loot_table",
+          "value": "lategameplus:gameplay/fishing/lava/junk",
+          "weight": 30,
+          "quality": -15
+        },
+        {
+          "type": "minecraft:loot_table",
+          "value": "lategameplus:gameplay/fishing/lava/treasure",
+          "weight": 20,
+          "quality": 5
+        },
+        {
+          "type": "minecraft:loot_table",
+          "value": "lategameplus:gameplay/fishing/lava/nether_junk",
+          "weight": 30,
+          "quality": -5
         }
       ]
     }
