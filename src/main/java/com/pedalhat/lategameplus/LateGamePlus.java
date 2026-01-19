@@ -68,6 +68,8 @@ public class LateGamePlus implements ModInitializer {
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.TOOLS)
                 .register(e -> e.addAfter(Items.ELYTRA, ModItems.NETHERITE_ELYTRA));
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.TOOLS)
+                .register(e -> e.addAfter(Items.FISHING_ROD, ModItems.NETHERITE_FISHING_ROD));
+        ItemGroupEvents.modifyEntriesEvent(ItemGroups.TOOLS)
                 .register(e -> e.addAfter(Items.PINK_HARNESS, ModItems.orderedNetheriteHarnesses()));
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.TOOLS)
                 .register(e -> e.addAfter(Items.COMPASS, ModItems.LODESTONE_WARP));

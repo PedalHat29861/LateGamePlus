@@ -26,6 +26,7 @@ import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
+import net.minecraft.item.FishingRodItem;
 import net.minecraft.item.equipment.ArmorMaterial;
 import net.minecraft.item.equipment.ArmorMaterials;
 import net.minecraft.item.equipment.EquipmentType;
@@ -84,6 +85,7 @@ public class ModItems {
     public static Item ENCHANTED_NETHERITE_APPLE;
     public static Item NETHERITE_BOW;
     public static Item NETHERITE_CROSSBOW;
+    public static Item NETHERITE_FISHING_ROD;
     public static Item TOTEM_OF_NETHERDYING;
     public static Item LODESTONE_WARP;
     public static Item VOID_CRYSTAL;
@@ -250,6 +252,17 @@ public class ModItems {
                     .fireproof()
                     .component(DataComponentTypes.REPAIRABLE, repairsWithNuggetAndIngot())
                     .component(DataComponentTypes.ITEM_MODEL, Identifier.of(LateGamePlus.MOD_ID, "netherite_crossbow"))
+                    .rarity(Rarity.COMMON)
+            )
+        );
+
+        NETHERITE_FISHING_ROD = register("netherite_fishing_rod",
+            new FishingRodItem(
+                settings("netherite_fishing_rod")
+                    .maxDamage(Items.FISHING_ROD.getDefaultStack().getMaxDamage() * 4)
+                    .enchantable(15)
+                    .fireproof()
+                    .component(DataComponentTypes.REPAIRABLE, repairsWithNuggetAndIngot())
                     .rarity(Rarity.COMMON)
             )
         );

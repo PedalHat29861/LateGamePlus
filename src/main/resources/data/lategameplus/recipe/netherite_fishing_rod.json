@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": "minecraft:netherite_ingot",
+  "base": "minecraft:fishing_rod",
+  "result": {
+    "id": "lategameplus:netherite_fishing_rod"
+  },
+  "template": "minecraft:netherite_upgrade_smithing_template"
+}

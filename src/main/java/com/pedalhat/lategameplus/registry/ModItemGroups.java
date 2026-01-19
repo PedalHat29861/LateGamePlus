@@ -29,6 +29,7 @@ public final class ModItemGroups {
                 entries.add(ModItems.NETHERITE_ELYTRA);
                 entries.add(ModItems.NETHERITE_BOW);
                 entries.add(ModItems.NETHERITE_CROSSBOW);
+                entries.add(ModItems.NETHERITE_FISHING_ROD);
                 entries.add(ModItems.NETHERITE_WOLF_ARMOR);
                 for (var harness : ModItems.orderedNetheriteHarnesses()) {
                     entries.add(harness);
