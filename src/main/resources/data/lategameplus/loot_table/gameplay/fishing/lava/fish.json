@@ -1,28 +1,54 @@
 {
-  "type": "minecraft:fishing",
-  "pools": [
-    {
-      "rolls": 1,
-      "entries": [
+    "type": "minecraft:fishing",
+    "pools": [
         {
-          "type": "minecraft:item",
-          "name": "minecraft:warped_stem",
-          "weight": 5,
-          "quality": 0
-        },
-        {
-          "type": "minecraft:item",
-          "name": "minecraft:crimson_stem",
-          "weight": 5,
-          "quality": 0
-        },
-        {
-          "type": "minecraft:item",
-          "name": "lategameplus:pompeii_worm",
-          "weight": 80,
-          "quality": 10
+            "rolls": 1,
+            "entries": [
+                {
+                    "type": "minecraft:item",
+                    "name": "minecraft:warped_stem",
+                    "weight": 5,
+                    "quality": 0
+                },
+                {
+                    "type": "minecraft:item",
+                    "name": "minecraft:crimson_stem",
+                    "weight": 5,
+                    "quality": 0
+                },
+                {
+                    "type": "minecraft:item",
+                    "name": "lategameplus:pompeii_worm",
+                    "weight": 80,
+                    "quality": 10,
+                    "functions": [
+                        {
+                            "conditions": [
+                                {
+                                    "condition": "minecraft:random_chance",
+                                    "chance": 0.000001
+                                }
+                            ],
+                            "function": "minecraft:set_components",
+                            "components": {
+                                "minecraft:enchantment_glint_override": true,
+                                "minecraft:lore": [
+                                    {
+                                        "text": "The chosen one...",
+                                        "color": "gold",
+                                        "italic": false
+                                    }
+                                ],
+                                "minecraft:custom_name": {
+                                    "text": "Miguel",
+                                    "color": "gold",
+                                    "bold": true
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
         }
-      ]
-    }
-  ]
+    ]
 }

@@ -320,6 +320,7 @@ public class ModItems {
                         .build(),
                     ConsumableComponents.food()
                         .consumeEffect(new ApplyEffectsConsumeEffect(new StatusEffectInstance(StatusEffects.FIRE_RESISTANCE, 70, 0), 1.0F))
+                        .consumeEffect(new ApplyEffectsConsumeEffect(new StatusEffectInstance(StatusEffects.FIRE_RESISTANCE, 140, 0), 0.1F))
                         .build()
                 ).rarity(Rarity.COMMON)
             )
