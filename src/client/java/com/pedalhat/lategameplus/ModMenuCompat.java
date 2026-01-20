@@ -39,6 +39,19 @@ public class ModMenuCompat implements ModMenuApi {
                     .step(0.05f))
                 .build();
 
+            var fishingTimeMultiplier = Option.<Float>createBuilder()
+                .name(Text.translatable("lategameplus.config.fishing.time_multiplier"))
+                .description(OptionDescription.of(Text.translatable("lategameplus.config.fishing.time_multiplier.desc")))
+                .binding(
+                    1.0f,
+                    () -> cfg.fishingTimeMultiplier,
+                    v  -> cfg.fishingTimeMultiplier = Math.max(0.25f, Math.min(4f, v))
+                )
+                .controller(opt -> FloatSliderControllerBuilder.create(opt)
+                    .range(0.25f, 4f)
+                    .step(0.05f))
+                .build();
+
             var netheriteAnvilCap = Option.<Integer>createBuilder()
                 .name(Text.translatable("lategameplus.config.anvil.max_cost"))
                 .description(OptionDescription.of(Text.translatable("lategameplus.config.anvil.max_cost.desc")))
@@ -246,6 +259,7 @@ public class ModMenuCompat implements ModMenuApi {
             var catGeneral = ConfigCategory.createBuilder()
                 .name(Text.translatable("lategameplus.config.category.general"))
                 .option(crossbowDamageMultiplier)
+                .option(fishingTimeMultiplier)
                 .option(netheriteAnvilCap)
                 .option(elytraProt)
                 .option(netheriteTotemUses)
@@ -289,6 +303,7 @@ public class ModMenuCompat implements ModMenuApi {
                         cfg.piglinBruteNuggetMax = tmp;
                     }
                     cfg.netheriteCrossbowDamageMultiplier = Math.max(0f, Math.min(5f, cfg.netheriteCrossbowDamageMultiplier));
+                    cfg.fishingTimeMultiplier = Math.max(0.25f, Math.min(4f, cfg.fishingTimeMultiplier));
                     cfg.netheriteAnvilMaxLevelCost = Math.max(20, Math.min(39, cfg.netheriteAnvilMaxLevelCost));
                     cfg.debrisResonatorMaxBatterySeconds = Math.max(0, Math.min(86400, cfg.debrisResonatorMaxBatterySeconds));
                     cfg.debrisResonatorCooldownSelfSeconds = Math.max(0, Math.min(3600, cfg.debrisResonatorCooldownSelfSeconds));

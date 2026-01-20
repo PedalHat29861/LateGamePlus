@@ -10,6 +10,7 @@ public class ModConfig {
     public float nuggetRepairPercent = 1f/18f;      // 0..1
 
     public float netheriteCrossbowDamageMultiplier = 1.5f; // projectile damage multiplier
+    public float fishingTimeMultiplier = 1.0f; // 0.25..4
 
     public int lodestoneWarpCooldownTicks = 80;    // IN TPS; 1s = 20 TPS
     public boolean lodestoneWarpCrossDim = false;   // allow across dimensions

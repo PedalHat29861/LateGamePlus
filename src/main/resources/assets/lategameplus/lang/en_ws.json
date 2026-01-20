@@ -85,6 +85,8 @@
   "lategameplus.config.lodestone.warp_cooldown_seconds.desc": "The measure of time till thy compass may once more perform its sorcery.",
   "lategameplus.config.crossbow.damage_multiplier": "Multiplier of the Boom'd Bolt",
   "lategameplus.config.crossbow.damage_multiplier.desc": "Bid the Netherite crossbow's quarrel strike as thou desirest. 1.0 = mortal strength, 1.5 = the present boon.",
+  "lategameplus.config.fishing.time_multiplier": "Multiplier of fishing time",
+  "lategameplus.config.fishing.time_multiplier.desc": "Scales the wait for a bite. 1.0 = vanilla, lower = slower, higher = faster.",
   "lategameplus.config.anvil.max_cost": "Anvil's Limit of Tribute",
   "lategameplus.config.anvil.max_cost.desc": "The utmost levels the Netherite anvil shall exact ere it stay the cost (20-39).",
   "lategameplus.config.debris.max_battery_seconds": "Lifespan of the battery (seconds)",

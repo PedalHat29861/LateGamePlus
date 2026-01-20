@@ -7,26 +7,26 @@
         {
           "type": "minecraft:item",
           "name": "minecraft:charcoal",
-          "weight": 80,
-          "quality": -10
+          "weight": 50,
+          "quality": 0
         },
         {
           "type": "minecraft:item",
           "name": "minecraft:obsidian",
-          "weight": 10,
-          "quality": 5
+          "weight": 50,
+          "quality": 50
         },
         {
           "type": "minecraft:item",
           "name": "minecraft:gravel",
-          "weight": 30,
-          "quality": -15
+          "weight": 50,
+          "quality": 100
         },
         {
           "type": "minecraft:item",
           "name": "minecraft:fire_charge",
-          "weight": 10,
-          "quality": 0
+          "weight": 50,
+          "quality": 150
         }
       ]
     }

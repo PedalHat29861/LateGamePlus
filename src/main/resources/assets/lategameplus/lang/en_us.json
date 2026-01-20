@@ -89,6 +89,8 @@
   "lategameplus.config.lodestone.warp_cooldown_seconds.desc": "Time to wait after warping before the item can be used again.",
   "lategameplus.config.crossbow.damage_multiplier": "Netherite Crossbow damage multiplier",
   "lategameplus.config.crossbow.damage_multiplier.desc": "Scales the damage dealt by Netherite Crossbow projectiles. 1.0 = vanilla damage, 1.5 = default.",
+  "lategameplus.config.fishing.time_multiplier": "Fishing time multiplier",
+  "lategameplus.config.fishing.time_multiplier.desc": "Scales fishing wait times. 1.0 = vanilla, lower = slower, higher = faster.",
   "lategameplus.config.anvil.max_cost": "Netherite Anvil XP cap",
   "lategameplus.config.anvil.max_cost.desc": "Maximum level cost the Netherite Anvil will charge before capping (20-39 levels).",
   "lategameplus.config.debris.max_battery_seconds": "Max battery (seconds)",

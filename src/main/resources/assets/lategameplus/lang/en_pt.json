@@ -92,8 +92,10 @@
   "lategameplus.config.lodestone.warp_cooldown_seconds": "Cooldown (rum seconds)",
   "lategameplus.config.lodestone.warp_cooldown_seconds.desc": "Wait fer yer compass, scallywag.",
 
-  "lategameplus.config.crossbow.damage_multiplier": "Boomstick pow’r multiplier",
+  "lategameplus.config.crossbow.damage_multiplier": "Boomstick pow'r multiplier",
   "lategameplus.config.crossbow.damage_multiplier.desc": "Make yer boomstick hit harder. 1.0 = fair fight, 1.5 = proper pirate.",
+  "lategameplus.config.fishing.time_multiplier": "Fishin' time multiplier",
+  "lategameplus.config.fishing.time_multiplier.desc": "Scales waitin' fer a bite. 1.0 = vanilla, lower = slower, higher = faster.",
 
   "lategameplus.config.anvil.max_cost": "Netherforge toll",
   "lategameplus.config.anvil.max_cost.desc": "Highest level toll afore the forge refuses (20-39 levels).",

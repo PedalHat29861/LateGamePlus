@@ -23,26 +23,240 @@
                     "quality": 10,
                     "functions": [
                         {
+                            "function": "minecraft:set_components",
                             "conditions": [
                                 {
                                     "condition": "minecraft:random_chance",
                                     "chance": 0.000001
                                 }
                             ],
-                            "function": "minecraft:set_components",
                             "components": {
-                                "minecraft:enchantment_glint_override": true,
-                                "minecraft:lore": [
+                                "minecraft:custom_name": [
+                                    "",
                                     {
-                                        "text": "The chosen one...",
-                                        "color": "gold",
-                                        "italic": false
+                                        "text": "M",
+                                        "color": "light_purple"
+                                    },
+                                    {
+                                        "text": "i",
+                                        "color": "#f575df"
+                                    },
+                                    {
+                                        "text": "g",
+                                        "color": "#eb95bf"
+                                    },
+                                    {
+                                        "text": "u",
+                                        "color": "#e0b59f"
+                                    },
+                                    {
+                                        "text": "e",
+                                        "color": "#d6d57f"
+                                    },
+                                    {
+                                        "text": "l",
+                                        "color": "#ccf55f"
                                     }
                                 ],
-                                "minecraft:custom_name": {
-                                    "text": "Miguel",
-                                    "color": "gold",
-                                    "bold": true
+                                "minecraft:item_name": [
+                                    {
+                                        "text": "M",
+                                        "italic": false,
+                                        "color": "light_purple"
+                                    },
+                                    {
+                                        "text": "i",
+                                        "italic": false,
+                                        "color": "#f575df"
+                                    },
+                                    {
+                                        "text": "g",
+                                        "italic": false,
+                                        "color": "#eb95bf"
+                                    },
+                                    {
+                                        "text": "u",
+                                        "italic": false,
+                                        "color": "#e0b59f"
+                                    },
+                                    {
+                                        "text": "e",
+                                        "italic": false,
+                                        "color": "#d6d57f"
+                                    },
+                                    {
+                                        "text": "l",
+                                        "italic": false,
+                                        "color": "#ccf55f"
+                                    }
+                                ],
+                                "minecraft:lore": [
+                                    [
+                                        {
+                                            "text": "T",
+                                            "italic": false,
+                                            "color": "#80ff00"
+                                        },
+                                        {
+                                            "text": "h",
+                                            "italic": false,
+                                            "color": "#80f50a"
+                                        },
+                                        {
+                                            "text": "i",
+                                            "italic": false,
+                                            "color": "#80eb14"
+                                        },
+                                        {
+                                            "text": "s",
+                                            "italic": false,
+                                            "color": "#80e01f"
+                                        },
+                                        {
+                                            "text": " ",
+                                            "italic": false,
+                                            "color": "#80d629"
+                                        },
+                                        {
+                                            "text": "g",
+                                            "italic": false,
+                                            "color": "#80cc33"
+                                        },
+                                        {
+                                            "text": "u",
+                                            "italic": false,
+                                            "color": "#80c23d"
+                                        },
+                                        {
+                                            "text": "y",
+                                            "italic": false,
+                                            "color": "#80b847"
+                                        },
+                                        {
+                                            "text": " ",
+                                            "italic": false,
+                                            "color": "#80ad52"
+                                        },
+                                        {
+                                            "text": "s",
+                                            "italic": false,
+                                            "color": "#80a35c"
+                                        },
+                                        {
+                                            "text": "e",
+                                            "italic": false,
+                                            "color": "#809966"
+                                        },
+                                        {
+                                            "text": "e",
+                                            "italic": false,
+                                            "color": "#808f70"
+                                        },
+                                        {
+                                            "text": "m",
+                                            "italic": false,
+                                            "color": "#80857a"
+                                        },
+                                        {
+                                            "text": "s",
+                                            "italic": false,
+                                            "color": "#807a85"
+                                        },
+                                        {
+                                            "text": " ",
+                                            "italic": false,
+                                            "color": "#80708f"
+                                        },
+                                        {
+                                            "text": "r",
+                                            "italic": false,
+                                            "color": "#806699"
+                                        },
+                                        {
+                                            "text": "e",
+                                            "italic": false,
+                                            "color": "#805ca3"
+                                        },
+                                        {
+                                            "text": "a",
+                                            "italic": false,
+                                            "color": "#8052ad"
+                                        },
+                                        {
+                                            "text": "l",
+                                            "italic": false,
+                                            "color": "#8047b8"
+                                        },
+                                        {
+                                            "text": "l",
+                                            "italic": false,
+                                            "color": "#803dc2"
+                                        },
+                                        {
+                                            "text": "y",
+                                            "italic": false,
+                                            "color": "#8033cc"
+                                        },
+                                        {
+                                            "text": " ",
+                                            "italic": false,
+                                            "color": "#8029d6"
+                                        },
+                                        {
+                                            "text": "c",
+                                            "italic": false,
+                                            "color": "#801fe0"
+                                        },
+                                        {
+                                            "text": "o",
+                                            "italic": false,
+                                            "color": "#8014eb"
+                                        },
+                                        {
+                                            "text": "o",
+                                            "italic": false,
+                                            "color": "#800af5"
+                                        },
+                                        {
+                                            "text": "l",
+                                            "italic": false,
+                                            "color": "#8000ff"
+                                        }
+                                    ]
+                                ],
+                                "minecraft:rarity": "rare",
+                                "minecraft:enchantable": {
+                                    "value": 1
+                                },
+                                "minecraft:enchantment_glint_override": true,
+                                "minecraft:attribute_modifiers": [
+                                    {
+                                        "type": "minecraft:luck",
+                                        "amount": 4,
+                                        "operation": "add_value",
+                                        "slot": "hand",
+                                        "id": "pompeiiluck"
+                                    },
+                                    {
+                                        "type": "minecraft:burning_time",
+                                        "amount": -0.9,
+                                        "operation": "add_multiplied_total",
+                                        "slot": "hand",
+                                        "id": "pompeiiburntime"
+                                    }
+                                ],
+                                "minecraft:food": {
+                                    "nutrition": 1,
+                                    "saturation": 1,
+                                    "can_always_eat": true
+                                },
+                                "minecraft:consumable": {
+                                    "consume_seconds": 20
+                                },
+                                "minecraft:tooltip_display": {
+                                    "hidden_components": [
+                                        "enchantments"
+                                    ]
                                 }
                             }
                         }

@@ -85,6 +85,8 @@
   "lategameplus.config.lodestone.warp_cooldown_seconds.desc": "传送后需等待的时间，才能再次使用。",
   "lategameplus.config.crossbow.damage_multiplier": "下界合金弩伤害倍率",
   "lategameplus.config.crossbow.damage_multiplier.desc": "调整下界合金弩射出的弹药伤害。1.0 = 原版数值，1.5 = 默认加成。",
+  "lategameplus.config.fishing.time_multiplier": "钓鱼时间倍率",
+  "lategameplus.config.fishing.time_multiplier.desc": "调整钓鱼等待时间。1.0 = 原版，较低 = 更慢，较高 = 更快。",
   "lategameplus.config.anvil.max_cost": "下界合金铁砧经验上限",
   "lategameplus.config.anvil.max_cost.desc": "封顶前铁砧需要的最高等级消耗（20-39级）。",
   "lategameplus.config.debris.max_battery_seconds": "最大电池时间（秒）",

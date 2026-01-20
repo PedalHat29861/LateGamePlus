@@ -84,6 +84,8 @@
   "item.lategameplus.fusion_forge": "Forja de Fusion",
   "lategameplus.config.crossbow.damage_multiplier": "Multiplicador de daño de la ballesta de netherita",
   "lategameplus.config.crossbow.damage_multiplier.desc": "Ajusta el daño de los proyectiles de la ballesta de netherita. 1.0 = daño original, 1.5 = valor predeterminado.",
+  "lategameplus.config.fishing.time_multiplier": "Multiplicador de tiempo de pesca",
+  "lategameplus.config.fishing.time_multiplier.desc": "Ajusta el tiempo de espera. 1.0 = vanilla, menor = mas lento, mayor = mas rapido.",
   "lategameplus.config.anvil.max_cost": "Límite de experiencia del yunque de netherita",
   "lategameplus.config.anvil.max_cost.desc": "Nivel máximo que exige el yunque antes de limitar el coste (20-39 niveles).",
   "lategameplus.config.debris.max_battery_seconds": "Batería máxima (segundos)",

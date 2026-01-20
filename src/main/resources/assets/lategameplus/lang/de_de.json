@@ -85,6 +85,8 @@
   "lategameplus.config.lodestone.warp_cooldown_seconds.desc": "Zeit nach Warp, bevor das Item erneut benutzt werden kann.",
   "lategameplus.config.crossbow.damage_multiplier": "Schadensmultiplikator der Netherit-Armbrust",
   "lategameplus.config.crossbow.damage_multiplier.desc": "Skaliert den Schaden von Projektilen der Netherit-Armbrust. 1,0 = Vanilla-Schaden, 1,5 = Standard.",
+  "lategameplus.config.fishing.time_multiplier": "Angelzeit-Multiplikator",
+  "lategameplus.config.fishing.time_multiplier.desc": "Skaliert die Wartezeit beim Angeln. 1,0 = Vanilla, niedriger = langsamer, hoeher = schneller.",
   "lategameplus.config.anvil.max_cost": "XP-Limit des Netherit-Ambosses",
   "lategameplus.config.anvil.max_cost.desc": "Höchste Erfahrungsstufe, die der Netherit-Amboss verlangt (20-39).",
   "lategameplus.config.debris.max_battery_seconds": "Maximale Batterie (Sekunden)",

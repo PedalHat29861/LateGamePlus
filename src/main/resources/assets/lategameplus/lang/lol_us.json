@@ -95,6 +95,8 @@
 
   "lategameplus.config.crossbow.damage_multiplier": "Boomstick hurt-much multiplier",
   "lategameplus.config.crossbow.damage_multiplier.desc": "Makez dat shiny boomstick arrowz hurt moar. 1.0 = boring vanilla, 1.5 = gud default.",
+  "lategameplus.config.fishing.time_multiplier": "Fishin time multipliar",
+  "lategameplus.config.fishing.time_multiplier.desc": "Makz waitin fer bite faster/slower. 1.0 = vanilla, lower = slower, higher = faster.",
 
   "lategameplus.config.anvil.max_cost": "Anvil XP ceiling thingy",
   "lategameplus.config.anvil.max_cost.desc": "Highest level tax da anvil asks before it sez NOPE (20-39 lvlz).",

@@ -85,6 +85,8 @@
   "lategameplus.config.lodestone.warp_cooldown_seconds.desc": "Temps d'attente après téléportation avant réutilisation.",
   "lategameplus.config.crossbow.damage_multiplier": "Multiplicateur de dégâts de l'arbalète en netherite",
   "lategameplus.config.crossbow.damage_multiplier.desc": "Ajuste les dégâts des projectiles de l'arbalète en netherite. 1,0 = valeur vanilla, 1,5 = valeur par défaut.",
+  "lategameplus.config.fishing.time_multiplier": "Multiplicateur du temps de peche",
+  "lategameplus.config.fishing.time_multiplier.desc": "Ajuste le temps d'attente. 1,0 = vanilla, plus bas = plus lent, plus haut = plus rapide.",
   "lategameplus.config.anvil.max_cost": "Plafond d'expérience de l'enclume en netherite",
   "lategameplus.config.anvil.max_cost.desc": "Coût en niveaux maximal appliqué avant plafonnement (20 à 39 niveaux).",
   "lategameplus.config.debris.max_battery_seconds": "Batterie max (secondes)",
