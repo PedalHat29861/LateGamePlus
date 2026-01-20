@@ -7,6 +7,7 @@ import com.pedalhat.lategameplus.item.LodestoneWarpItem;
 import com.pedalhat.lategameplus.item.NetheriteBowItem;
 import com.pedalhat.lategameplus.item.NetheriteCrossbowItem;
 import com.pedalhat.lategameplus.item.DebrisResonatorItem;
+import com.pedalhat.lategameplus.item.PompeiiWormItem;
 import com.pedalhat.lategameplus.tag.LGPItemTags;
 
 import net.minecraft.component.ComponentMap;
@@ -91,6 +92,7 @@ public class ModItems {
     public static Item VOID_CRYSTAL;
     public static Item DEBRIS_RESONATOR;
     public static Item NETHERITE_WOLF_ARMOR;
+    public static Item POMPEII_WORM;
     public static Map<DyeColor, Item> NETHERITE_HARNESSES;
 
     private static final RegistryKey<net.minecraft.item.equipment.EquipmentAsset> NETHERITE_WOLF_ARMOR_ASSET =
@@ -165,6 +167,7 @@ public class ModItems {
             .toArray(Item[]::new);
     }
 
+    @SuppressWarnings("null")
     public static void init(ModConfig cfg) {
         NETHERITE_NUGGET = register("netherite_nugget",
             new Item(settings("netherite_nugget").fireproof()));
@@ -305,5 +308,21 @@ public class ModItems {
         for (DyeColor color : DyeColor.values()) {
             NETHERITE_HARNESSES.put(color, registerHarness(color));
         }
+        POMPEII_WORM = register("pompeii_worm",
+            new PompeiiWormItem(settings("pompeii_worm")
+                .maxCount(16)
+                .fireproof()
+                .food(
+                    new FoodComponent.Builder()
+                        .nutrition(4)
+                        .saturationModifier(0.8F)
+                        .alwaysEdible()
+                        .build(),
+                    ConsumableComponents.food()
+                        .consumeEffect(new ApplyEffectsConsumeEffect(new StatusEffectInstance(StatusEffects.FIRE_RESISTANCE, 70, 0), 1.0F))
+                        .build()
+                ).rarity(Rarity.COMMON)
+            )
+        );
     }
 }

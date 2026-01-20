@@ -7,14 +7,20 @@
         {
           "type": "minecraft:item",
           "name": "minecraft:warped_stem",
-          "weight": 50,
+          "weight": 5,
           "quality": 0
         },
         {
           "type": "minecraft:item",
           "name": "minecraft:crimson_stem",
-          "weight": 50,
+          "weight": 5,
           "quality": 0
+        },
+        {
+          "type": "minecraft:item",
+          "name": "lategameplus:pompeii_worm",
+          "weight": 80,
+          "quality": 10
         }
       ]
     }

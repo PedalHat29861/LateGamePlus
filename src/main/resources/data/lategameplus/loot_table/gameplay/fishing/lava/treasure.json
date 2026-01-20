@@ -19,7 +19,7 @@
         {
           "type": "minecraft:item",
           "name": "minecraft:book",
-          "weight": 40,
+          "weight": 10,
           "quality": 5,
           "conditions": [],
           "functions": [

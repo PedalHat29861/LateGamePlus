@@ -38,6 +38,7 @@ public final class ModItemGroups {
                 entries.add(ModItems.DEBRIS_RESONATOR);
                 entries.add(ModBlocks.NETHERITE_ANVIL);
                 entries.add(ModBlocks.FUSION_FORGE);
+                entries.add(ModItems.POMPEII_WORM);
             })
             .build());
     }

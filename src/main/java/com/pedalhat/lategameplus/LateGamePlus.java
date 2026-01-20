@@ -76,9 +76,11 @@ public class LateGamePlus implements ModInitializer {
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.FUNCTIONAL)
                 .register(e -> e.addAfter(Items.ANVIL,ModBlocks.NETHERITE_ANVIL.asItem()));
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.FUNCTIONAL)
-                .register(e -> e.addAfter(Items.CHIPPED_ANVIL,ModBlocks.FUSION_FORGE.asItem()));
+                .register(e -> e.addAfter(Items.DAMAGED_ANVIL,ModBlocks.FUSION_FORGE.asItem()));
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.TOOLS)
                 .register(e -> e.addAfter(ModItems.LODESTONE_WARP, ModItems.DEBRIS_RESONATOR));
+        ItemGroupEvents.modifyEntriesEvent(ItemGroups.FOOD_AND_DRINK)
+                .register(e -> e.addAfter(ModItems.ENCHANTED_NETHERITE_APPLE, ModItems.POMPEII_WORM));
         
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> {
                 DebrisResonatorItem.DebrisResonatorHooks.shutdown();
