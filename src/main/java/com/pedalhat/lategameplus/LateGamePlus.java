@@ -10,6 +10,8 @@ import com.pedalhat.lategameplus.registry.ModBlocks;
 import com.pedalhat.lategameplus.registry.ModBlockEntities;
 import com.pedalhat.lategameplus.registry.ModItemGroups;
 import com.pedalhat.lategameplus.registry.ModItems;
+import com.pedalhat.lategameplus.registry.ModEffects;
+import com.pedalhat.lategameplus.registry.ModPotions;
 import com.pedalhat.lategameplus.registry.ModScreenHandlers;
 
 import net.fabricmc.api.ModInitializer;
@@ -37,6 +39,8 @@ public class LateGamePlus implements ModInitializer {
         ModBlockEntities.init();
         ModScreenHandlers.init();
         ModItemGroups.init();
+        ModEffects.init();
+        ModPotions.init();
         ModEvents.register(cfg);
         ModCommands.register();
         ModRecipes.init();

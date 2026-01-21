@@ -12,6 +12,7 @@
     "HappyGhastEntityMixin",
     "ItemEntityMixin",
     "LivingEntityDropStorageMixin",
+    "LivingEntityLavaTravelMixin",
     "WolfEntityMixin"
   ],
   "client": [

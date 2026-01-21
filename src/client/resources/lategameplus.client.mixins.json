@@ -3,6 +3,8 @@
 	"package": "com.pedalhat.lategameplus.mixin.client",
 	"compatibilityLevel": "JAVA_21",
 	"client": [
+		"FogRendererMixin",
+		"InGameOverlayRendererMixin",
 		"TotemFloatingDisplayMixin",
 		"HeldItemRendererMixin",
 		"PlayerEntityRendererMixin"

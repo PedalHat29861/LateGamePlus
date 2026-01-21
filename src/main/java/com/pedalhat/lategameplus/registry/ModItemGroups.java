@@ -2,8 +2,10 @@ package com.pedalhat.lategameplus.registry;
 
 import com.pedalhat.lategameplus.LateGamePlus;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
+import net.minecraft.component.type.PotionContentsComponent;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
@@ -39,6 +41,24 @@ public final class ModItemGroups {
                 entries.add(ModBlocks.NETHERITE_ANVIL);
                 entries.add(ModBlocks.FUSION_FORGE);
                 entries.add(ModItems.POMPEII_WORM);
+                entries.add(PotionContentsComponent.createStack(Items.POTION, ModPotions.LAVA_VISION));
+                entries.add(PotionContentsComponent.createStack(Items.POTION, ModPotions.STRONG_LAVA_VISION));
+                entries.add(PotionContentsComponent.createStack(Items.POTION, ModPotions.LONG_LAVA_VISION));
+                entries.add(PotionContentsComponent.createStack(Items.POTION, ModPotions.VOLCANIC_INFUSION));
+                entries.add(PotionContentsComponent.createStack(Items.POTION, ModPotions.STRONG_VOLCANIC_INFUSION));
+                entries.add(PotionContentsComponent.createStack(Items.POTION, ModPotions.LONG_VOLCANIC_INFUSION));
+                entries.add(PotionContentsComponent.createStack(Items.SPLASH_POTION, ModPotions.LAVA_VISION));
+                entries.add(PotionContentsComponent.createStack(Items.SPLASH_POTION, ModPotions.STRONG_LAVA_VISION));
+                entries.add(PotionContentsComponent.createStack(Items.SPLASH_POTION, ModPotions.LONG_LAVA_VISION));
+                entries.add(PotionContentsComponent.createStack(Items.SPLASH_POTION, ModPotions.VOLCANIC_INFUSION));
+                entries.add(PotionContentsComponent.createStack(Items.SPLASH_POTION, ModPotions.STRONG_VOLCANIC_INFUSION));
+                entries.add(PotionContentsComponent.createStack(Items.SPLASH_POTION, ModPotions.LONG_VOLCANIC_INFUSION));
+                entries.add(PotionContentsComponent.createStack(Items.LINGERING_POTION, ModPotions.LAVA_VISION));
+                entries.add(PotionContentsComponent.createStack(Items.LINGERING_POTION, ModPotions.STRONG_LAVA_VISION));
+                entries.add(PotionContentsComponent.createStack(Items.LINGERING_POTION, ModPotions.LONG_LAVA_VISION));
+                entries.add(PotionContentsComponent.createStack(Items.LINGERING_POTION, ModPotions.VOLCANIC_INFUSION));
+                entries.add(PotionContentsComponent.createStack(Items.LINGERING_POTION, ModPotions.STRONG_VOLCANIC_INFUSION));
+                entries.add(PotionContentsComponent.createStack(Items.LINGERING_POTION, ModPotions.LONG_VOLCANIC_INFUSION));
             })
             .build());
     }

@@ -29,8 +29,7 @@
 		"jei_mod_plugin": [
 			{
 				"value": "com.pedalhat.lategameplus.jei.FusionForgeJeiPlugin",
-				"adapter": "default",
-				"environment": "client"
+				"adapter": "default"
 			}
 		]
 	},
