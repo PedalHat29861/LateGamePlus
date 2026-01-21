@@ -20,7 +20,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(LivingEntity.class)
 public class LivingEntityLavaTravelMixin {
-    // Config hook: swap these for Mod Menu config values when available.
     private static float LAVA_TRAVEL_MULTIPLIER_TIER1 = 3.0f;
     private static float LAVA_TRAVEL_MULTIPLIER_TIER2 = 6.0f;
     private static float LAVA_VERTICAL_MULTIPLIER_TIER1 = 1.0f;
