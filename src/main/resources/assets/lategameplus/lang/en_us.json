@@ -130,5 +130,6 @@
   "item.minecraft.lingering_potion.effect.lategameplus.long_volcanic_infusion": "Lingering Potion of Volcanic Infusion",
   "item.minecraft.tipped_arrow.effect.lategameplus.volcanic_infusion": "Arrow of Volcanic Infusion",
   "item.minecraft.tipped_arrow.effect.lategameplus.strong_volcanic_infusion": "Arrow of Volcanic Infusion",
-  "item.minecraft.tipped_arrow.effect.lategameplus.long_volcanic_infusion": "Arrow of Volcanic Infusion"
+  "item.minecraft.tipped_arrow.effect.lategameplus.long_volcanic_infusion": "Arrow of Volcanic Infusion",
+  "enchantment.lategameplus.volcanic_walker": "Volcanic Walker"
 }

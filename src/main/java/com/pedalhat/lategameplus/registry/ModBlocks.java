@@ -4,9 +4,11 @@ import com.pedalhat.lategameplus.LateGamePlus;
 import com.pedalhat.lategameplus.block.FusionForgeBlock;
 import com.pedalhat.lategameplus.block.FusionForgeState;
 import com.pedalhat.lategameplus.block.NetheriteAnvilBlock;
+import com.pedalhat.lategameplus.block.VolcanicObsidianBlock;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.AbstractBlock;
+import net.minecraft.block.Blocks;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
@@ -45,6 +47,7 @@ public final class ModBlocks {
 
     public static Block NETHERITE_ANVIL;
     public static Block FUSION_FORGE;
+    public static Block VOLCANIC_OBSIDIAN;
 
     public static void init() {
         // Block tuning: anvil sounds, netherite hardness/resistance (50F/1200F),
@@ -88,6 +91,16 @@ public final class ModBlocks {
             new FusionForgeBlock(fusionForgeSettings),
             Rarity.COMMON,
             true
+        );
+
+        AbstractBlock.Settings volcanicObsidianSettings = AbstractBlock.Settings
+            .copy(Blocks.OBSIDIAN)
+            .dropsNothing()
+            .registryKey(blockKey("volcanic_obsidian"));
+
+        VOLCANIC_OBSIDIAN = registerBlock(
+            "volcanic_obsidian",
+            new VolcanicObsidianBlock(volcanicObsidianSettings)
         );
     }
 

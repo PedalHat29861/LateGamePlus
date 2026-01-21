@@ -127,5 +127,6 @@
   "item.minecraft.lingering_potion.effect.lategameplus.long_volcanic_infusion": "Pocion persistente de Infusion volcanica",
   "item.minecraft.tipped_arrow.effect.lategameplus.volcanic_infusion": "Flecha de Infusion volcanica",
   "item.minecraft.tipped_arrow.effect.lategameplus.strong_volcanic_infusion": "Flecha de Infusion volcanica",
-  "item.minecraft.tipped_arrow.effect.lategameplus.long_volcanic_infusion": "Flecha de Infusion volcanica"
+  "item.minecraft.tipped_arrow.effect.lategameplus.long_volcanic_infusion": "Flecha de Infusion volcanica",
+  "enchantment.lategameplus.volcanic_walker": "Paso volcanico"
 }
