@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "minecraft:bowl",
+    "minecraft:magma_cream",
+    "lategameplus:blind_shrimp",
+    "lategameplus:pompeii_worm"
+  ],
+  "result": {
+    "id": "lategameplus:volcanic_concoction",
+    "count": 1
+  }
+}

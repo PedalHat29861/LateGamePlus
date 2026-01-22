@@ -93,6 +93,8 @@ public class ModItems {
     public static Item DEBRIS_RESONATOR;
     public static Item NETHERITE_WOLF_ARMOR;
     public static Item POMPEII_WORM;
+    public static Item BLIND_SHRIMP;
+    public static Item VOLCANIC_CONCOCTION;
     public static Map<DyeColor, Item> NETHERITE_HARNESSES;
 
     private static final RegistryKey<net.minecraft.item.equipment.EquipmentAsset> NETHERITE_WOLF_ARMOR_ASSET =
@@ -310,7 +312,7 @@ public class ModItems {
         }
         POMPEII_WORM = register("pompeii_worm",
             new PompeiiWormItem(settings("pompeii_worm")
-                .maxCount(16)
+                .maxCount(64)
                 .fireproof()
                 .food(
                     new FoodComponent.Builder()
@@ -323,6 +325,29 @@ public class ModItems {
                         .consumeEffect(new ApplyEffectsConsumeEffect(new StatusEffectInstance(StatusEffects.FIRE_RESISTANCE, 140, 0), 0.1F))
                         .build()
                 ).rarity(Rarity.COMMON)
+            )
+        );
+        BLIND_SHRIMP = register("blind_shrimp",
+            new Item(settings("blind_shrimp")
+                .maxCount(64)
+                .fireproof()
+                .food(
+                    new FoodComponent.Builder()
+                        .nutrition(1)
+                        .saturationModifier(0.4F)
+                        .alwaysEdible()
+                        .build(),
+                    ConsumableComponents.food()
+                        .consumeEffect(new ApplyEffectsConsumeEffect(new StatusEffectInstance(ModEffects.VOLCANIC_INFUSION, 400, 0), 1.0F))
+                        .consumeEffect(new ApplyEffectsConsumeEffect(new StatusEffectInstance(ModEffects.LAVA_VISION, 400, 0), 1.0F))
+                        .build()
+                ).rarity(Rarity.COMMON)
+            )
+        );
+        VOLCANIC_CONCOCTION = register("volcanic_concoction",
+            new Item(settings("volcanic_concoction")
+                .maxCount(16)
+                .rarity(Rarity.COMMON)
             )
         );
     }

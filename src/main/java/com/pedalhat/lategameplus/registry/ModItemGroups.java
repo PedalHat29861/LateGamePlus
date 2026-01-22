@@ -41,6 +41,11 @@ public final class ModItemGroups {
                 entries.add(ModBlocks.NETHERITE_ANVIL);
                 entries.add(ModBlocks.FUSION_FORGE);
                 entries.add(ModItems.POMPEII_WORM);
+                entries.add(ModItems.BLIND_SHRIMP);
+                entries.add(ModItems.VOLCANIC_CONCOCTION);
+
+
+
                 entries.add(PotionContentsComponent.createStack(Items.POTION, ModPotions.LAVA_VISION));
                 entries.add(PotionContentsComponent.createStack(Items.POTION, ModPotions.STRONG_LAVA_VISION));
                 entries.add(PotionContentsComponent.createStack(Items.POTION, ModPotions.LONG_LAVA_VISION));

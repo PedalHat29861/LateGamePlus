@@ -1,0 +1,39 @@
+{
+  "criteria": {
+    "has_ingredient_1": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "minecraft:brick"
+            ]
+          }
+        ]
+      }
+    },
+    "has_ingredient_2": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "minecraft:netherrack"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_ingredient_1",
+      "has_ingredient_2"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "lategameplus:fusion_forge/nether_brick"
+    ]
+  }
+}

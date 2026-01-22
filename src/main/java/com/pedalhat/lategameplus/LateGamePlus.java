@@ -34,16 +34,16 @@ public class LateGamePlus implements ModInitializer {
         ConfigManager.load();
         ModConfig cfg = ConfigManager.get();
         LOGGER.info("Hello Fabric world! Late Game Plus is initializing...");
-        ModItems.init(cfg);
+        ModEffects.init();
         ModBlocks.init();
         ModBlockEntities.init();
         ModScreenHandlers.init();
         ModItemGroups.init();
-        ModEffects.init();
         ModPotions.init();
         ModEvents.register(cfg);
         ModCommands.register();
         ModRecipes.init();
+        ModItems.init(cfg);
         RecipeSynchronization.synchronizeRecipeSerializer(ModRecipes.FUSION_FORGE_SERIALIZER);
         DebrisResonatorItem.DebrisResonatorHooks.init();
 
@@ -85,6 +85,10 @@ public class LateGamePlus implements ModInitializer {
                 .register(e -> e.addAfter(ModItems.LODESTONE_WARP, ModItems.DEBRIS_RESONATOR));
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.FOOD_AND_DRINK)
                 .register(e -> e.addAfter(ModItems.ENCHANTED_NETHERITE_APPLE, ModItems.POMPEII_WORM));
+        ItemGroupEvents.modifyEntriesEvent(ItemGroups.FOOD_AND_DRINK)
+                .register(e -> e.addAfter(ModItems.POMPEII_WORM, ModItems.BLIND_SHRIMP));
+        ItemGroupEvents.modifyEntriesEvent(ItemGroups.INGREDIENTS)
+                .register(e -> e.addAfter(Items.BLAZE_POWDER, ModItems.VOLCANIC_CONCOCTION));
         
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> {
                 DebrisResonatorItem.DebrisResonatorHooks.shutdown();

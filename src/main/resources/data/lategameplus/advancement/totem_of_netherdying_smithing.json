@@ -1,0 +1,52 @@
+{
+  "criteria": {
+    "has_ingredient_1": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "minecraft:netherite_upgrade_smithing_template"
+            ]
+          }
+        ]
+      }
+    },
+    "has_ingredient_2": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "minecraft:totem_of_undying"
+            ]
+          }
+        ]
+      }
+    },
+    "has_ingredient_3": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "minecraft:netherite_ingot"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_ingredient_1",
+      "has_ingredient_2",
+      "has_ingredient_3"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "lategameplus:totem_of_netherdying_smithing"
+    ]
+  }
+}

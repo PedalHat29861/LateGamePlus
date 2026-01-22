@@ -1,0 +1,41 @@
+{
+  "criteria": {
+    "got_blind_shrimp": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "lategameplus:blind_shrimp"
+            ]
+          }
+        ]
+      }
+    },
+    "got_pompeii_worm": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "lategameplus:pompeii_worm"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "got_blind_shrimp"
+    ],
+    [
+      "got_pompeii_worm"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "lategameplus:volcanic_concoction_crafting"
+    ]
+  }
+}
