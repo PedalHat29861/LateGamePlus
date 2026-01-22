@@ -7,43 +7,93 @@
         {
           "type": "minecraft:item",
           "name": "minecraft:iron_ingot",
-          "weight": 100,
-          "quality": -10
+          "weight": 150,
+          "quality": -5
         },
         {
           "type": "minecraft:item",
           "name": "minecraft:gold_ingot",
-          "weight": 150,
-          "quality": 0
+          "weight": 200,
+          "quality": 10
         },
         {
           "type": "minecraft:item",
           "name": "minecraft:book",
-          "weight": 10,
-          "quality": 5,
+          "weight": 50,
+          "quality": -15,
           "conditions": [],
           "functions": [
             {
               "function": "minecraft:enchant_with_levels",
-              "levels": 35,
+              "levels": 15,
               "options": [
+                "minecraft:flame",
+                "minecraft:unbreaking",
+                "minecraft:power",
+                "minecraft:knockback",
+                "minecraft:punch",
                 "minecraft:fire_protection",
-                "minecraft:fire_aspect"
-              ]
+                "minecraft:fire_aspect",
+                "minecraft:protection",
+                "minecraft:sharpness"
+              ],
+              "conditions": []
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:book",
+          "weight": 5,
+          "quality": 15,
+          "conditions": [],
+          "functions": [
+            {
+              "function": "minecraft:enchant_with_levels",
+              "levels": 40,
+              "options": [
+                "minecraft:flame",
+                "minecraft:mending",
+                "minecraft:unbreaking",
+                "minecraft:power",
+                "minecraft:knockback",
+                "minecraft:punch",
+                "minecraft:fire_protection",
+                "minecraft:fire_aspect",
+                "minecraft:protection",
+                "minecraft:sharpness"
+              ],
+              "conditions": []
             }
           ]
         },
         {
           "type": "minecraft:item",
           "name": "minecraft:netherite_upgrade_smithing_template",
-          "weight": 1,
-          "quality": 5
+          "weight": 2,
+          "quality": 2
         },
         {
           "type": "minecraft:item",
           "name": "lategameplus:netherite_nugget",
           "weight": 5,
-          "quality": 15
+          "quality": 10
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:book",
+          "weight": 1,
+          "quality": 5,
+          "conditions": [],
+          "functions": [
+            {
+              "function": "minecraft:enchant_with_levels",
+              "levels": 30,
+              "options": [
+                "lategameplus:volcanic_walker"
+              ]
+            }
+          ]
         }
       ]
     }

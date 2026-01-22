@@ -18,6 +18,12 @@
                 },
                 {
                     "type": "minecraft:item",
+                    "name": "lategameplus:blind_shrimp",
+                    "weight": 65,
+                    "quality": 15
+                },
+                {
+                    "type": "minecraft:item",
                     "name": "lategameplus:pompeii_worm",
                     "weight": 80,
                     "quality": 10,

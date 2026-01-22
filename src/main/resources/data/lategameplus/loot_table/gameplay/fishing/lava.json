@@ -7,26 +7,26 @@
         {
           "type": "minecraft:loot_table",
           "value": "lategameplus:gameplay/fishing/lava/fish",
-          "weight": 40,
+          "weight": 75,
           "quality": -15
         },
         {
           "type": "minecraft:loot_table",
           "value": "lategameplus:gameplay/fishing/lava/junk",
-          "weight": 30,
+          "weight": 65,
           "quality": -15
         },
         {
           "type": "minecraft:loot_table",
           "value": "lategameplus:gameplay/fishing/lava/treasure",
-          "weight": 20,
-          "quality": 5
+          "weight": 25,
+          "quality": 15
         },
         {
           "type": "minecraft:loot_table",
           "value": "lategameplus:gameplay/fishing/lava/nether_junk",
-          "weight": 30,
-          "quality": -5
+          "weight": 50,
+          "quality": -10
         }
       ]
     }
