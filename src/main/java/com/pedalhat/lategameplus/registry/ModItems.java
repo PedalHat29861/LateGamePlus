@@ -95,6 +95,7 @@ public class ModItems {
     public static Item POMPEII_WORM;
     public static Item BLIND_SHRIMP;
     public static Item VOLCANIC_CONCOCTION;
+    public static Item LAVA_VISION_ICON;
     public static Map<DyeColor, Item> NETHERITE_HARNESSES;
 
     private static final RegistryKey<net.minecraft.item.equipment.EquipmentAsset> NETHERITE_WOLF_ARMOR_ASSET =
@@ -169,7 +170,6 @@ public class ModItems {
             .toArray(Item[]::new);
     }
 
-    @SuppressWarnings("null")
     public static void init(ModConfig cfg) {
         NETHERITE_NUGGET = register("netherite_nugget",
             new Item(settings("netherite_nugget").fireproof()));
@@ -347,6 +347,12 @@ public class ModItems {
         VOLCANIC_CONCOCTION = register("volcanic_concoction",
             new Item(settings("volcanic_concoction")
                 .maxCount(16)
+                .rarity(Rarity.COMMON)
+            )
+        );
+        LAVA_VISION_ICON = register("lava_vision_icon",
+            new Item(settings("lava_vision_icon")
+                .maxCount(1)
                 .rarity(Rarity.COMMON)
             )
         );

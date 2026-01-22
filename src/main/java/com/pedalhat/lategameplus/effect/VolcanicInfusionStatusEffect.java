@@ -5,6 +5,6 @@ import net.minecraft.entity.effect.StatusEffectCategory;
 
 public class VolcanicInfusionStatusEffect extends StatusEffect {
     public VolcanicInfusionStatusEffect() {
-        super(StatusEffectCategory.BENEFICIAL, 0xE0622E);
+        super(StatusEffectCategory.BENEFICIAL, 0xFFD200);
     }
 }

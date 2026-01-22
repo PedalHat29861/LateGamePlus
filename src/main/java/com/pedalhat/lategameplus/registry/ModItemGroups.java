@@ -19,6 +19,11 @@ public final class ModItemGroups {
         Identifier.of(LateGamePlus.MOD_ID, "lategameplus")
     );
 
+    public static final RegistryKey<ItemGroup> LATEGAMEPLUS_GROUP_POTIONS = RegistryKey.of(
+        RegistryKeys.ITEM_GROUP,
+        Identifier.of(LateGamePlus.MOD_ID, "lategameplus_potions")
+    );
+
     public static void init() {
         Registry.register(Registries.ITEM_GROUP, LATEGAMEPLUS_GROUP, FabricItemGroup.builder()
             .icon(() -> new ItemStack(ModItems.ENCHANTED_NETHERITE_APPLE))
@@ -43,9 +48,12 @@ public final class ModItemGroups {
                 entries.add(ModItems.POMPEII_WORM);
                 entries.add(ModItems.BLIND_SHRIMP);
                 entries.add(ModItems.VOLCANIC_CONCOCTION);
-
-
-
+            })
+            .build());
+        Registry.register(Registries.ITEM_GROUP, LATEGAMEPLUS_GROUP_POTIONS, FabricItemGroup.builder()
+            .icon(() -> new ItemStack(ModItems.LAVA_VISION_ICON))
+            .displayName(Text.translatable("itemGroup.lategameplus.potions"))
+            .entries((context, entries) -> {
                 entries.add(PotionContentsComponent.createStack(Items.POTION, ModPotions.LAVA_VISION));
                 entries.add(PotionContentsComponent.createStack(Items.POTION, ModPotions.STRONG_LAVA_VISION));
                 entries.add(PotionContentsComponent.createStack(Items.POTION, ModPotions.LONG_LAVA_VISION));
@@ -64,6 +72,15 @@ public final class ModItemGroups {
                 entries.add(PotionContentsComponent.createStack(Items.LINGERING_POTION, ModPotions.VOLCANIC_INFUSION));
                 entries.add(PotionContentsComponent.createStack(Items.LINGERING_POTION, ModPotions.STRONG_VOLCANIC_INFUSION));
                 entries.add(PotionContentsComponent.createStack(Items.LINGERING_POTION, ModPotions.LONG_VOLCANIC_INFUSION));
+                entries.add(PotionContentsComponent.createStack(Items.POTION, ModPotions.VOLCANIC_MASTER));
+                entries.add(PotionContentsComponent.createStack(Items.POTION, ModPotions.STRONG_VOLCANIC_MASTER));
+                entries.add(PotionContentsComponent.createStack(Items.POTION, ModPotions.LONG_VOLCANIC_MASTER));
+                entries.add(PotionContentsComponent.createStack(Items.SPLASH_POTION, ModPotions.VOLCANIC_MASTER));
+                entries.add(PotionContentsComponent.createStack(Items.SPLASH_POTION, ModPotions.STRONG_VOLCANIC_MASTER));
+                entries.add(PotionContentsComponent.createStack(Items.SPLASH_POTION, ModPotions.LONG_VOLCANIC_MASTER));
+                entries.add(PotionContentsComponent.createStack(Items.LINGERING_POTION, ModPotions.VOLCANIC_MASTER));
+                entries.add(PotionContentsComponent.createStack(Items.LINGERING_POTION, ModPotions.STRONG_VOLCANIC_MASTER));
+                entries.add(PotionContentsComponent.createStack(Items.LINGERING_POTION, ModPotions.LONG_VOLCANIC_MASTER));
             })
             .build());
     }

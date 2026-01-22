@@ -5,6 +5,6 @@ import net.minecraft.entity.effect.StatusEffectCategory;
 
 public class LavaVisionStatusEffect extends StatusEffect {
     public LavaVisionStatusEffect() {
-        super(StatusEffectCategory.BENEFICIAL, 0xE25A2C);
+        super(StatusEffectCategory.BENEFICIAL, 0xFF6A00);
     }
 }

@@ -7,12 +7,9 @@ import com.pedalhat.lategameplus.mixinutil.LGPLavaImmuneItemEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.projectile.FishingBobberEntity;
-import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.item.Item;
@@ -26,16 +23,10 @@ import net.minecraft.registry.ReloadableRegistries;
 import net.minecraft.registry.tag.FluidTags;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
-import net.minecraft.world.event.GameEvent;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.stat.Stats;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -182,33 +173,6 @@ public class FishingBobberEntityMixin {
         }
     }
 
-    @Inject(method = "tickFishingLogic", at = @At("TAIL"))
-    private void lategameplus$autoReelOnBite(BlockPos pos, CallbackInfo ci) {
-        FishingBobberEntity self = (FishingBobberEntity)(Object)this;
-        if (self.getEntityWorld().isClient()) {
-            return;
-        }
-        if (!this.caughtFish || this.hookCountdown <= 0) {
-            this.lategameplus$autoReelTriggered = false;
-            return;
-        }
-        if (this.lategameplus$autoReelTriggered) {
-            return;
-        }
-        PlayerEntity owner = self.getPlayerOwner();
-        if (owner == null) {
-            return;
-        }
-        if (!owner.getMainHandStack().isOf(ModItems.NETHERITE_FISHING_ROD)) {
-            return;
-        }
-        if (!owner.getOffHandStack().isOf(ModItems.POMPEII_WORM)) {
-            return;
-        }
-        this.lategameplus$autoReelTriggered = true;
-        this.lategameplus$autoReelAndRecast(owner);
-    }
-
     @Redirect(
         method = "tickFishingLogic",
         at = @At(
@@ -257,37 +221,6 @@ public class FishingBobberEntityMixin {
                 : LATEGAMEPLUS$LAVA_FISHING_LOOT_NETHER;
         }
         return LATEGAMEPLUS$LAVA_FISHING_LOOT_OVERWORLD;
-    }
-
-    @Unique
-    private void lategameplus$autoReelAndRecast(PlayerEntity owner) {
-        FishingBobberEntity self = (FishingBobberEntity)(Object)this;
-        World world = self.getEntityWorld();
-        ItemStack rodStack = owner.getMainHandStack();
-        int damage = self.use(rodStack);
-        rodStack.damage(damage, (LivingEntity)owner, Hand.MAIN_HAND.getEquipmentSlot());
-        world.playSound(null, owner.getX(), owner.getY(), owner.getZ(),
-            SoundEvents.ENTITY_FISHING_BOBBER_RETRIEVE, SoundCategory.NEUTRAL,
-            1.0f, 0.4f / (world.getRandom().nextFloat() * 0.4f + 0.8f));
-        rodStack.emitUseGameEvent(owner, GameEvent.ITEM_INTERACT_FINISH);
-
-        ItemStack baitStack = owner.getOffHandStack();
-        if (baitStack.isOf(ModItems.POMPEII_WORM) && world.getRandom().nextFloat() < 0.5f) {
-            baitStack.decrement(1);
-        }
-        if (!owner.getOffHandStack().isOf(ModItems.POMPEII_WORM)) {
-            return;
-        }
-        world.playSound(null, owner.getX(), owner.getY(), owner.getZ(),
-            SoundEvents.ENTITY_FISHING_BOBBER_THROW, SoundCategory.NEUTRAL,
-            0.5f, 0.4f / (world.getRandom().nextFloat() * 0.4f + 0.8f));
-        if (world instanceof ServerWorld serverWorld) {
-            int reduction = (int)(EnchantmentHelper.getFishingTimeReduction(serverWorld, rodStack, owner) * 20.0f);
-            int luck = EnchantmentHelper.getFishingLuckBonus(serverWorld, rodStack, owner);
-            ProjectileEntity.spawn(new FishingBobberEntity(owner, world, luck, reduction), serverWorld, rodStack);
-        }
-        owner.incrementStat(Stats.USED.getOrCreateStat(rodStack.getItem()));
-        rodStack.emitUseGameEvent(owner, GameEvent.ITEM_INTERACT_START);
     }
 
     @Unique

@@ -55,6 +55,7 @@
   "tag.item.lategameplus.crossbows": "Crossbows",
   "tag.item.lategameplus.repairs_netherite_wolf_armor": "Repairs Netherite Wolf Armor",
   "itemGroup.lategameplus.lategameplus": "Late Game Plus",
+  "itemGroup.lategameplus.potions": "Late Game Plus Potions",
   
   "block.lategameplus.netherite_anvil": "Netherite Anvil",
   "block.lategameplus.fusion_forge": "Fusion Forge",
@@ -145,5 +146,6 @@
   "item.minecraft.tipped_arrow.effect.lategameplus.volcanic_master": "Arrow of Volcanic Master",
   "item.minecraft.tipped_arrow.effect.lategameplus.strong_volcanic_master": "Arrow of Volcanic Master",
   "item.minecraft.tipped_arrow.effect.lategameplus.long_volcanic_master": "Arrow of Volcanic Master",
-  "enchantment.lategameplus.volcanic_walker": "Volcanic Walker"
+  "enchantment.lategameplus.volcanic_walker": "Volcanic Walker",
+  "item.lategameplus.lava_vision_icon": "DEBUG ITEM, THIS DON'T HAVE ANY USES"
 }
