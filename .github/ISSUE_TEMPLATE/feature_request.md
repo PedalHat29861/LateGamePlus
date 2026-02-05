@@ -1,20 +1,29 @@
 ---
 name: Feature request
-about: Suggest an idea for this project
-title: ''
+about: Suggest a feature or improvement for LateGame+.
+title: "[REQUEST]"
 labels: ''
-assignees: ''
+assignees: PedalHat29861
 
 ---
 
-**Is your feature request related to a problem? Please describe.**
-A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
+Please keep in mind that not all suggestions will be implemented.
 
-**Describe the solution you'd like**
-A clear and concise description of what you want to happen.
+**Is your request related to a problem or limitation?**
+If yes, describe what feels missing or problematic.
 
-**Describe alternatives you've considered**
-A clear and concise description of any alternative solutions or features you've considered.
+**Describe the feature you would like**
+What should be added or changed? Be specific.
+
+**How does this fit LateGame+ progression?**
+Early game / Mid game / Late game
+Explain where this feature belongs and why.
+
+**Have you considered balance or drawbacks?**
+If this feature is powerful, what would limit it? Cost, rarity, downsides, etc.
+
+**Alternatives you’ve considered**
+Any other ways this idea could be implemented.
 
 **Additional context**
-Add any other context or screenshots about the feature request here.
+Screenshots, references, similar mods, or extra details.
