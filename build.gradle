@@ -51,8 +51,20 @@ dependencies {
     modRuntimeOnly "mezz.jei:jei-${project.minecraft_version}-fabric:${project.jei_version}"
 }
 
+def nonRuntimeAssetPatterns = [
+    "**/*.kra", "**/*.kra~",
+    "**/*.psd", "**/*.psd~",
+    "**/*.xcf", "**/*.xcf~",
+    "**/*.ase", "**/*.aseprite",
+    "**/*.clip", "**/*.clip~",
+    "**/*.ora", "**/*.ora~",
+    "**/*.blend", "**/*.blend1",
+    "**/*~"
+]
+
 processResources {
     inputs.property "version", project.version
+    exclude(nonRuntimeAssetPatterns)
     filesMatching("fabric.mod.json") {
         expand "version": inputs.properties.version
     }
@@ -71,9 +83,14 @@ java {
 
 jar {
     inputs.property "archivesName", project.base.archivesName
+    exclude(nonRuntimeAssetPatterns)
     from("LICENSE") {
         rename { "${it}_${inputs.properties.archivesName}" }
     }
+}
+
+tasks.named("sourcesJar", Jar).configure {
+    exclude(nonRuntimeAssetPatterns)
 }
 
 publishing {
