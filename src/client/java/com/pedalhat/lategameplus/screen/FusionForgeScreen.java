@@ -117,7 +117,7 @@ public class FusionForgeScreen extends HandledScreen<FusionForgeScreenHandler> {
         int current = handler.getFuelStored();
         context.drawTooltip(
             textRenderer,
-            Text.translatable("tooltip.lategameplus.fusion_forge.fuel_capacity", capacity, current),
+            Text.translatable("tooltip.lategameplus.fusion_forge.fuel_capacity", current, capacity),
             mouseX,
             mouseY
         );
