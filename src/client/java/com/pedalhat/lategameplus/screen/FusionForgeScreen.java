@@ -9,6 +9,8 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
+import java.util.Locale;
+
 public class FusionForgeScreen extends HandledScreen<FusionForgeScreenHandler> {
     private static final Identifier TEXTURE = Identifier.of(LateGamePlus.MOD_ID, "textures/gui/container/fusion_forge.png");
     private static final Identifier BURN_PROGRESS_TEXTURE =
@@ -34,8 +36,11 @@ public class FusionForgeScreen extends HandledScreen<FusionForgeScreenHandler> {
     private static final int FLAME_V = 0;
     private static final int FLAME_WIDTH = 14;
     private static final int FLAME_HEIGHT = 14;
+    private static final int FLAME_TEXTURE_HEIGHT = 56;
+    private static final int FLAME_FRAME_COUNT = 4;
+    private static final int FLAME_FRAME_TICKS = 20;
     private static final int FLAME_X = 68;
-    private static final int FLAME_Y = 39;
+    private static final int FLAME_Y = 40;
 
     public FusionForgeScreen(FusionForgeScreenHandler handler, PlayerInventory inventory, Text title) {
         super(handler, inventory, title);
@@ -82,9 +87,11 @@ public class FusionForgeScreen extends HandledScreen<FusionForgeScreenHandler> {
         int fuel = handler.getFuelProgress();
         if (fuel > 0) {
             int flameOffset = FLAME_HEIGHT - fuel;
+            long worldTime = client != null && client.world != null ? client.world.getTime() : 0L;
+            int frame = (int) ((worldTime / FLAME_FRAME_TICKS) % FLAME_FRAME_COUNT);
             context.drawTexture(RenderPipelines.GUI_TEXTURED, LIT_PROGRESS_TEXTURE, x + FLAME_X,
-                y + FLAME_Y + flameOffset, FLAME_U, FLAME_V + flameOffset, FLAME_WIDTH, fuel, FLAME_WIDTH,
-                FLAME_HEIGHT);
+                y + FLAME_Y + flameOffset, FLAME_U, FLAME_V + frame * FLAME_HEIGHT + flameOffset, FLAME_WIDTH, fuel, FLAME_WIDTH,
+                FLAME_TEXTURE_HEIGHT);
         }
     }
 
@@ -93,5 +100,24 @@ public class FusionForgeScreen extends HandledScreen<FusionForgeScreenHandler> {
         renderBackground(context, mouseX, mouseY, delta);
         super.render(context, mouseX, mouseY, delta);
         drawMouseoverTooltip(context, mouseX, mouseY);
+        drawFuelTooltip(context, mouseX, mouseY);
+    }
+
+    private void drawFuelTooltip(DrawContext context, int mouseX, int mouseY) {
+        int x = (width - backgroundWidth) / 2;
+        int y = (height - backgroundHeight) / 2;
+        int left = x + FLAME_X;
+        int top = y + FLAME_Y;
+        if (mouseX < left || mouseX >= left + FLAME_WIDTH || mouseY < top || mouseY >= top + FLAME_HEIGHT) {
+            return;
+        }
+
+        int capacity = handler.getFuelCapacity();
+        if (capacity <= 0) {
+            return;
+        }
+        int current = handler.getFuelStored();
+        String formatted = String.format(Locale.US, "Capacidad de combustible: %,d / %,d", capacity, current);
+        context.drawTooltip(textRenderer, Text.literal(formatted), mouseX, mouseY);
     }
 }

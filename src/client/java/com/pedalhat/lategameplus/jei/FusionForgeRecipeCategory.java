@@ -30,7 +30,7 @@ public class FusionForgeRecipeCategory implements IRecipeCategory<RecipeEntry<Fu
     private static final Identifier BURN_PROGRESS_TEXTURE =
         Identifier.of(LateGamePlus.MOD_ID, "textures/gui/sprites/burn_progress.png");
     private static final Identifier LIT_PROGRESS_TEXTURE =
-        Identifier.of(LateGamePlus.MOD_ID, "textures/gui/sprites/lit_progress.png");
+        Identifier.ofVanilla("textures/gui/sprites/container/furnace/lit_progress.png");
     private static final Identifier X2_TEXTURE =
         Identifier.of(LateGamePlus.MOD_ID, "textures/gui/sprites/fusion_forge_x2.png");
     private static final int BACKGROUND_WIDTH = 127;

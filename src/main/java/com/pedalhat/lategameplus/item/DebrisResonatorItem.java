@@ -7,12 +7,14 @@ import net.minecraft.block.Blocks;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.CustomModelDataComponent;
 import net.minecraft.component.type.NbtComponent;
+import net.minecraft.component.type.TooltipDisplayComponent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
@@ -374,12 +376,22 @@ public class DebrisResonatorItem extends Item {
                     writeState(stack, State.DEPLETED);
                 }
             } else if (st == State.SEARCHING) {
-                if (getCmdFlag(stack, CMD_FLAG_LOCKED, true)) {
+                boolean targetLocked = readBool(stack, KEY_TARGET_LOCKED, false);
+                if (targetLocked) {
                     world.playSound(null, user.getX(), user.getY(), user.getZ(),
                             SoundEvents.BLOCK_REDSTONE_TORCH_BURNOUT, SoundCategory.PLAYERS, 0.6f, 0.8f);
                     ((ServerWorld) world).spawnParticles(ParticleTypes.SMOKE, user.getX(), user.getBodyY(0.5), user.getZ(),
                             5, 0.1, 0.1, 0.1, 0.0);
                     user.sendMessage(Text.translatable("item.lategameplus.debris_resonator.locked").formatted(Formatting.GRAY), true);
+                } else {
+                    commitBatteryFromFloats(stack);
+                    clearTarget(stack);
+                    removeKey(stack, KEY_FAR_SINCE_MS);
+                    removeKey(stack, KEY_MISSING_SINCE_MS);
+                    clearSoundCycle(user);
+                    writeState(stack, State.OFF);
+                    world.playSound(null, user.getX(), user.getY(), user.getZ(),
+                            SoundEvents.BLOCK_AMETHYST_BLOCK_CHIME, SoundCategory.PLAYERS, 0.6f, 0.95f);
                 }
             }
         }
@@ -699,39 +711,81 @@ public class DebrisResonatorItem extends Item {
         if (dist <= 32.5) return 1; // too_far (until RELEASE_DISTANCE)
         return 0; // searching
     }
+
+    private enum TooltipState {
+        SEARCHING,
+        LOCATED,
+        COOLDOWN,
+        OFF
+    }
+
+    private static TooltipState getTooltipState(ItemStack stack) {
+        long now = TimeBridge.nowSeconds();
+        long cooldownUntil = readLong(stack, KEY_SCAN_COOLDOWN_UNTIL, 0L);
+        if (now < cooldownUntil) {
+            return TooltipState.COOLDOWN;
+        }
+
+        State state = readState(stack);
+        if (state == State.SEARCHING) {
+            return readBool(stack, KEY_TARGET_LOCKED, false) ? TooltipState.LOCATED : TooltipState.SEARCHING;
+        }
+        return TooltipState.OFF;
+    }
+
+    private static Text getTooltipDistanceText(ItemStack stack) {
+        int tier = readInt(stack, KEY_MODEL_TIER, 1);
+        return switch (tier) {
+            case 4 -> Text.translatable("item.lategameplus.debris_resonator.tooltip.distance.close");
+            case 3 -> Text.translatable("item.lategameplus.debris_resonator.tooltip.distance.medium");
+            case 2 -> Text.translatable("item.lategameplus.debris_resonator.tooltip.distance.far");
+            default -> Text.translatable("item.lategameplus.debris_resonator.tooltip.distance.very_far");
+        };
+    }
+
+    private static Text getTooltipChargeText(ItemStack stack) {
+        int secs = Math.max(0, calcEffectiveBatteryLive(stack));
+        if (secs >= 60) {
+            return Text.translatable("item.lategameplus.debris_resonator.tooltip.minutes", Math.round(secs / 60f));
+        }
+        return Text.translatable("item.lategameplus.debris_resonator.tooltip.seconds", secs);
+    }
+
+    private static Text formatTooltipEntry(String key, Text value) {
+        return Text.translatable(key, value.copy().formatted(Formatting.WHITE))
+            .formatted(Formatting.GOLD);
+    }
+
+    @Override
+    public void appendTooltip(
+        ItemStack stack,
+        Item.TooltipContext context,
+        TooltipDisplayComponent displayComponent,
+        Consumer<Text> textConsumer,
+        TooltipType type
+    ) {
+        TooltipState tooltipState = getTooltipState(stack);
+        Text stateText = switch (tooltipState) {
+            case SEARCHING -> Text.translatable("item.lategameplus.debris_resonator.tooltip.state.searching");
+            case LOCATED -> Text.translatable("item.lategameplus.debris_resonator.tooltip.state.located");
+            case COOLDOWN -> Text.translatable("item.lategameplus.debris_resonator.tooltip.state.cooldown");
+            case OFF -> Text.translatable("item.lategameplus.debris_resonator.tooltip.state.off");
+        };
+        textConsumer.accept(formatTooltipEntry("item.lategameplus.debris_resonator.tooltip.state", stateText));
+
+        if (tooltipState == TooltipState.LOCATED) {
+            textConsumer.accept(formatTooltipEntry(
+                "item.lategameplus.debris_resonator.tooltip.distance",
+                getTooltipDistanceText(stack)
+            ));
+        }
+
+        textConsumer.accept(formatTooltipEntry("item.lategameplus.debris_resonator.tooltip.charge", getTooltipChargeText(stack)));
+    }
+
     @Override
     public Text getName(ItemStack stack) {
-        Text base = stack.getCustomName() != null ? stack.getName() : Text.translatable(getTranslationKey());
-        State st = readState(stack);
-
-        if (st == State.SEARCHING) {
-            int secs = Math.max(0, calcEffectiveBatteryLive(stack));
-            Text timeText = (secs >= 60)
-                    ? Text.translatable("item.lategameplus.debris_resonator.searching_minutes_suffix", Math.round(secs / 60f))
-                    : Text.translatable("item.lategameplus.debris_resonator.searching_seconds_suffix", secs);
-            return Text.empty().append(base).append(" ").append(timeText.copy().formatted(Formatting.GRAY, Formatting.ITALIC));
-        } else if (st == State.DEPLETED) {
-            Text suffix = Text.translatable("item.lategameplus.debris_resonator.depleted_suffix");
-            return Text.empty().append(base).append(" ").append(suffix.copy().formatted(Formatting.GRAY, Formatting.ITALIC));
-        } else if (st == State.OFF) {
-            // Check if it's in cooldown
-            long now = TimeBridge.nowSeconds();
-            long cdUntil = readLong(stack, KEY_SCAN_COOLDOWN_UNTIL, 0L);
-            if (now < cdUntil) {
-                long remainingSecs = cdUntil - now;
-                Text cooldownText = (remainingSecs >= 60)
-                        ? Text.translatable("item.lategameplus.debris_resonator.cooldown_minutes_suffix", Math.round(remainingSecs / 60f))
-                        : Text.translatable("item.lategameplus.debris_resonator.cooldown_seconds_suffix", remainingSecs);
-                return Text.empty().append(base).append(" ").append(cooldownText.copy().formatted(Formatting.DARK_GRAY, Formatting.ITALIC));
-            }
-
-            int secs = Math.max(0, readBattery(stack));
-            Text remainingText = (secs >= 60)
-                    ? Text.translatable("item.lategameplus.debris_resonator.off_minutes_suffix", Math.round(secs / 60f))
-                    : Text.translatable("item.lategameplus.debris_resonator.off_seconds_suffix", secs);
-            return Text.empty().append(base).append(" ").append(remainingText.copy().formatted(Formatting.GRAY, Formatting.ITALIC));
-        }
-        return base;
+        return stack.getCustomName() != null ? stack.getName() : Text.translatable(getTranslationKey());
     }
 
 

@@ -40,8 +40,11 @@ import net.minecraft.world.World;
 
 public class FusionForgeBlockEntity extends BlockEntity implements NamedScreenHandlerFactory, SidedInventory {
     public static final int INVENTORY_SIZE = 5;
+    private static final int PROPERTY_COUNT = 6;
     private static final int DEFAULT_COOK_TIME = 200;
     private static final int DEFAULT_FUEL_COST = 1600;
+    private static final int FALLBACK_LAVA_FUEL_TICKS = 20_000;
+    private static final int MAX_LAVA_BUCKETS_STORED = 10;
     private static final int IDLE_DELAY_TICKS = 20;
     private static final int[] TOP_SLOTS = {FusionForgeScreenHandler.INPUT_A_SLOT};
     private static final int[] BOTTOM_SLOTS = {FusionForgeScreenHandler.OUTPUT_SLOT, FusionForgeScreenHandler.FUEL_SLOT};
@@ -50,14 +53,16 @@ public class FusionForgeBlockEntity extends BlockEntity implements NamedScreenHa
     private static final int[] EMPTY_SLOTS = {};
 
     private final DefaultedList<ItemStack> inventory = DefaultedList.ofSize(INVENTORY_SIZE, ItemStack.EMPTY);
-    private final PropertyDelegate propertyDelegate = new ArrayPropertyDelegate(4) {
+    private final PropertyDelegate propertyDelegate = new ArrayPropertyDelegate(PROPERTY_COUNT) {
         @Override
         public int get(int index) {
             return switch (index) {
                 case 0 -> cookTime;
                 case 1 -> cookTimeTotal;
-                case 2 -> fuelTicks;
-                case 3 -> fuelMaxTicks;
+                case 2 -> low16(fuelStoredTicks);
+                case 3 -> high16(fuelStoredTicks);
+                case 4 -> low16(fuelCapacityTicks);
+                case 5 -> high16(fuelCapacityTicks);
                 default -> 0;
             };
         }
@@ -67,8 +72,10 @@ public class FusionForgeBlockEntity extends BlockEntity implements NamedScreenHa
             switch (index) {
                 case 0 -> cookTime = value;
                 case 1 -> cookTimeTotal = value;
-                case 2 -> fuelTicks = value;
-                case 3 -> fuelMaxTicks = value;
+                case 2 -> fuelStoredTicks = mergeLow16(fuelStoredTicks, value);
+                case 3 -> fuelStoredTicks = mergeHigh16(fuelStoredTicks, value);
+                case 4 -> fuelCapacityTicks = mergeLow16(fuelCapacityTicks, value);
+                case 5 -> fuelCapacityTicks = mergeHigh16(fuelCapacityTicks, value);
                 default -> { }
             }
         }
@@ -76,8 +83,8 @@ public class FusionForgeBlockEntity extends BlockEntity implements NamedScreenHa
     private int cookTime;
     private int cookTimeTotal = DEFAULT_COOK_TIME;
     private int fuelCost = DEFAULT_FUEL_COST;
-    private int fuelTicks;
-    private int fuelMaxTicks;
+    private int fuelStoredTicks;
+    private int fuelCapacityTicks;
     private float storedExperience;
     private boolean hadCatalyst;
     private int idleDelayTicks;
@@ -91,8 +98,11 @@ public class FusionForgeBlockEntity extends BlockEntity implements NamedScreenHa
         super.readData(view);
         Inventories.readData(view, inventory);
         cookTime = view.getInt("cook_time", 0);
-        fuelTicks = view.getInt("fuel_ticks", 0);
-        fuelMaxTicks = view.getInt("fuel_max", 0);
+        fuelStoredTicks = Math.max(0, view.getInt("fuel_ticks", 0));
+        fuelCapacityTicks = Math.max(0, view.getInt("fuel_capacity", view.getInt("fuel_max", 0)));
+        if (fuelStoredTicks > fuelCapacityTicks && fuelCapacityTicks > 0) {
+            fuelStoredTicks = fuelCapacityTicks;
+        }
         storedExperience = view.getFloat("stored_exp", 0.0f);
         idleDelayTicks = view.getInt("idle_delay", 0);
         hadCatalyst = hasCatalyst();
@@ -103,8 +113,9 @@ public class FusionForgeBlockEntity extends BlockEntity implements NamedScreenHa
         super.writeData(view);
         Inventories.writeData(view, inventory);
         view.putInt("cook_time", cookTime);
-        view.putInt("fuel_ticks", fuelTicks);
-        view.putInt("fuel_max", fuelMaxTicks);
+        view.putInt("fuel_ticks", fuelStoredTicks);
+        view.putInt("fuel_capacity", fuelCapacityTicks);
+        view.putInt("fuel_max", fuelCapacityTicks);
         view.putFloat("stored_exp", storedExperience);
         view.putInt("idle_delay", idleDelayTicks);
     }
@@ -255,6 +266,9 @@ public class FusionForgeBlockEntity extends BlockEntity implements NamedScreenHa
         if (blockEntity.updateRecipeValues(recipe)) {
             dirty = true;
         }
+        if (blockEntity.syncFuelCapacity(world.getFuelRegistry())) {
+            dirty = true;
+        }
         int fuelPerTick = blockEntity.getFuelPerTick();
         boolean hasCatalyst = blockEntity.hasCatalyst();
         boolean canCraft = recipe != null && blockEntity.canCraft(recipe);
@@ -285,14 +299,19 @@ public class FusionForgeBlockEntity extends BlockEntity implements NamedScreenHa
             }
         }
 
-        if (canCraft) {
-            if (blockEntity.fuelTicks < fuelPerTick) {
-                if (blockEntity.consumeFuel(world.getFuelRegistry())) {
-                    dirty = true;
+        if (blockEntity.fuelStoredTicks < blockEntity.fuelCapacityTicks) {
+            int consumeGuard = 0;
+            while (blockEntity.fuelStoredTicks < blockEntity.fuelCapacityTicks && consumeGuard++ < 64) {
+                if (!blockEntity.consumeFuel(world.getFuelRegistry())) {
+                    break;
                 }
+                dirty = true;
             }
-            if (blockEntity.fuelTicks >= fuelPerTick) {
-                blockEntity.fuelTicks -= fuelPerTick;
+        }
+
+        if (canCraft) {
+            if (blockEntity.fuelStoredTicks >= fuelPerTick) {
+                blockEntity.fuelStoredTicks -= fuelPerTick;
                 blockEntity.cookTime++;
                 workingThisTick = true;
                 dirty = true;
@@ -336,11 +355,6 @@ public class FusionForgeBlockEntity extends BlockEntity implements NamedScreenHa
             world.setBlockState(pos, state.with(FusionForgeBlock.STATE, targetState), net.minecraft.block.Block.NOTIFY_LISTENERS);
         }
 
-        if (blockEntity.fuelTicks <= 0 && blockEntity.fuelMaxTicks != 0) {
-            blockEntity.fuelMaxTicks = 0;
-            dirty = true;
-        }
-
         if (dirty) {
             blockEntity.markDirty();
         }
@@ -360,14 +374,45 @@ public class FusionForgeBlockEntity extends BlockEntity implements NamedScreenHa
         if (fuelTime <= 0) {
             return false;
         }
-        fuelTicks += fuelTime;
-        fuelMaxTicks = fuelTime;
-        ItemStack remainder = fuelStack.getRecipeRemainder();
-        fuelStack.decrement(1);
-        if (fuelStack.isEmpty()) {
-            inventory.set(FusionForgeScreenHandler.FUEL_SLOT, remainder);
+        int capacity = getFuelCapacity(fuelRegistry);
+        if (fuelStoredTicks + fuelTime > capacity) {
+            return false;
         }
+
+        ItemStack remainder = fuelStack.getRecipeRemainder();
+        if (remainder.isEmpty()) {
+            fuelStack.decrement(1);
+        } else if (fuelStack.getCount() == 1) {
+            inventory.set(FusionForgeScreenHandler.FUEL_SLOT, remainder.copy());
+        } else {
+            fuelStack.decrement(1);
+        }
+        fuelCapacityTicks = capacity;
+        fuelStoredTicks = Math.min(fuelCapacityTicks, fuelStoredTicks + fuelTime);
         return true;
+    }
+
+    private boolean syncFuelCapacity(FuelRegistry fuelRegistry) {
+        int capacity = getFuelCapacity(fuelRegistry);
+        boolean changed = false;
+        if (fuelCapacityTicks != capacity) {
+            fuelCapacityTicks = capacity;
+            changed = true;
+        }
+        if (fuelStoredTicks > fuelCapacityTicks) {
+            fuelStoredTicks = fuelCapacityTicks;
+            changed = true;
+        }
+        return changed;
+    }
+
+    private static int getFuelCapacity(FuelRegistry fuelRegistry) {
+        int lavaFuel = fuelRegistry.getFuelTicks(new ItemStack(Items.LAVA_BUCKET));
+        if (lavaFuel <= 0) {
+            lavaFuel = FALLBACK_LAVA_FUEL_TICKS;
+        }
+        long capacity = (long) lavaFuel * MAX_LAVA_BUCKETS_STORED;
+        return (int) Math.min(Integer.MAX_VALUE, capacity);
     }
 
     private FusionForgeRecipe getRecipe(World world) {
@@ -532,5 +577,21 @@ public class FusionForgeBlockEntity extends BlockEntity implements NamedScreenHa
         storedExperience = 0.0f;
         markDirty();
         return whole;
+    }
+
+    private static int low16(int value) {
+        return value & 0xFFFF;
+    }
+
+    private static int high16(int value) {
+        return (value >>> 16) & 0xFFFF;
+    }
+
+    private static int mergeLow16(int original, int low) {
+        return (original & 0xFFFF0000) | (low & 0xFFFF);
+    }
+
+    private static int mergeHigh16(int original, int high) {
+        return (original & 0x0000FFFF) | ((high & 0xFFFF) << 16);
     }
 }

@@ -17,6 +17,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(AnvilScreenHandler.class)
 public abstract class DebrisResonatorAnvilRechargeMixin {
+    @Unique
+    private static final int LGP$FULL_RECHARGE_MAX_XP_COST = 10;
 
     @Shadow @Final private Property levelCost;
     @Shadow private int repairItemUsage;
@@ -66,7 +68,7 @@ public abstract class DebrisResonatorAnvilRechargeMixin {
                 DebrisResonatorItem.setBatterySeconds(result, maxBattery);
                 outputSlot.setStack(result);
                 this.repairItemUsage = 1;
-                this.levelCost.set(5);
+                this.levelCost.set(LGP$FULL_RECHARGE_MAX_XP_COST);
                 self.sendContentUpdates();
                 return;
             }
@@ -93,7 +95,9 @@ public abstract class DebrisResonatorAnvilRechargeMixin {
                 DebrisResonatorItem.addBatterySeconds(result, restored);
                 outputSlot.setStack(result);
                 this.repairItemUsage = use;
-                int xpCost = MathHelper.clamp(use, 1, 60);
+                int fullPieces = Math.max(1, Math.ceilDiv(maxBattery, chunk));
+                int xpCost = Math.round((use * (float) LGP$FULL_RECHARGE_MAX_XP_COST) / fullPieces);
+                xpCost = MathHelper.clamp(xpCost, 1, LGP$FULL_RECHARGE_MAX_XP_COST);
                 this.levelCost.set(xpCost);
                 self.sendContentUpdates();
             }

@@ -13,15 +13,15 @@ public class ModConfig {
     public float fishingTimeMultiplier = 1.0f; // 0.25..4
 
     public int lodestoneWarpCooldownTicks = 80;    // IN TPS; 1s = 20 TPS
-    public boolean lodestoneWarpCrossDim = false;   // allow across dimensions
-    public boolean lodestoneWarpReusable = false;   // if true, the item is not consumed
+    public boolean lodestoneWarpCrossDim = true;    // allow across dimensions
+    public boolean lodestoneWarpReusable = true;    // if true, the item is not consumed
 
     public int netheriteAnvilMaxLevelCost = 35;     // 20..39 levels
 
     // Debris Resonator
     public int debrisResonatorMaxBatterySeconds = 1800;   // >= 0
-    public int debrisResonatorCooldownSelfSeconds = 25;   // >= 0
-    public int debrisResonatorCooldownOtherSeconds = 10;  // >= 0
+    public int debrisResonatorCooldownSelfSeconds = 5;    // >= 0
+    public int debrisResonatorCooldownOtherSeconds = 15;  // >= 0
     public int debrisResonatorCooldownFarSeconds = 60;    // >= 0
     public int debrisResonatorRangeY = 2;                 // >= 0
     public float debrisResonatorSoundVolume = 1.0f;       // 0..?

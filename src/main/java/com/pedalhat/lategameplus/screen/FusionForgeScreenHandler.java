@@ -20,7 +20,7 @@ public class FusionForgeScreenHandler extends ScreenHandler {
     public static final int FUEL_SLOT = 2;
     public static final int CATALYST_SLOT = 3;
     public static final int OUTPUT_SLOT = 4;
-    private static final int PROPERTY_COUNT = 4;
+    private static final int PROPERTY_COUNT = 6;
     private static final int ARROW_PIXELS = 24;
     private static final int FLAME_PIXELS = 14;
 
@@ -138,15 +138,39 @@ public class FusionForgeScreenHandler extends ScreenHandler {
     }
 
     public int getFuelProgress() {
-        int fuelTicks = propertyDelegate.get(2);
-        int fuelMaxTicks = propertyDelegate.get(3);
-        if (fuelMaxTicks <= 0 || fuelTicks <= 0) {
+        int fuelStored = getFuelStoredTicks();
+        int fuelCapacity = getFuelCapacityTicks();
+        if (fuelCapacity <= 0 || fuelStored <= 0) {
             return 0;
         }
-        int progress = fuelTicks * FLAME_PIXELS / fuelMaxTicks;
+        int progress = (int) ((long) fuelStored * FLAME_PIXELS / fuelCapacity);
         if (progress > FLAME_PIXELS) {
             return FLAME_PIXELS;
         }
         return Math.max(progress, 0);
+    }
+
+    public int getFuelStored() {
+        return Math.max(0, getFuelStoredTicks());
+    }
+
+    public int getFuelCapacity() {
+        return Math.max(0, getFuelCapacityTicks());
+    }
+
+    private int getFuelStoredTicks() {
+        int low = unsignedProperty(2);
+        int high = unsignedProperty(3);
+        return (high << 16) | low;
+    }
+
+    private int getFuelCapacityTicks() {
+        int low = unsignedProperty(4);
+        int high = unsignedProperty(5);
+        return (high << 16) | low;
+    }
+
+    private int unsignedProperty(int index) {
+        return propertyDelegate.get(index) & 0xFFFF;
     }
 }
