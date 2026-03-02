@@ -9,8 +9,6 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
-import java.util.Locale;
-
 public class FusionForgeScreen extends HandledScreen<FusionForgeScreenHandler> {
     private static final Identifier TEXTURE = Identifier.of(LateGamePlus.MOD_ID, "textures/gui/container/fusion_forge.png");
     private static final Identifier BURN_PROGRESS_TEXTURE =
@@ -117,7 +115,11 @@ public class FusionForgeScreen extends HandledScreen<FusionForgeScreenHandler> {
             return;
         }
         int current = handler.getFuelStored();
-        String formatted = String.format(Locale.US, "Capacidad de combustible: %,d / %,d", capacity, current);
-        context.drawTooltip(textRenderer, Text.literal(formatted), mouseX, mouseY);
+        context.drawTooltip(
+            textRenderer,
+            Text.translatable("tooltip.lategameplus.fusion_forge.fuel_capacity", capacity, current),
+            mouseX,
+            mouseY
+        );
     }
 }

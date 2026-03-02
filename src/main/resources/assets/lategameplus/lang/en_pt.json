@@ -154,5 +154,6 @@
   "item.minecraft.tipped_arrow.effect.lategameplus.volcanic_master": "Arrow o' Volcanic Master",
   "item.minecraft.tipped_arrow.effect.lategameplus.strong_volcanic_master": "Arrow o' Volcanic Master",
   "item.minecraft.tipped_arrow.effect.lategameplus.long_volcanic_master": "Arrow o' Volcanic Master",
-  "enchantment.lategameplus.volcanic_walker": "Volcanic Walker"
+  "enchantment.lategameplus.volcanic_walker": "Volcanic Walker",
+  "tooltip.lategameplus.fusion_forge.fuel_capacity": "Fuel capacity: %s / %s"
 }

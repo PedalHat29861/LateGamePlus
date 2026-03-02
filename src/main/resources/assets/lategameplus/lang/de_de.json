@@ -143,5 +143,6 @@
   "item.minecraft.tipped_arrow.effect.lategameplus.volcanic_master": "Pfeil des Vulkanischen Meisters",
   "item.minecraft.tipped_arrow.effect.lategameplus.strong_volcanic_master": "Pfeil des Vulkanischen Meisters",
   "item.minecraft.tipped_arrow.effect.lategameplus.long_volcanic_master": "Pfeil des Vulkanischen Meisters",
-  "enchantment.lategameplus.volcanic_walker": "Vulkanlaeufer"
+  "enchantment.lategameplus.volcanic_walker": "Vulkanlaeufer",
+  "tooltip.lategameplus.fusion_forge.fuel_capacity": "Fuel capacity: %s / %s"
 }
