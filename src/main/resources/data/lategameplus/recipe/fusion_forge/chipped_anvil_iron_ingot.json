@@ -6,7 +6,7 @@
         "id": "minecraft:iron_ingot",
         "count": 12
     },
-    "experience": 5,
+    "experience": 125,
     "cook_time": 200,
     "fuel_cost": 1000
 }

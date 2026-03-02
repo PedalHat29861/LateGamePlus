@@ -6,7 +6,7 @@
         "id": "minecraft:iron_block",
         "count": 3
     },
-    "experience": 15,
+    "experience": 35,
     "cook_time": 1800,
     "fuel_cost": 9000
 }
