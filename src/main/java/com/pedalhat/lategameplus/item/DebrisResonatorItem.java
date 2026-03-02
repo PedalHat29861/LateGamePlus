@@ -44,6 +44,7 @@ public class DebrisResonatorItem extends Item {
     private static final int  DEFAULT_COOLDOWN_OTHER        = 1;
     private static final int  DEFAULT_COOLDOWN_FAR          = 30;
     private static final long MODEL_RATE_LIMIT_MS           = 500;
+    private static final float RANGE_TRANSITION_VOLUME       = 0.45f;
 
     private static int maxBatterySeconds() {
         int value = ConfigManager.get().debrisResonatorMaxBatterySeconds;
@@ -454,9 +455,8 @@ public class DebrisResonatorItem extends Item {
             BlockPos found = scanForDebris(world, origin, seed);
             if (found != null) {
                 setTarget(stack, world, found);
-                world.playSound(null, player.getX(), player.getY(), player.getZ(),
-                        SoundEvents.BLOCK_AMETHYST_BLOCK_RESONATE, SoundCategory.PLAYERS, 0.6f, 1.2f);
-                updateGuidanceModelIfNeeded(stack, player.getX(), player.getY(), player.getZ(), found);
+                playConnectionFeedback(world, player);
+                updateGuidanceModelIfNeeded(stack, player.getX(), player.getY(), player.getZ(), found, world, player, false);
             }
             return;
         }
@@ -468,7 +468,7 @@ public class DebrisResonatorItem extends Item {
         }
 
 
-        updateGuidanceModelIfNeeded(stack, player.getX(), player.getY(), player.getZ(), target);
+        updateGuidanceModelIfNeeded(stack, player.getX(), player.getY(), player.getZ(), target, world, player, true);
         boolean isStillThere = world.getBlockState(target).isOf(Blocks.ANCIENT_DEBRIS);
         long nowMs = System.currentTimeMillis();
 
@@ -501,10 +501,7 @@ public class DebrisResonatorItem extends Item {
         clearSoundCycle(player);
         writeLong(stack, KEY_SCAN_COOLDOWN_UNTIL, TimeBridge.nowSeconds() + seconds);
         setCooldownVisual(stack);
-        world.playSound(null, player.getX(), player.getY(), player.getZ(),
-                SoundEvents.BLOCK_AMETHYST_BLOCK_CHIME, SoundCategory.PLAYERS, 0.7f, 0.7f);
-        world.spawnParticles(ParticleTypes.END_ROD, player.getX(), player.getBodyY(0.5), player.getZ(),
-                6, 0.2, 0.2, 0.2, 0.0);
+        playDisconnectFeedback(world, player);
     }
 
     private static boolean isNether(ServerWorld world) {
@@ -605,7 +602,16 @@ public class DebrisResonatorItem extends Item {
         return new BlockPos(x, y, z);
     }
 
-    private static void updateGuidanceModelIfNeeded(ItemStack stack, double px, double py, double pz, BlockPos target) {
+    private static void updateGuidanceModelIfNeeded(
+        ItemStack stack,
+        double px,
+        double py,
+        double pz,
+        BlockPos target,
+        ServerWorld world,
+        PlayerEntity player,
+        boolean playRangeTransitionSound
+    ) {
         long nowMs = System.currentTimeMillis();
         long last = readLong(stack, KEY_LAST_MODEL_UPDATE_MS, 0L);
         if (nowMs - last < MODEL_RATE_LIMIT_MS) return;
@@ -623,8 +629,67 @@ public class DebrisResonatorItem extends Item {
             case 1 -> setModelString(stack, "on_too_far");
             default -> setModelString(stack, "searching");
         }
+
+        if (playRangeTransitionSound && currentTier > 0 && desiredTier > 0) {
+            if (desiredTier > currentTier) {
+                world.playSound(
+                    null,
+                    player.getX(),
+                    player.getY(),
+                    player.getZ(),
+                    SoundEvents.BLOCK_RESPAWN_ANCHOR_CHARGE,
+                    SoundCategory.PLAYERS,
+                    RANGE_TRANSITION_VOLUME,
+                    1.28f
+                );
+            } else if (desiredTier < currentTier) {
+                world.playSound(
+                    null,
+                    player.getX(),
+                    player.getY(),
+                    player.getZ(),
+                    SoundEvents.BLOCK_RESPAWN_ANCHOR_DEPLETE,
+                    SoundCategory.PLAYERS,
+                    RANGE_TRANSITION_VOLUME,
+                    0.92f
+                );
+            }
+        }
+
         writeInt(stack, KEY_MODEL_TIER, desiredTier);
         writeLong(stack, KEY_LAST_MODEL_UPDATE_MS, nowMs);
+    }
+
+    private static void playConnectionFeedback(ServerWorld world, PlayerEntity player) {
+        world.playSound(
+            null,
+            player.getX(),
+            player.getY(),
+            player.getZ(),
+            SoundEvents.BLOCK_BEACON_ACTIVATE,
+            SoundCategory.PLAYERS,
+            0.9f,
+            1.08f
+        );
+        double eyeY = player.getEyeY();
+        world.spawnParticles(ParticleTypes.END_ROD, player.getX(), eyeY, player.getZ(), 18, 0.35, 0.25, 0.35, 0.02);
+        world.spawnParticles(ParticleTypes.ENCHANT, player.getX(), eyeY, player.getZ(), 20, 0.4, 0.3, 0.4, 0.05);
+    }
+
+    private static void playDisconnectFeedback(ServerWorld world, PlayerEntity player) {
+        world.playSound(
+            null,
+            player.getX(),
+            player.getY(),
+            player.getZ(),
+            SoundEvents.BLOCK_BEACON_DEACTIVATE,
+            SoundCategory.PLAYERS,
+            0.9f,
+            0.95f
+        );
+        double eyeY = player.getEyeY();
+        world.spawnParticles(ParticleTypes.END_ROD, player.getX(), eyeY, player.getZ(), 14, 0.35, 0.25, 0.35, 0.0);
+        world.spawnParticles(ParticleTypes.SMOKE, player.getX(), eyeY, player.getZ(), 16, 0.35, 0.2, 0.35, 0.01);
     }
 
     private static int computeTier(double dist) {
@@ -739,10 +804,7 @@ public class DebrisResonatorItem extends Item {
                     writeLong(stack, KEY_SCAN_COOLDOWN_UNTIL, TimeBridge.nowSeconds() + cooldownSelfSeconds());
                     setCooldownVisual(stack);
 
-                    world.playSound(null, player.getX(), player.getY(), player.getZ(),
-                            SoundEvents.BLOCK_AMETHYST_BLOCK_RESONATE, SoundCategory.PLAYERS, 0.7f, 1.1f);
-                    ((ServerWorld) world).spawnParticles(ParticleTypes.END_ROD, pos.getX() + 0.5, pos.getY() + 0.8, pos.getZ() + 0.5,
-                            8, 0.2, 0.2, 0.2, 0.0);
+                    playDisconnectFeedback((ServerWorld) world, player);
                     
                     String key = world.getRegistryKey().getValue().toString() + ":" + pos.toShortString();
                     if (playerPlacedDebris.remove(key)) {
