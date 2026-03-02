@@ -65,7 +65,7 @@ public class FusionForgeJeiPlugin implements IModPlugin {
 
     @Override
     public void registerGuiHandlers(IGuiHandlerRegistration registration) {
-        registration.addRecipeClickArea(FusionForgeScreen.class, 79, 34, 18, 16, FUSION_FORGE_TYPE);
+        registration.addRecipeClickArea(FusionForgeScreen.class, 17, 21, 20, 18, FUSION_FORGE_TYPE);
     }
 
     @Override

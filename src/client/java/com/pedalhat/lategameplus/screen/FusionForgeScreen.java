@@ -1,6 +1,7 @@
 package com.pedalhat.lategameplus.screen;
 
 import com.pedalhat.lategameplus.LateGamePlus;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
@@ -14,6 +15,15 @@ public class FusionForgeScreen extends HandledScreen<FusionForgeScreenHandler> {
         Identifier.of(LateGamePlus.MOD_ID, "textures/gui/sprites/burn_progress.png");
     private static final Identifier LIT_PROGRESS_TEXTURE =
         Identifier.of(LateGamePlus.MOD_ID, "textures/gui/sprites/lit_progress.png");
+    private static final Identifier RECIPE_BUTTON_TEXTURE =
+        Identifier.ofVanilla("textures/gui/sprites/recipe_book/button.png");
+    private static final Identifier RECIPE_BUTTON_HIGHLIGHTED_TEXTURE =
+        Identifier.ofVanilla("textures/gui/sprites/recipe_book/button_highlighted.png");
+    private static final boolean JEI_LOADED = FabricLoader.getInstance().isModLoaded("jei");
+    private static final int RECIPE_BUTTON_X = 17;
+    private static final int RECIPE_BUTTON_Y = 21;
+    private static final int RECIPE_BUTTON_WIDTH = 20;
+    private static final int RECIPE_BUTTON_HEIGHT = 18;
     private static final int ARROW_U = 0;
     private static final int ARROW_V = 0;
     private static final int ARROW_WIDTH = 24;
@@ -42,6 +52,28 @@ public class FusionForgeScreen extends HandledScreen<FusionForgeScreenHandler> {
         int y = (height - backgroundHeight) / 2;
         context.drawTexture(RenderPipelines.GUI_TEXTURED, TEXTURE, x, y, 0, 0, backgroundWidth,
             backgroundHeight, backgroundWidth, backgroundHeight);
+
+        if (JEI_LOADED) {
+            int buttonX = x + RECIPE_BUTTON_X;
+            int buttonY = y + RECIPE_BUTTON_Y;
+            boolean hovered = mouseX >= buttonX
+                && mouseX < buttonX + RECIPE_BUTTON_WIDTH
+                && mouseY >= buttonY
+                && mouseY < buttonY + RECIPE_BUTTON_HEIGHT;
+            context.drawTexture(
+                RenderPipelines.GUI_TEXTURED,
+                hovered ? RECIPE_BUTTON_HIGHLIGHTED_TEXTURE : RECIPE_BUTTON_TEXTURE,
+                buttonX,
+                buttonY,
+                0,
+                0,
+                RECIPE_BUTTON_WIDTH,
+                RECIPE_BUTTON_HEIGHT,
+                RECIPE_BUTTON_WIDTH,
+                RECIPE_BUTTON_HEIGHT
+            );
+        }
+
         int progress = handler.getCookProgress();
         if (progress > 0) {
             context.drawTexture(RenderPipelines.GUI_TEXTURED, BURN_PROGRESS_TEXTURE, x + ARROW_X, y + ARROW_Y, ARROW_U,

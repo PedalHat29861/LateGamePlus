@@ -44,7 +44,7 @@ public class FusionForgeBlockEntity extends BlockEntity implements NamedScreenHa
     private static final int DEFAULT_FUEL_COST = 1600;
     private static final int IDLE_DELAY_TICKS = 20;
     private static final int[] TOP_SLOTS = {FusionForgeScreenHandler.INPUT_A_SLOT};
-    private static final int[] BOTTOM_SLOTS = {FusionForgeScreenHandler.OUTPUT_SLOT};
+    private static final int[] BOTTOM_SLOTS = {FusionForgeScreenHandler.OUTPUT_SLOT, FusionForgeScreenHandler.FUEL_SLOT};
     private static final int[] BACK_SLOTS = {FusionForgeScreenHandler.INPUT_B_SLOT};
     private static final int[] FUEL_SLOTS = {FusionForgeScreenHandler.FUEL_SLOT};
     private static final int[] EMPTY_SLOTS = {};
@@ -237,7 +237,10 @@ public class FusionForgeBlockEntity extends BlockEntity implements NamedScreenHa
     @Override
     public boolean canExtract(int slot, ItemStack stack, Direction direction) {
         if (direction == Direction.DOWN) {
-            return slot == FusionForgeScreenHandler.OUTPUT_SLOT;
+            if (slot == FusionForgeScreenHandler.OUTPUT_SLOT) {
+                return true;
+            }
+            return slot == FusionForgeScreenHandler.FUEL_SLOT && stack.isOf(Items.BUCKET);
         }
         return false;
     }
@@ -359,7 +362,11 @@ public class FusionForgeBlockEntity extends BlockEntity implements NamedScreenHa
         }
         fuelTicks += fuelTime;
         fuelMaxTicks = fuelTime;
+        ItemStack remainder = fuelStack.getRecipeRemainder();
         fuelStack.decrement(1);
+        if (fuelStack.isEmpty()) {
+            inventory.set(FusionForgeScreenHandler.FUEL_SLOT, remainder);
+        }
         return true;
     }
 
