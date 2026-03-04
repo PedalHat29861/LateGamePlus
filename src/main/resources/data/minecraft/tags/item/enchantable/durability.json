@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "lategameplus:netherite_elytra"
+    "lategameplus:netherite_elytra",
+    "lategameplus:netherite_fishing_rod"
   ]
 }

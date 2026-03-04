@@ -4,6 +4,8 @@ import com.pedalhat.lategameplus.LateGamePlus;
 import com.pedalhat.lategameplus.config.ConfigManager;
 import com.pedalhat.lategameplus.registry.ModItems;
 import com.pedalhat.lategameplus.mixinutil.LGPLavaImmuneItemEntity;
+import com.pedalhat.lategameplus.mixinutil.AutoReelDamageContext;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -21,8 +23,10 @@ import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.ReloadableRegistries;
 import net.minecraft.registry.tag.FluidTags;
+import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.random.Random;
@@ -51,6 +55,10 @@ public class FishingBobberEntityMixin {
     @Unique
     private static final RegistryKey<LootTable> LATEGAMEPLUS$LAVA_FISHING_LOOT_NETHER =
         RegistryKey.of(RegistryKeys.LOOT_TABLE, Identifier.of(LateGamePlus.MOD_ID, "gameplay/fishing/lava_nether"));
+
+    @Unique
+    private static final Identifier LATEGAMEPLUS$AUTO_REEL_ID =
+        Identifier.of(LateGamePlus.MOD_ID, "auto_reel");
 
     @Unique
     private boolean lategameplus$lavaFishing;
@@ -133,6 +141,56 @@ public class FishingBobberEntityMixin {
         if (this.lategameplus$canFishInLava() && this.lategameplus$isInLava()) {
             ((FishingBobberEntity)(Object)this).extinguish();
         }
+    }
+
+    @Inject(method = "tick", at = @At("TAIL"))
+    private void lategameplus$autoReelAndRecast(CallbackInfo ci) {
+        FishingBobberEntity self = (FishingBobberEntity)(Object)this;
+        if (self.getEntityWorld().isClient()) {
+            return;
+        }
+        if (this.hookCountdown <= 0 || !this.caughtFish || this.lategameplus$autoReelTriggered) {
+            return;
+        }
+
+        PlayerEntity owner = self.getPlayerOwner();
+        if (owner == null || owner.fishHook != self) {
+            return;
+        }
+
+        Hand hand = this.lategameplus$getAutoReelHand(owner);
+        if (hand == null) {
+            return;
+        }
+
+        ItemStack rodStack = owner.getStackInHand(hand);
+        int autoReelLevel = this.lategameplus$getAutoReelLevel(rodStack);
+        if (autoReelLevel <= 0) {
+            return;
+        }
+
+        this.lategameplus$autoReelTriggered = true;
+        int extraDamage = this.lategameplus$getAutoReelExtraDamage(autoReelLevel);
+
+        AutoReelDamageContext.setExtraDamage(extraDamage);
+        try {
+            rodStack.use(owner.getEntityWorld(), owner, hand);
+        } finally {
+            AutoReelDamageContext.clear();
+        }
+
+        if (!owner.isAlive() || owner.isRemoved()) {
+            return;
+        }
+
+        ItemStack updatedRodStack = owner.getStackInHand(hand);
+        if (updatedRodStack.isEmpty()
+            || !updatedRodStack.isIn(ItemTags.FISHING_ENCHANTABLE)
+            || owner.fishHook != null) {
+            return;
+        }
+
+        updatedRodStack.use(owner.getEntityWorld(), owner, hand);
     }
 
     @Redirect(
@@ -254,5 +312,35 @@ public class FishingBobberEntityMixin {
     private boolean lategameplus$isInLava() {
         FishingBobberEntity self = (FishingBobberEntity)(Object)this;
         return self.getEntityWorld().getFluidState(self.getBlockPos()).isIn(FluidTags.LAVA) || self.isInLava();
+    }
+
+    @Unique
+    private Hand lategameplus$getAutoReelHand(PlayerEntity owner) {
+        ItemStack main = owner.getMainHandStack();
+        if (main.isIn(ItemTags.FISHING_ENCHANTABLE) && this.lategameplus$getAutoReelLevel(main) > 0) {
+            return Hand.MAIN_HAND;
+        }
+
+        ItemStack off = owner.getOffHandStack();
+        if (off.isIn(ItemTags.FISHING_ENCHANTABLE) && this.lategameplus$getAutoReelLevel(off) > 0) {
+            return Hand.OFF_HAND;
+        }
+
+        return null;
+    }
+
+    @Unique
+    private int lategameplus$getAutoReelLevel(ItemStack stack) {
+        FishingBobberEntity self = (FishingBobberEntity)(Object)this;
+        return self.getEntityWorld().getRegistryManager()
+            .getOrThrow(RegistryKeys.ENCHANTMENT)
+            .getEntry(LATEGAMEPLUS$AUTO_REEL_ID)
+            .map(entry -> EnchantmentHelper.getLevel(entry, stack))
+            .orElse(0);
+    }
+
+    @Unique
+    private int lategameplus$getAutoReelExtraDamage(int level) {
+        return Math.max(1, 6 - Math.max(1, level));
     }
 }

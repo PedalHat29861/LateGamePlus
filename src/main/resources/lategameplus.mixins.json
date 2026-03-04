@@ -9,6 +9,7 @@
     "DebrisResonatorAnvilRechargeMixin",
     "EntityMixin",
     "FishingBobberEntityMixin",
+    "FishingRodItemMixin",
     "HappyGhastEntityMixin",
     "ItemEntityMixin",
     "LivingEntityDropStorageMixin",

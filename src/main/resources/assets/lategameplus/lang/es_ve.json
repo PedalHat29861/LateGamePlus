@@ -157,5 +157,6 @@
   "item.minecraft.tipped_arrow.effect.lategameplus.strong_volcanic_master": "Flecha de Maestria volcanica",
   "item.minecraft.tipped_arrow.effect.lategameplus.long_volcanic_master": "Flecha de Maestria volcanica",
   "enchantment.lategameplus.volcanic_walker": "Paso volcanico",
+  "enchantment.lategameplus.auto_reel": "Auto Pesca",
   "tooltip.lategameplus.fusion_forge.fuel_capacity": "Capacidad de combustible: %s / %s"
 }
