@@ -1,7 +1,7 @@
 package com.pedalhat.lategameplus.item;
 
-import net.minecraft.item.Item;
+import net.minecraft.world.item.Item;
 
 public class NetheriteElytraItem extends Item {
-    public NetheriteElytraItem(Settings settings) { super(settings); }
+    public NetheriteElytraItem(Properties settings) { super(settings); }
 }

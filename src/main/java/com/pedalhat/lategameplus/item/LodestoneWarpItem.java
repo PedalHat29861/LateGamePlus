@@ -2,86 +2,84 @@ package com.pedalhat.lategameplus.item;
 
 import com.pedalhat.lategameplus.config.ConfigManager;
 import com.pedalhat.lategameplus.config.ModConfig;
-
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.LodestoneTrackerComponent;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.consume.UseAction;
-import net.minecraft.network.packet.s2c.play.PositionFlag;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.GlobalPos;
-import net.minecraft.world.World;
-
 import java.util.Optional;
 import java.util.Set;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.GlobalPos;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Relative;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemUseAnimation;
+import net.minecraft.world.item.component.LodestoneTracker;
+import net.minecraft.world.level.Level;
 
 public class LodestoneWarpItem extends Item {
 
     private static final int CHARGE_TICKS = 12;
 
-    public LodestoneWarpItem(Item.Settings settings) {
-        super(settings.maxCount(1));
+    public LodestoneWarpItem(Item.Properties settings) {
+        super(settings.stacksTo(1));
     }
 
     @Override
-    public ActionResult use(World world, PlayerEntity user, Hand hand) {
-        ItemStack inHand = user.getStackInHand(hand);
-        if (user.getItemCooldownManager().isCoolingDown(inHand)) {
-            user.playSound(SoundEvents.BLOCK_NOTE_BLOCK_BASS.value(), 1f, 0.5f);
-            return ActionResult.FAIL;
+    public InteractionResult use(Level world, Player user, InteractionHand hand) {
+        ItemStack inHand = user.getItemInHand(hand);
+        if (user.getCooldowns().isOnCooldown(inHand)) {
+            user.playSound(SoundEvents.NOTE_BLOCK_BASS.value(), 1f, 0.5f);
+            return InteractionResult.FAIL;
         }
 
-        user.setCurrentHand(hand);
-        return ActionResult.CONSUME;
+        user.startUsingItem(hand);
+        return InteractionResult.CONSUME;
     }
 
     @Override
-    public int getMaxUseTime(ItemStack stack, LivingEntity user) {
+    public int getUseDuration(ItemStack stack, LivingEntity user) {
         return CHARGE_TICKS;
     }
 
     @Override
-    public UseAction getUseAction(ItemStack stack) {
-        return UseAction.BOW;
+    public ItemUseAnimation getUseAnimation(ItemStack stack) {
+        return ItemUseAnimation.BOW;
     }
 
     @Override
-    public ItemStack finishUsing(ItemStack stack, World world, LivingEntity entity) {
-        if (!(entity instanceof ServerPlayerEntity player)) return stack;
+    public ItemStack finishUsingItem(ItemStack stack, Level world, LivingEntity entity) {
+        if (!(entity instanceof ServerPlayer player)) return stack;
 
-        if (player.getItemCooldownManager().isCoolingDown(stack)) {
-            player.playSound(SoundEvents.BLOCK_NOTE_BLOCK_BASS.value(), 1f, 0.5f);
+        if (player.getCooldowns().isOnCooldown(stack)) {
+            player.playSound(SoundEvents.NOTE_BLOCK_BASS.value(), 1f, 0.5f);
             return stack;
         }
 
         ModConfig cfg = ConfigManager.get();
 
-        LodestoneTrackerComponent tracker = stack.get(DataComponentTypes.LODESTONE_TRACKER);
+        LodestoneTracker tracker = stack.get(DataComponents.LODESTONE_TRACKER);
         Optional<GlobalPos> maybeTarget = (tracker == null) ? Optional.empty() : tracker.target();
         if (maybeTarget.isEmpty()) {
-            player.playSound(SoundEvents.BLOCK_NOTE_BLOCK_BASS.value(), 1f, 0.5f);
+            player.playSound(SoundEvents.NOTE_BLOCK_BASS.value(), 1f, 0.5f);
             return stack;
         }
 
         GlobalPos gpos = maybeTarget.get();
-        ServerWorld targetWorld = player.getEntityWorld().getServer().getWorld(gpos.dimension());
+        ServerLevel targetWorld = player.level().getServer().getLevel(gpos.dimension());
         if (targetWorld == null) {
-            player.playSound(SoundEvents.BLOCK_NOTE_BLOCK_BASS.value(), 1f, 0.5f);
+            player.playSound(SoundEvents.NOTE_BLOCK_BASS.value(), 1f, 0.5f);
             return stack;
         }
 
         if (!cfg.lodestoneWarpCrossDim
-            && !player.getEntityWorld().getRegistryKey().equals(targetWorld.getRegistryKey())) {
-            player.playSound(SoundEvents.BLOCK_NOTE_BLOCK_BASS.value(), 1f, 0.5f);
+            && !player.level().dimension().equals(targetWorld.dimension())) {
+            player.playSound(SoundEvents.NOTE_BLOCK_BASS.value(), 1f, 0.5f);
             return stack;
         }
 
@@ -92,36 +90,36 @@ public class LodestoneWarpItem extends Item {
 
         world.playSound(
             null,
-            entity.getBlockPos(),
-            SoundEvents.ENTITY_ENDERMAN_TELEPORT,
-            SoundCategory.PLAYERS,
+            entity.blockPosition(),
+            SoundEvents.ENDERMAN_TELEPORT,
+            SoundSource.PLAYERS,
             0.8f, 1f
         );
 
-        player.teleport(
+        player.teleportTo(
             targetWorld,
             x, y, z,
-            Set.<PositionFlag>of(),
-            player.getYaw(),
-            player.getPitch(),
+            Set.<Relative>of(),
+            player.getYRot(),
+            player.getXRot(),
             false
         );
 
         targetWorld.playSound(
             null,
-            BlockPos.ofFloored(x, y, z),
-            SoundEvents.ENTITY_ENDERMAN_TELEPORT,
-            SoundCategory.PLAYERS,
+            BlockPos.containing(x, y, z),
+            SoundEvents.ENDERMAN_TELEPORT,
+            SoundSource.PLAYERS,
             0.8f, 1f
         );
 
         int cooldown = Math.max(0, cfg.lodestoneWarpCooldownTicks);
-        player.getItemCooldownManager().set(stack, cooldown);
-        player.getEntityWorld().getServer().execute(() -> player.getItemCooldownManager().set(stack, cooldown));
+        player.getCooldowns().addCooldown(stack, cooldown);
+        player.level().getServer().execute(() -> player.getCooldowns().addCooldown(stack, cooldown));
 
         if (!player.isCreative() && !cfg.lodestoneWarpReusable) {
-            stack.setDamage(stack.getDamage() + 1);
-            if (stack.getDamage() >= stack.getMaxDamage()) stack.decrement(1);
+            stack.setDamageValue(stack.getDamageValue() + 1);
+            if (stack.getDamageValue() >= stack.getMaxDamage()) stack.shrink(1);
         }
 
         return stack;

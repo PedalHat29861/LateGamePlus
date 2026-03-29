@@ -1,15 +1,14 @@
 package com.pedalhat.lategameplus.util;
 
 import com.pedalhat.lategameplus.config.ConfigManager;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.math.MathHelper;
-
 import java.util.HashMap;
 import java.util.Map;
+import net.minecraft.client.Minecraft;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 
 public class AnimationSoundSynchronizer {
     private static final Map<Integer, AnimationConfig> ANIMATION_CONFIGS = new HashMap<>();
@@ -22,7 +21,7 @@ public class AnimationSoundSynchronizer {
         if (Float.isNaN(value) || Float.isInfinite(value)) {
             value = 1.0f;
         }
-        return MathHelper.clamp(value, 0.0f, 4.0f);
+        return Mth.clamp(value, 0.0f, 4.0f);
     }
     
     static {
@@ -32,21 +31,21 @@ public class AnimationSoundSynchronizer {
         
         
         ANIMATION_CONFIGS.put(-1, new AnimationConfig(0, 0, null, 0.0f, 0.0f)); 
-        ANIMATION_CONFIGS.put(0, new AnimationConfig(15, 2, SoundEvents.BLOCK_NOTE_BLOCK_COW_BELL.value(), 1.0f, 0.8f)); 
-        ANIMATION_CONFIGS.put(1, new AnimationConfig(15, 2, SoundEvents.BLOCK_NOTE_BLOCK_COW_BELL.value(), 1.0f, 0.8f)); 
+        ANIMATION_CONFIGS.put(0, new AnimationConfig(15, 2, SoundEvents.NOTE_BLOCK_COW_BELL.value(), 1.0f, 0.8f)); 
+        ANIMATION_CONFIGS.put(1, new AnimationConfig(15, 2, SoundEvents.NOTE_BLOCK_COW_BELL.value(), 1.0f, 0.8f)); 
         ANIMATION_CONFIGS.put(2, new AnimationConfig(15, 2, null, 0.0f, 0.0f)); 
-        ANIMATION_CONFIGS.put(3, new AnimationConfig(10, 2, SoundEvents.BLOCK_AMETHYST_BLOCK_RESONATE, 1.3f, 1.5f)); 
-        ANIMATION_CONFIGS.put(4, new AnimationConfig(20, 2, SoundEvents.BLOCK_AMETHYST_BLOCK_RESONATE, 1.0f, 1.0f)); 
-        ANIMATION_CONFIGS.put(5, new AnimationConfig(30, 2, SoundEvents.BLOCK_AMETHYST_BLOCK_RESONATE, 0.75f, 0.7f)); 
-        ANIMATION_CONFIGS.put(6, new AnimationConfig(60, 2, SoundEvents.BLOCK_AMETHYST_BLOCK_RESONATE, 0.5f, 0.6f)); 
+        ANIMATION_CONFIGS.put(3, new AnimationConfig(10, 2, SoundEvents.AMETHYST_BLOCK_RESONATE, 1.3f, 1.5f)); 
+        ANIMATION_CONFIGS.put(4, new AnimationConfig(20, 2, SoundEvents.AMETHYST_BLOCK_RESONATE, 1.0f, 1.0f)); 
+        ANIMATION_CONFIGS.put(5, new AnimationConfig(30, 2, SoundEvents.AMETHYST_BLOCK_RESONATE, 0.75f, 0.7f)); 
+        ANIMATION_CONFIGS.put(6, new AnimationConfig(60, 2, SoundEvents.AMETHYST_BLOCK_RESONATE, 0.5f, 0.6f)); 
         
     }    public static void tick() {
-        PlayerEntity player = getCurrentPlayer();
+        Player player = getCurrentPlayer();
         if (player == null) return;
         
         
-        ItemStack mainHand = player.getMainHandStack();
-        ItemStack offHand = player.getOffHandStack();
+        ItemStack mainHand = player.getMainHandItem();
+        ItemStack offHand = player.getOffhandItem();
         
         ItemStack resonatorStack = null;
         if (isDebrisResonator(mainHand)) {
@@ -63,11 +62,11 @@ public class AnimationSoundSynchronizer {
         
         int currentModelData = 1; 
         String currentStateString = "";
-        if (resonatorStack.contains(DataComponentTypes.CUSTOM_MODEL_DATA)) {
+        if (resonatorStack.has(DataComponents.CUSTOM_MODEL_DATA)) {
             try {
                 
                 @SuppressWarnings("null")
-                String componentString = resonatorStack.get(DataComponentTypes.CUSTOM_MODEL_DATA).toString();
+                String componentString = resonatorStack.get(DataComponents.CUSTOM_MODEL_DATA).toString();
                 
                 
                 if (componentString.contains("searching")) {
@@ -132,12 +131,12 @@ public class AnimationSoundSynchronizer {
         animationTick = 0;
     }
     
-    private static PlayerEntity getCurrentPlayer() {
-        MinecraftClient client = MinecraftClient.getInstance();
+    private static Player getCurrentPlayer() {
+        Minecraft client = Minecraft.getInstance();
         return (client != null && client.player != null) ? client.player : null;
     }
     
-    private static void playAnimationSound(PlayerEntity player, AnimationConfig config) {
+    private static void playAnimationSound(Player player, AnimationConfig config) {
         if (config.soundEvent == null) {
             return;
         }
@@ -147,13 +146,13 @@ public class AnimationSoundSynchronizer {
             return;
         }
 
-        MinecraftClient client = MinecraftClient.getInstance();
+        Minecraft client = Minecraft.getInstance();
         if (client == null || client.getSoundManager() == null) {
             return;
         }
 
-        net.minecraft.client.sound.PositionedSoundInstance soundInstance =
-                net.minecraft.client.sound.PositionedSoundInstance.master(
+        net.minecraft.client.resources.sounds.SimpleSoundInstance soundInstance =
+                net.minecraft.client.resources.sounds.SimpleSoundInstance.forUI(
                         config.soundEvent,
                         config.pitch,
                         adjustedVolume
@@ -167,11 +166,11 @@ public class AnimationSoundSynchronizer {
         final int frametime; 
         @SuppressWarnings("unused")
         final int totalFrames;
-        final net.minecraft.sound.SoundEvent soundEvent;
+        final net.minecraft.sounds.SoundEvent soundEvent;
         final float pitch;
         final float volume; 
         
-        AnimationConfig(int frametime, int totalFrames, net.minecraft.sound.SoundEvent soundEvent, float pitch, float volume) {
+        AnimationConfig(int frametime, int totalFrames, net.minecraft.sounds.SoundEvent soundEvent, float pitch, float volume) {
             this.frametime = frametime;
             this.totalFrames = totalFrames;
             this.soundEvent = soundEvent;

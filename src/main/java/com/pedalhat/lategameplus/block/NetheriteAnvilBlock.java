@@ -1,26 +1,26 @@
 package com.pedalhat.lategameplus.block;
 
 import com.pedalhat.lategameplus.screen.NetheriteAnvilScreenHandler;
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.AnvilBlock;
-import net.minecraft.block.BlockState;
-import net.minecraft.screen.NamedScreenHandlerFactory;
-import net.minecraft.screen.ScreenHandlerContext;
-import net.minecraft.screen.SimpleNamedScreenHandlerFactory;
-import net.minecraft.text.Text;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.SimpleMenuProvider;
+import net.minecraft.world.inventory.ContainerLevelAccess;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.AnvilBlock;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
 
 public class NetheriteAnvilBlock extends AnvilBlock {
-    public NetheriteAnvilBlock(AbstractBlock.Settings settings) {
+    public NetheriteAnvilBlock(BlockBehaviour.Properties settings) {
         super(settings);
     }
 
     @Override
-    public NamedScreenHandlerFactory createScreenHandlerFactory(BlockState state, World world, BlockPos pos) {
-        return new SimpleNamedScreenHandlerFactory((syncId, inventory, player) ->
-            new NetheriteAnvilScreenHandler(syncId, inventory, ScreenHandlerContext.create(world, pos)),
-            Text.translatable("container.repair")
+    public MenuProvider getMenuProvider(BlockState state, Level world, BlockPos pos) {
+        return new SimpleMenuProvider((syncId, inventory, player) ->
+            new NetheriteAnvilScreenHandler(syncId, inventory, ContainerLevelAccess.create(world, pos)),
+            Component.translatable("container.repair")
         );
     }
 }

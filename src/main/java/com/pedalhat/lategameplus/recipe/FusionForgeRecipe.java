@@ -1,25 +1,24 @@
 package com.pedalhat.lategameplus.recipe;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.recipe.Ingredient;
-import net.minecraft.recipe.IngredientPlacement;
-import net.minecraft.recipe.Recipe;
-import net.minecraft.recipe.RecipeSerializer;
-import net.minecraft.recipe.RecipeType;
-import net.minecraft.recipe.book.RecipeBookCategories;
-import net.minecraft.recipe.book.RecipeBookCategory;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.world.World;
-
+import net.minecraft.core.HolderLookup;
 import java.util.List;
 import java.util.Optional;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.PlacementInfo;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeBookCategories;
+import net.minecraft.world.item.crafting.RecipeBookCategory;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.Level;
 
 public record FusionForgeRecipe(Ingredient inputA, Ingredient inputB, ItemStack output,
                                 int cookTime, int fuelCost, float experience)
     implements Recipe<FusionForgeRecipeInput> {
 
     @Override
-    public boolean matches(FusionForgeRecipeInput input, World world) {
+    public boolean matches(FusionForgeRecipeInput input, Level world) {
         ItemStack stackA = input.inputA();
         ItemStack stackB = input.inputB();
         boolean direct = inputA.test(stackA) && inputB.test(stackB);
@@ -28,7 +27,7 @@ public record FusionForgeRecipe(Ingredient inputA, Ingredient inputB, ItemStack 
     }
 
     @Override
-    public ItemStack craft(FusionForgeRecipeInput input, RegistryWrapper.WrapperLookup registries) {
+    public ItemStack assemble(FusionForgeRecipeInput input) {
         return output.copy();
     }
 
@@ -43,16 +42,26 @@ public record FusionForgeRecipe(Ingredient inputA, Ingredient inputB, ItemStack 
     }
 
     @Override
-    public IngredientPlacement getIngredientPlacement() {
-        return IngredientPlacement.forMultipleSlots(List.of(
+    public PlacementInfo placementInfo() {
+        return PlacementInfo.createFromOptionals(List.of(
             Optional.of(inputA),
             Optional.of(inputB)
         ));
     }
 
     @Override
-    public RecipeBookCategory getRecipeBookCategory() {
+    public RecipeBookCategory recipeBookCategory() {
         return RecipeBookCategories.FURNACE_MISC;
+    }
+
+    @Override
+    public String group() {
+        return "";
+    }
+
+    @Override
+    public boolean showNotification() {
+        return false;
     }
 
     public ItemStack getOutput() {

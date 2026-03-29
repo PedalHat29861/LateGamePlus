@@ -3,29 +3,29 @@ package com.pedalhat.lategameplus.item;
 import com.pedalhat.lategameplus.config.ConfigManager;
 import com.pedalhat.lategameplus.util.TimeBridge;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
-import net.minecraft.block.Blocks;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.CustomModelDataComponent;
-import net.minecraft.component.type.NbtComponent;
-import net.minecraft.component.type.TooltipDisplayComponent;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.tooltip.TooltipType;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.Text;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.item.component.CustomModelData;
+import net.minecraft.world.item.component.TooltipDisplay;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -53,7 +53,7 @@ public class DebrisResonatorItem extends Item {
         if (value < 0) {
             value = DEFAULT_MAX_BATTERY_SECONDS;
         }
-        return MathHelper.clamp(value, 0, 24 * 60 * 60);
+        return Mth.clamp(value, 0, 24 * 60 * 60);
     }
 
     private static int cooldownSelfSeconds() {
@@ -61,7 +61,7 @@ public class DebrisResonatorItem extends Item {
         if (value < 0) {
             value = DEFAULT_COOLDOWN_SELF;
         }
-        return MathHelper.clamp(value, 0, 3600);
+        return Mth.clamp(value, 0, 3600);
     }
 
     private static int cooldownOtherSeconds() {
@@ -69,7 +69,7 @@ public class DebrisResonatorItem extends Item {
         if (value < 0) {
             value = DEFAULT_COOLDOWN_OTHER;
         }
-        return MathHelper.clamp(value, 0, 3600);
+        return Mth.clamp(value, 0, 3600);
     }
 
     private static int cooldownFarSeconds() {
@@ -77,7 +77,7 @@ public class DebrisResonatorItem extends Item {
         if (value < 0) {
             value = DEFAULT_COOLDOWN_FAR;
         }
-        return MathHelper.clamp(value, 0, 3600);
+        return Mth.clamp(value, 0, 3600);
     }
 
     private static int rangeY() {
@@ -85,7 +85,7 @@ public class DebrisResonatorItem extends Item {
         if (value < 0) {
             value = DEFAULT_RANGE_Y;
         }
-        return MathHelper.clamp(value, 0, 64);
+        return Mth.clamp(value, 0, 64);
     }
 
 
@@ -113,15 +113,15 @@ public class DebrisResonatorItem extends Item {
     private static final Map<UUID, Long> nextScanCache = new ConcurrentHashMap<>();
     private static final Map<UUID, Integer> lastPingTierCache = new ConcurrentHashMap<>();
 
-    private static void clearSoundCycle(PlayerEntity player) {
-        UUID playerId = player.getUuid();
+    private static void clearSoundCycle(Player player) {
+        UUID playerId = player.getUUID();
         soundCycleCache.remove(playerId);
         nextScanCache.remove(playerId);
         lastPingTierCache.remove(playerId);
     }
 
-    public DebrisResonatorItem(Settings settings) {
-        super(settings.maxCount(1));
+    public DebrisResonatorItem(Properties settings) {
+        super(settings.stacksTo(1));
     }
 
     private enum State { OFF, SEARCHING, DEPLETED }
@@ -129,7 +129,7 @@ public class DebrisResonatorItem extends Item {
     
 
     private static State readState(ItemStack stack) {
-        CustomModelDataComponent cmd = stack.get(DataComponentTypes.CUSTOM_MODEL_DATA);
+        CustomModelData cmd = stack.get(DataComponents.CUSTOM_MODEL_DATA);
         if (cmd == null) return State.OFF;
         String s = cmd.getString(CMD_INDEX);
         if (s == null) return State.OFF;
@@ -141,17 +141,17 @@ public class DebrisResonatorItem extends Item {
     }
 
     private static void setModelString(ItemStack stack, String modelKey) {
-        CustomModelDataComponent prev = stack.get(DataComponentTypes.CUSTOM_MODEL_DATA);
+        CustomModelData prev = stack.get(DataComponents.CUSTOM_MODEL_DATA);
         List<Float> floats = prev != null ? prev.floats()  : List.of();
         List<Boolean> flags = prev != null ? prev.flags()  : List.of();
         List<Integer> colors = prev != null ? prev.colors() : List.of();
-        stack.set(DataComponentTypes.CUSTOM_MODEL_DATA,
-                new CustomModelDataComponent(floats, flags, List.of(modelKey), colors));
+        stack.set(DataComponents.CUSTOM_MODEL_DATA,
+                new CustomModelData(floats, flags, List.of(modelKey), colors));
     }
 
     private static void writeState(ItemStack stack, State state) {
         if (state == State.OFF) {
-            stack.remove(DataComponentTypes.CUSTOM_MODEL_DATA);
+            stack.remove(DataComponents.CUSTOM_MODEL_DATA);
             return;
         }
         setModelString(stack, state == State.SEARCHING ? "searching" : "depleted");
@@ -162,7 +162,7 @@ public class DebrisResonatorItem extends Item {
     }
 
     private static String getModelStateString(ItemStack stack) {
-        CustomModelDataComponent cmd = stack.get(DataComponentTypes.CUSTOM_MODEL_DATA);
+        CustomModelData cmd = stack.get(DataComponents.CUSTOM_MODEL_DATA);
         if (cmd == null) return "off";
         String s = cmd.getString(CMD_INDEX);
         return s != null ? s : "off";
@@ -170,21 +170,21 @@ public class DebrisResonatorItem extends Item {
 
 
 
-    private static NbtComponent getComp(ItemStack stack) {
-        return stack.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT);
+    private static CustomData getComp(ItemStack stack) {
+        return stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY);
     }
 
-    private static void mutateRoot(ItemStack stack, Consumer<net.minecraft.nbt.NbtCompound> updater) {
-        NbtComponent comp = getComp(stack);
-        net.minecraft.nbt.NbtCompound data = comp.copyNbt();
-        net.minecraft.nbt.NbtCompound root = data.getCompound(ROOT_KEY).orElseGet(net.minecraft.nbt.NbtCompound::new);
+    private static void mutateRoot(ItemStack stack, Consumer<net.minecraft.nbt.CompoundTag> updater) {
+        CustomData comp = getComp(stack);
+        net.minecraft.nbt.CompoundTag data = comp.copyTag();
+        net.minecraft.nbt.CompoundTag root = data.getCompound(ROOT_KEY).orElseGet(net.minecraft.nbt.CompoundTag::new);
         updater.accept(root);
         data.put(ROOT_KEY, root);
-        stack.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(data));
+        stack.set(DataComponents.CUSTOM_DATA, CustomData.of(data));
     }
 
     private static int readInt(ItemStack stack, String key, int def) {
-        var data = getComp(stack).copyNbt();
+        var data = getComp(stack).copyTag();
         var rootOpt = data.getCompound(ROOT_KEY);
         if (rootOpt.isEmpty()) return def;
         var v = rootOpt.get().getInt(key);
@@ -192,7 +192,7 @@ public class DebrisResonatorItem extends Item {
     }
 
     private static long readLong(ItemStack stack, String key, long def) {
-        var data = getComp(stack).copyNbt();
+        var data = getComp(stack).copyTag();
         var rootOpt = data.getCompound(ROOT_KEY);
         if (rootOpt.isEmpty()) return def;
         var v = rootOpt.get().getLong(key);
@@ -200,7 +200,7 @@ public class DebrisResonatorItem extends Item {
     }
 
     private static boolean readBool(ItemStack stack, String key, boolean def) {
-        var data = getComp(stack).copyNbt();
+        var data = getComp(stack).copyTag();
         var rootOpt = data.getCompound(ROOT_KEY);
         if (rootOpt.isEmpty()) return def;
         var v = rootOpt.get().getBoolean(key);
@@ -230,7 +230,7 @@ public class DebrisResonatorItem extends Item {
     }
 
     private static void writeBattery(ItemStack stack, int seconds) {
-        writeInt(stack, KEY_BATTERY, MathHelper.clamp(seconds, 0, maxBatterySeconds()));
+        writeInt(stack, KEY_BATTERY, Mth.clamp(seconds, 0, maxBatterySeconds()));
     }
 
     public static int getBatterySeconds(ItemStack stack) {
@@ -238,7 +238,7 @@ public class DebrisResonatorItem extends Item {
     }
 
     public static void setBatterySeconds(ItemStack stack, int seconds) {
-        int clamped = MathHelper.clamp(seconds, 0, maxBatterySeconds());
+        int clamped = Mth.clamp(seconds, 0, maxBatterySeconds());
         writeBattery(stack, clamped);
         State state = readState(stack);
         if (state == State.SEARCHING) {
@@ -268,7 +268,7 @@ public class DebrisResonatorItem extends Item {
 
 
     private static float getCmdFloat(ItemStack stack, int idx, float def) {
-        CustomModelDataComponent cmd = stack.get(DataComponentTypes.CUSTOM_MODEL_DATA);
+        CustomModelData cmd = stack.get(DataComponents.CUSTOM_MODEL_DATA);
         if (cmd == null) return def;
         List<Float> fs = cmd.floats();
         if (fs == null || fs.size() <= idx) return def;
@@ -277,7 +277,7 @@ public class DebrisResonatorItem extends Item {
     }
 
     private static boolean getCmdFlag(ItemStack stack, int idx, boolean def) {
-        CustomModelDataComponent cmd = stack.get(DataComponentTypes.CUSTOM_MODEL_DATA);
+        CustomModelData cmd = stack.get(DataComponents.CUSTOM_MODEL_DATA);
         if (cmd == null) return def;
         List<Boolean> fl = cmd.flags();
         if (fl == null || fl.size() <= idx) return def;
@@ -286,10 +286,10 @@ public class DebrisResonatorItem extends Item {
     }
 
     private static void setCmdStateFloatsFlags(ItemStack stack, String stateString, float baseSeconds, float sinceSeconds, boolean locked) {
-        CustomModelDataComponent prev = stack.get(DataComponentTypes.CUSTOM_MODEL_DATA);
+        CustomModelData prev = stack.get(DataComponents.CUSTOM_MODEL_DATA);
         List<Integer> colors = prev != null ? prev.colors() : List.of();
-        stack.set(DataComponentTypes.CUSTOM_MODEL_DATA,
-                new CustomModelDataComponent(
+        stack.set(DataComponents.CUSTOM_MODEL_DATA,
+                new CustomModelData(
                         List.of(baseSeconds, sinceSeconds),
                         List.of(locked),
                         List.of(stateString),
@@ -298,11 +298,11 @@ public class DebrisResonatorItem extends Item {
     }
 
     private static void clearCmdFloatsFlagsKeepState(ItemStack stack) {
-        CustomModelDataComponent prev = stack.get(DataComponentTypes.CUSTOM_MODEL_DATA);
+        CustomModelData prev = stack.get(DataComponents.CUSTOM_MODEL_DATA);
         String s = (prev != null && prev.getString(CMD_INDEX) != null) ? prev.getString(CMD_INDEX) : "off";
         List<Integer> colors = prev != null ? prev.colors() : List.of();
-        stack.set(DataComponentTypes.CUSTOM_MODEL_DATA,
-                new CustomModelDataComponent(List.of(), List.of(), List.of(s), colors));
+        stack.set(DataComponents.CUSTOM_MODEL_DATA,
+                new CustomModelData(List.of(), List.of(), List.of(s), colors));
     }
 
 
@@ -332,36 +332,36 @@ public class DebrisResonatorItem extends Item {
 
 
     @Override
-    public ActionResult use(World world, PlayerEntity user, Hand hand) {
-        ItemStack stack = user.getStackInHand(hand);
-        if (!world.isClient()) {
+    public InteractionResult use(Level world, Player user, InteractionHand hand) {
+        ItemStack stack = user.getItemInHand(hand);
+        if (!world.isClientSide()) {
             long now = TimeBridge.nowSeconds();
             State st = readState(stack);
 
             if (st == State.OFF) {
-                if (world.getRegistryKey() != World.NETHER) {
-                    user.sendMessage(Text.translatable("item.lategameplus.debris_resonator.invalid_dimension").formatted(Formatting.GRAY), true);
+                if (world.dimension() != Level.NETHER) {
+                    user.sendOverlayMessage(Component.translatable("item.lategameplus.debris_resonator.invalid_dimension").withStyle(ChatFormatting.GRAY));
                     world.playSound(null, user.getX(), user.getY(), user.getZ(),
-                            SoundEvents.BLOCK_REDSTONE_TORCH_BURNOUT, SoundCategory.PLAYERS, 0.6f, 0.8f);
-                    return ActionResult.SUCCESS;
+                            SoundEvents.REDSTONE_TORCH_BURNOUT, SoundSource.PLAYERS, 0.6f, 0.8f);
+                    return InteractionResult.SUCCESS;
                 }
 
                 long cdUntil = readLong(stack, KEY_SCAN_COOLDOWN_UNTIL, 0L);
                 if (now < cdUntil) {
                     long remainingSecs = cdUntil - now;
-                    Text cooldownMessage = (remainingSecs >= 60)
-                            ? Text.translatable("item.lategameplus.debris_resonator.cooldown_message_minutes", Math.round(remainingSecs / 60f))
-                            : Text.translatable("item.lategameplus.debris_resonator.cooldown_message_seconds", remainingSecs);
-                    user.sendMessage(cooldownMessage.copy().formatted(Formatting.GRAY), true);
+                    Component cooldownMessage = (remainingSecs >= 60)
+                            ? Component.translatable("item.lategameplus.debris_resonator.cooldown_message_minutes", Math.round(remainingSecs / 60f))
+                            : Component.translatable("item.lategameplus.debris_resonator.cooldown_message_seconds", remainingSecs);
+                    user.sendOverlayMessage(cooldownMessage.copy().withStyle(ChatFormatting.GRAY));
                     world.playSound(null, user.getX(), user.getY(), user.getZ(),
-                            SoundEvents.BLOCK_REDSTONE_TORCH_BURNOUT, SoundCategory.PLAYERS, 0.6f, 0.8f);
-                    return ActionResult.SUCCESS;
+                            SoundEvents.REDSTONE_TORCH_BURNOUT, SoundSource.PLAYERS, 0.6f, 0.8f);
+                    return InteractionResult.SUCCESS;
                 }
                 int base = readBattery(stack);
                 if (base > 0) {
                     setCmdStateFloatsFlags(stack, "searching", base, (float) now, true);
                     writeBool(stack, KEY_TARGET_LOCKED, false);
-                    UUID userId = user.getUuid();
+                    UUID userId = user.getUUID();
                     nextScanCache.put(userId, now);
                     lastPingTierCache.put(userId, 0);
                     writeInt(stack, KEY_MODEL_TIER, 0);
@@ -369,8 +369,8 @@ public class DebrisResonatorItem extends Item {
                     removeKey(stack, KEY_FAR_SINCE_MS);
                     removeKey(stack, KEY_MISSING_SINCE_MS);
                     world.playSound(null, user.getX(), user.getY(), user.getZ(),
-                            SoundEvents.BLOCK_AMETHYST_BLOCK_HIT, SoundCategory.PLAYERS, 0.8f, 1.0f);
-                    ((ServerWorld) world).spawnParticles(ParticleTypes.ENCHANT, user.getX(), user.getBodyY(0.5), user.getZ(),
+                            SoundEvents.AMETHYST_BLOCK_HIT, SoundSource.PLAYERS, 0.8f, 1.0f);
+                    ((ServerLevel) world).sendParticles(ParticleTypes.ENCHANT, user.getX(), user.getY(0.5), user.getZ(),
                             8, 0.2, 0.2, 0.2, 0.0);
                 } else {
                     writeState(stack, State.DEPLETED);
@@ -379,10 +379,10 @@ public class DebrisResonatorItem extends Item {
                 boolean targetLocked = readBool(stack, KEY_TARGET_LOCKED, false);
                 if (targetLocked) {
                     world.playSound(null, user.getX(), user.getY(), user.getZ(),
-                            SoundEvents.BLOCK_REDSTONE_TORCH_BURNOUT, SoundCategory.PLAYERS, 0.6f, 0.8f);
-                    ((ServerWorld) world).spawnParticles(ParticleTypes.SMOKE, user.getX(), user.getBodyY(0.5), user.getZ(),
+                            SoundEvents.REDSTONE_TORCH_BURNOUT, SoundSource.PLAYERS, 0.6f, 0.8f);
+                    ((ServerLevel) world).sendParticles(ParticleTypes.SMOKE, user.getX(), user.getY(0.5), user.getZ(),
                             5, 0.1, 0.1, 0.1, 0.0);
-                    user.sendMessage(Text.translatable("item.lategameplus.debris_resonator.locked").formatted(Formatting.GRAY), true);
+                    user.sendOverlayMessage(Component.translatable("item.lategameplus.debris_resonator.locked").withStyle(ChatFormatting.GRAY));
                 } else {
                     commitBatteryFromFloats(stack);
                     clearTarget(stack);
@@ -391,20 +391,20 @@ public class DebrisResonatorItem extends Item {
                     clearSoundCycle(user);
                     writeState(stack, State.OFF);
                     world.playSound(null, user.getX(), user.getY(), user.getZ(),
-                            SoundEvents.BLOCK_AMETHYST_BLOCK_CHIME, SoundCategory.PLAYERS, 0.6f, 0.95f);
+                            SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.PLAYERS, 0.6f, 0.95f);
                 }
             }
         }
-        user.swingHand(hand);
-        return ActionResult.SUCCESS;
+        user.swing(hand);
+        return InteractionResult.SUCCESS;
     }
 
 
 
     @SuppressWarnings("null")
     @Override
-    public void inventoryTick(ItemStack stack, ServerWorld world, Entity entity, @Nullable EquipmentSlot slot) {
-        if (!(entity instanceof PlayerEntity player)) return;
+    public void inventoryTick(ItemStack stack, ServerLevel world, Entity entity, @Nullable EquipmentSlot slot) {
+        if (!(entity instanceof Player player)) return;
 
         State currentState = readState(stack);
         if (currentState == State.OFF) {
@@ -412,7 +412,7 @@ public class DebrisResonatorItem extends Item {
             long cdUntil = readLong(stack, KEY_SCAN_COOLDOWN_UNTIL, 0L);
             if (cdUntil > 0L && now >= cdUntil) {
                 removeKey(stack, KEY_SCAN_COOLDOWN_UNTIL);
-                stack.remove(DataComponentTypes.CUSTOM_MODEL_DATA);
+                stack.remove(DataComponents.CUSTOM_MODEL_DATA);
             }
         }
 
@@ -435,8 +435,8 @@ public class DebrisResonatorItem extends Item {
                 writeLong(stack, KEY_SCAN_COOLDOWN_UNTIL, now + cooldownSelfSeconds());
                 clearTarget(stack);
                 world.playSound(null, player.getX(), player.getY(), player.getZ(),
-                        SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.PLAYERS, 0.9f, 0.9f);
-                world.spawnParticles(ParticleTypes.POOF, player.getX(), player.getBodyY(0.5), player.getZ(),
+                        SoundEvents.FIRE_EXTINGUISH, SoundSource.PLAYERS, 0.9f, 0.9f);
+                world.sendParticles(ParticleTypes.POOF, player.getX(), player.getY(0.5), player.getZ(),
                         6, 0.2, 0.2, 0.2, 0.0);
                 return;
             }
@@ -451,7 +451,7 @@ public class DebrisResonatorItem extends Item {
         if (!locked) {
             if (!isNether(world)) { return; }
             
-            UUID playerId = player.getUuid();
+            UUID playerId = player.getUUID();
             long nextScanDeciseconds = nextScanCache.getOrDefault(playerId, 0L);
             long nowDeciseconds = now * 10;
             long scanPeriodDeciseconds = (long)(SCAN_PERIOD_SECONDS * 10);
@@ -462,7 +462,7 @@ public class DebrisResonatorItem extends Item {
             if (nowDeciseconds < nextScanDeciseconds) { return; }
             nextScanCache.put(playerId, nowDeciseconds + scanPeriodDeciseconds);
 
-            BlockPos origin = player.getBlockPos();
+            BlockPos origin = player.blockPosition();
             long seed = world.getSeed();
             BlockPos found = scanForDebris(world, origin, seed);
             if (found != null) {
@@ -481,7 +481,7 @@ public class DebrisResonatorItem extends Item {
 
 
         updateGuidanceModelIfNeeded(stack, player.getX(), player.getY(), player.getZ(), target, world, player, true);
-        boolean isStillThere = world.getBlockState(target).isOf(Blocks.ANCIENT_DEBRIS);
+        boolean isStillThere = world.getBlockState(target).is(Blocks.ANCIENT_DEBRIS);
         long nowMs = System.currentTimeMillis();
 
         if (!isStillThere) {
@@ -494,7 +494,7 @@ public class DebrisResonatorItem extends Item {
         } else {
             removeKey(stack, KEY_MISSING_SINCE_MS);
         }
-        double dist = player.getEntityPos().distanceTo(target.toCenterPos());
+        double dist = player.position().distanceTo(target.getCenter());
         if (dist <= RELEASE_DISTANCE) {
             removeKey(stack, KEY_FAR_SINCE_MS);
         } else {
@@ -507,7 +507,7 @@ public class DebrisResonatorItem extends Item {
         }
     }
 
-    private static void liberateToCooldown(ItemStack stack, ServerWorld world, PlayerEntity player, int seconds) {
+    private static void liberateToCooldown(ItemStack stack, ServerLevel world, Player player, int seconds) {
         commitBatteryFromFloats(stack);
         clearTarget(stack);
         clearSoundCycle(player);
@@ -516,17 +516,17 @@ public class DebrisResonatorItem extends Item {
         playDisconnectFeedback(world, player);
     }
 
-    private static boolean isNether(ServerWorld world) {
-        return world.getRegistryKey() == World.NETHER;
+    private static boolean isNether(ServerLevel world) {
+        return world.dimension() == Level.NETHER;
     }
 
-    private static BlockPos scanForDebris(ServerWorld world, BlockPos origin, long worldSeed) {
+    private static BlockPos scanForDebris(ServerLevel world, BlockPos origin, long worldSeed) {
         int verticalRange = rangeY();
         for (int dy = -verticalRange; dy <= verticalRange; dy++) {
             for (int dx = -RANGE_XZ; dx <= RANGE_XZ; dx++) {
                 for (int dz = -RANGE_XZ; dz <= RANGE_XZ; dz++) {
-                    BlockPos p = origin.add(dx, dy, dz);
-                    if (!world.getBlockState(p).isOf(Blocks.ANCIENT_DEBRIS)) continue;
+                    BlockPos p = origin.offset(dx, dy, dz);
+                    if (!world.getBlockState(p).is(Blocks.ANCIENT_DEBRIS)) continue;
                     if (!isTrackable(world, p, worldSeed)) continue;
                     return p;
                 }
@@ -535,7 +535,7 @@ public class DebrisResonatorItem extends Item {
         return null;
     }
 
-    private static boolean isTrackable(ServerWorld world, BlockPos pos, long seed) {
+    private static boolean isTrackable(ServerLevel world, BlockPos pos, long seed) {
         boolean isNatural = isNaturallyGenerated(world, pos, seed);
 
         
@@ -543,7 +543,7 @@ public class DebrisResonatorItem extends Item {
             return false;
         }
         
-        long dimHash = world.getRegistryKey().getValue().hashCode();
+        long dimHash = world.dimension().identifier().hashCode();
         long h = seed
                 ^ (dimHash * 0x9E3779B97F4A7C15L)
                 ^ (pos.getX() * 73428767L)
@@ -556,8 +556,8 @@ public class DebrisResonatorItem extends Item {
         return trackable;
     }
     
-    private static boolean isNaturallyGenerated(ServerWorld world, BlockPos pos, long seed) {
-        String key = world.getRegistryKey().getValue().toString() + ":" + pos.toShortString();
+    private static boolean isNaturallyGenerated(ServerLevel world, BlockPos pos, long seed) {
+        String key = world.dimension().identifier().toString() + ":" + pos.toShortString();
         boolean isPlayerPlaced = DebrisResonatorHooks.playerPlacedDebris.contains(key);
         
         if (isPlayerPlaced) {
@@ -570,7 +570,7 @@ public class DebrisResonatorItem extends Item {
         return result;
     }
 
-    private static boolean isNaturallyGeneratedByAlgorithm(ServerWorld world, BlockPos pos, long seed) {
+    private static boolean isNaturallyGeneratedByAlgorithm(ServerLevel world, BlockPos pos, long seed) {
         if (!isNether(world)) {
             return false;
         }
@@ -583,14 +583,14 @@ public class DebrisResonatorItem extends Item {
         return true;
     }
 
-    private static void setTarget(ItemStack stack, ServerWorld world, BlockPos pos) {
+    private static void setTarget(ItemStack stack, ServerLevel world, BlockPos pos) {
         writeBool(stack, KEY_TARGET_LOCKED, true);
         writeInt(stack, KEY_TARGET_X, pos.getX());
         writeInt(stack, KEY_TARGET_Y, pos.getY());
         writeInt(stack, KEY_TARGET_Z, pos.getZ());
         writeInt(stack, KEY_MODEL_TIER, 0);
         writeLong(stack, KEY_LAST_MODEL_UPDATE_MS, 0L);
-        mutateRoot(stack, root -> root.putString(KEY_TARGET_DIM, world.getRegistryKey().getValue().toString()));
+        mutateRoot(stack, root -> root.putString(KEY_TARGET_DIM, world.dimension().identifier().toString()));
         removeKey(stack, KEY_FAR_SINCE_MS);
         removeKey(stack, KEY_MISSING_SINCE_MS);
     }
@@ -620,15 +620,15 @@ public class DebrisResonatorItem extends Item {
         double py,
         double pz,
         BlockPos target,
-        ServerWorld world,
-        PlayerEntity player,
+        ServerLevel world,
+        Player player,
         boolean playRangeTransitionSound
     ) {
         long nowMs = System.currentTimeMillis();
         long last = readLong(stack, KEY_LAST_MODEL_UPDATE_MS, 0L);
         if (nowMs - last < MODEL_RATE_LIMIT_MS) return;
 
-        double dist = Math.sqrt(target.toCenterPos().squaredDistanceTo(px, py, pz));
+        double dist = Math.sqrt(target.getCenter().distanceToSqr(px, py, pz));
         int desiredTier = computeTier(dist); // 0=searching,1=too_far,2=far,3=mid,4=close
 
         int currentTier = readInt(stack, KEY_MODEL_TIER, 0);
@@ -649,8 +649,8 @@ public class DebrisResonatorItem extends Item {
                     player.getX(),
                     player.getY(),
                     player.getZ(),
-                    SoundEvents.BLOCK_RESPAWN_ANCHOR_CHARGE,
-                    SoundCategory.PLAYERS,
+                    SoundEvents.RESPAWN_ANCHOR_CHARGE,
+                    SoundSource.PLAYERS,
                     RANGE_TRANSITION_VOLUME,
                     1.28f
                 );
@@ -660,8 +660,8 @@ public class DebrisResonatorItem extends Item {
                     player.getX(),
                     player.getY(),
                     player.getZ(),
-                    SoundEvents.BLOCK_RESPAWN_ANCHOR_DEPLETE,
-                    SoundCategory.PLAYERS,
+                    SoundEvents.RESPAWN_ANCHOR_DEPLETE,
+                    SoundSource.PLAYERS,
                     RANGE_TRANSITION_VOLUME,
                     0.92f
                 );
@@ -672,36 +672,36 @@ public class DebrisResonatorItem extends Item {
         writeLong(stack, KEY_LAST_MODEL_UPDATE_MS, nowMs);
     }
 
-    private static void playConnectionFeedback(ServerWorld world, PlayerEntity player) {
+    private static void playConnectionFeedback(ServerLevel world, Player player) {
         world.playSound(
             null,
             player.getX(),
             player.getY(),
             player.getZ(),
-            SoundEvents.BLOCK_BEACON_ACTIVATE,
-            SoundCategory.PLAYERS,
+            SoundEvents.BEACON_ACTIVATE,
+            SoundSource.PLAYERS,
             0.9f,
             1.08f
         );
         double eyeY = player.getEyeY();
-        world.spawnParticles(ParticleTypes.END_ROD, player.getX(), eyeY, player.getZ(), 18, 0.35, 0.25, 0.35, 0.02);
-        world.spawnParticles(ParticleTypes.ENCHANT, player.getX(), eyeY, player.getZ(), 20, 0.4, 0.3, 0.4, 0.05);
+        world.sendParticles(ParticleTypes.END_ROD, player.getX(), eyeY, player.getZ(), 18, 0.35, 0.25, 0.35, 0.02);
+        world.sendParticles(ParticleTypes.ENCHANT, player.getX(), eyeY, player.getZ(), 20, 0.4, 0.3, 0.4, 0.05);
     }
 
-    private static void playDisconnectFeedback(ServerWorld world, PlayerEntity player) {
+    private static void playDisconnectFeedback(ServerLevel world, Player player) {
         world.playSound(
             null,
             player.getX(),
             player.getY(),
             player.getZ(),
-            SoundEvents.BLOCK_BEACON_DEACTIVATE,
-            SoundCategory.PLAYERS,
+            SoundEvents.BEACON_DEACTIVATE,
+            SoundSource.PLAYERS,
             0.9f,
             0.95f
         );
         double eyeY = player.getEyeY();
-        world.spawnParticles(ParticleTypes.END_ROD, player.getX(), eyeY, player.getZ(), 14, 0.35, 0.25, 0.35, 0.0);
-        world.spawnParticles(ParticleTypes.SMOKE, player.getX(), eyeY, player.getZ(), 16, 0.35, 0.2, 0.35, 0.01);
+        world.sendParticles(ParticleTypes.END_ROD, player.getX(), eyeY, player.getZ(), 14, 0.35, 0.25, 0.35, 0.0);
+        world.sendParticles(ParticleTypes.SMOKE, player.getX(), eyeY, player.getZ(), 16, 0.35, 0.2, 0.35, 0.01);
     }
 
     private static int computeTier(double dist) {
@@ -733,43 +733,43 @@ public class DebrisResonatorItem extends Item {
         return TooltipState.OFF;
     }
 
-    private static Text getTooltipDistanceText(ItemStack stack) {
+    private static Component getTooltipDistanceText(ItemStack stack) {
         int tier = readInt(stack, KEY_MODEL_TIER, 1);
         return switch (tier) {
-            case 4 -> Text.translatable("item.lategameplus.debris_resonator.tooltip.distance.close");
-            case 3 -> Text.translatable("item.lategameplus.debris_resonator.tooltip.distance.medium");
-            case 2 -> Text.translatable("item.lategameplus.debris_resonator.tooltip.distance.far");
-            default -> Text.translatable("item.lategameplus.debris_resonator.tooltip.distance.very_far");
+            case 4 -> Component.translatable("item.lategameplus.debris_resonator.tooltip.distance.close");
+            case 3 -> Component.translatable("item.lategameplus.debris_resonator.tooltip.distance.medium");
+            case 2 -> Component.translatable("item.lategameplus.debris_resonator.tooltip.distance.far");
+            default -> Component.translatable("item.lategameplus.debris_resonator.tooltip.distance.very_far");
         };
     }
 
-    private static Text getTooltipChargeText(ItemStack stack) {
+    private static Component getTooltipChargeText(ItemStack stack) {
         int secs = Math.max(0, calcEffectiveBatteryLive(stack));
         if (secs >= 60) {
-            return Text.translatable("item.lategameplus.debris_resonator.tooltip.minutes", Math.round(secs / 60f));
+            return Component.translatable("item.lategameplus.debris_resonator.tooltip.minutes", Math.round(secs / 60f));
         }
-        return Text.translatable("item.lategameplus.debris_resonator.tooltip.seconds", secs);
+        return Component.translatable("item.lategameplus.debris_resonator.tooltip.seconds", secs);
     }
 
-    private static Text formatTooltipEntry(String key, Text value) {
-        return Text.translatable(key, value.copy().formatted(Formatting.WHITE))
-            .formatted(Formatting.GOLD);
+    private static Component formatTooltipEntry(String key, Component value) {
+        return Component.translatable(key, value.copy().withStyle(ChatFormatting.WHITE))
+            .withStyle(ChatFormatting.GOLD);
     }
 
     @Override
-    public void appendTooltip(
+    public void appendHoverText(
         ItemStack stack,
         Item.TooltipContext context,
-        TooltipDisplayComponent displayComponent,
-        Consumer<Text> textConsumer,
-        TooltipType type
+        TooltipDisplay displayComponent,
+        Consumer<Component> textConsumer,
+        TooltipFlag type
     ) {
         TooltipState tooltipState = getTooltipState(stack);
-        Text stateText = switch (tooltipState) {
-            case SEARCHING -> Text.translatable("item.lategameplus.debris_resonator.tooltip.state.searching");
-            case LOCATED -> Text.translatable("item.lategameplus.debris_resonator.tooltip.state.located");
-            case COOLDOWN -> Text.translatable("item.lategameplus.debris_resonator.tooltip.state.cooldown");
-            case OFF -> Text.translatable("item.lategameplus.debris_resonator.tooltip.state.off");
+        Component stateText = switch (tooltipState) {
+            case SEARCHING -> Component.translatable("item.lategameplus.debris_resonator.tooltip.state.searching");
+            case LOCATED -> Component.translatable("item.lategameplus.debris_resonator.tooltip.state.located");
+            case COOLDOWN -> Component.translatable("item.lategameplus.debris_resonator.tooltip.state.cooldown");
+            case OFF -> Component.translatable("item.lategameplus.debris_resonator.tooltip.state.off");
         };
         textConsumer.accept(formatTooltipEntry("item.lategameplus.debris_resonator.tooltip.state", stateText));
 
@@ -784,27 +784,27 @@ public class DebrisResonatorItem extends Item {
     }
 
     @Override
-    public Text getName(ItemStack stack) {
-        return stack.getCustomName() != null ? stack.getName() : Text.translatable(getTranslationKey());
+    public Component getName(ItemStack stack) {
+        return stack.getCustomName() != null ? stack.getHoverName() : Component.translatable(getDescriptionId());
     }
 
 
 
     @Override
-    public boolean isItemBarVisible(ItemStack stack) {
+    public boolean isBarVisible(ItemStack stack) {
         return calcEffectiveBatteryLive(stack) < maxBatterySeconds();
     }
 
     @Override
-    public int getItemBarStep(ItemStack stack) {
+    public int getBarWidth(ItemStack stack) {
         int bat = calcEffectiveBatteryLive(stack);
         return Math.round(13.0f * bat / (float) Math.max(1, maxBatterySeconds()));
     }
 
     @Override
-    public int getItemBarColor(ItemStack stack) {
+    public int getBarColor(ItemStack stack) {
         float f = Math.max(0.0F, calcEffectiveBatteryLive(stack) / (float) Math.max(1, maxBatterySeconds()));
-        return MathHelper.hsvToRgb(f / 3.0F, 1.0F, 1.0F);
+        return Mth.hsvToRgb(f / 3.0F, 1.0F, 1.0F);
     }
 
 
@@ -821,24 +821,24 @@ public class DebrisResonatorItem extends Item {
                 300, 300, java.util.concurrent.TimeUnit.SECONDS
             );
             net.fabricmc.fabric.api.event.player.UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
-                if (world.isClient()) return net.minecraft.util.ActionResult.PASS;
+                if (world.isClientSide()) return net.minecraft.world.InteractionResult.PASS;
                 
-                ItemStack stack = player.getStackInHand(hand);
-                if (stack.getItem() == net.minecraft.item.Items.ANCIENT_DEBRIS.asItem()) {
-                    BlockPos pos = hitResult.getBlockPos().offset(hitResult.getSide());
-                    String key = world.getRegistryKey().getValue().toString() + ":" + pos.toShortString();
+                ItemStack stack = player.getItemInHand(hand);
+                if (stack.getItem() == net.minecraft.world.item.Items.ANCIENT_DEBRIS.asItem()) {
+                    BlockPos pos = hitResult.getBlockPos().relative(hitResult.getDirection());
+                    String key = world.dimension().identifier().toString() + ":" + pos.toShortString();
                     playerPlacedDebris.add(key);
                     savePlayerPlacedDebris();
                 }
-                return net.minecraft.util.ActionResult.PASS;
+                return net.minecraft.world.InteractionResult.PASS;
             });
             
             PlayerBlockBreakEvents.AFTER.register((world, player, pos, state, blockEntity) -> {
-                if (world.isClient()) return;
-                if (!state.isOf(Blocks.ANCIENT_DEBRIS)) return;
-                PlayerInventory inventory = player.getInventory();
-                for (int slot = 0; slot < inventory.size(); slot++) {
-                    ItemStack stack = inventory.getStack(slot);
+                if (world.isClientSide()) return;
+                if (!state.is(Blocks.ANCIENT_DEBRIS)) return;
+                Inventory inventory = player.getInventory();
+                for (int slot = 0; slot < inventory.getContainerSize(); slot++) {
+                    ItemStack stack = inventory.getItem(slot);
                     if (!(stack.getItem() instanceof DebrisResonatorItem)) continue;
                     if (readState(stack) != State.SEARCHING) continue;
                     if (readState(stack) != State.SEARCHING) continue;
@@ -847,8 +847,8 @@ public class DebrisResonatorItem extends Item {
                     BlockPos target = readTargetPos(stack);
                     if (target == null) continue;
 
-                    String dim = world.getRegistryKey().getValue().toString();
-                    String dimNbt = getComp(stack).copyNbt().getCompound(ROOT_KEY).flatMap(n -> n.getString(KEY_TARGET_DIM)).orElse("");
+                    String dim = world.dimension().identifier().toString();
+                    String dimNbt = getComp(stack).copyTag().getCompound(ROOT_KEY).flatMap(n -> n.getString(KEY_TARGET_DIM)).orElse("");
                     if (!dim.equals(dimNbt)) continue;
                     if (!target.equals(pos)) continue;
 
@@ -858,9 +858,9 @@ public class DebrisResonatorItem extends Item {
                     writeLong(stack, KEY_SCAN_COOLDOWN_UNTIL, TimeBridge.nowSeconds() + cooldownSelfSeconds());
                     setCooldownVisual(stack);
 
-                    playDisconnectFeedback((ServerWorld) world, player);
+                    playDisconnectFeedback((ServerLevel) world, player);
                     
-                    String key = world.getRegistryKey().getValue().toString() + ":" + pos.toShortString();
+                    String key = world.dimension().identifier().toString() + ":" + pos.toShortString();
                     if (playerPlacedDebris.remove(key)) {
                         savePlayerPlacedDebris();
                     }
@@ -873,8 +873,8 @@ public class DebrisResonatorItem extends Item {
             playerPlacedDebris.clear();
         }
  
-        public static boolean isPlayerPlaced(ServerWorld world, BlockPos pos) {
-            String key = world.getRegistryKey().getValue().toString() + ":" + pos.toShortString();
+        public static boolean isPlayerPlaced(ServerLevel world, BlockPos pos) {
+            String key = world.dimension().identifier().toString() + ":" + pos.toShortString();
             return playerPlacedDebris.contains(key);
         }
 

@@ -1,37 +1,37 @@
 package com.pedalhat.lategameplus.mixin.client;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
-import net.minecraft.client.network.AbstractClientPlayerEntity;
-import net.minecraft.client.render.command.OrderedRenderCommandQueue;
-import net.minecraft.client.render.item.HeldItemRenderer;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.item.CrossbowItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Hand;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.renderer.ItemInHandRenderer;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.CrossbowItem;
+import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
-@Mixin(HeldItemRenderer.class)
+@Mixin(ItemInHandRenderer.class)
 public abstract class HeldItemRendererMixin {
 
     @ModifyExpressionValue(
-        method = "renderFirstPersonItem(Lnet/minecraft/client/network/AbstractClientPlayerEntity;FFLnet/minecraft/util/Hand;FLnet/minecraft/item/ItemStack;FLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/command/OrderedRenderCommandQueue;I)V",
+        method = "renderArmWithItem(Lnet/minecraft/client/player/AbstractClientPlayer;FFLnet/minecraft/world/InteractionHand;FLnet/minecraft/world/item/ItemStack;FLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;I)V",
         at = @At(
             value = "INVOKE",
-            target = "Lnet/minecraft/item/ItemStack;isOf(Lnet/minecraft/item/Item;)Z"
+            target = "Lnet/minecraft/world/item/ItemStack;is(Ljava/lang/Object;)Z"
         )
     )
     private boolean lategameplus$acceptAnyCrossbowFP(
         boolean original,
-        AbstractClientPlayerEntity player,
+        AbstractClientPlayer player,
         float tickDelta,
         float pitch,
-        Hand hand,
+        InteractionHand hand,
         float swingProgress,
         ItemStack stack,
         float equipProgress,
-        MatrixStack matrices,
-        OrderedRenderCommandQueue commandQueue,
+        PoseStack matrices,
+        SubmitNodeCollector commandQueue,
         int light
     ) {
         // Si ya era true (ballesta vanilla), mantenlo.

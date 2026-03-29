@@ -1,25 +1,24 @@
 package com.pedalhat.lategameplus.item;
 
 import com.pedalhat.lategameplus.config.ConfigManager;
-
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.projectile.PersistentProjectileEntity;
-import net.minecraft.entity.projectile.ProjectileEntity;
-import net.minecraft.item.CrossbowItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
+import net.minecraft.world.item.CrossbowItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 
 public class NetheriteCrossbowItem extends CrossbowItem {
-    public NetheriteCrossbowItem(Settings settings) {
+    public NetheriteCrossbowItem(Properties settings) {
         super(settings);
     }
 
     @Override
-    protected ProjectileEntity createArrowEntity(World world, LivingEntity shooter, ItemStack weaponStack, ItemStack projectileStack, boolean critical) {
-        ProjectileEntity projectile = super.createArrowEntity(world, shooter, weaponStack, projectileStack, critical);
-        if (projectile instanceof PersistentProjectileEntity persistent) {
+    protected Projectile createProjectile(Level world, LivingEntity shooter, ItemStack weaponStack, ItemStack projectileStack, boolean critical) {
+        Projectile projectile = super.createProjectile(world, shooter, weaponStack, projectileStack, critical);
+        if (projectile instanceof AbstractArrow persistent) {
             float multiplier = Math.max(0.0F, ConfigManager.get().netheriteCrossbowDamageMultiplier);
-            persistent.applyDamageModifier(multiplier);
+            persistent.setBaseDamageFromMob(multiplier);
         }
         return projectile;
     }

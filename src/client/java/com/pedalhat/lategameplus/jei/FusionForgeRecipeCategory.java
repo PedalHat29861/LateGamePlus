@@ -14,25 +14,25 @@ import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import mezz.jei.api.recipe.types.IRecipeType;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import mezz.jei.api.gui.widgets.IRecipeExtrasBuilder;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.recipe.RecipeEntry;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import java.util.Locale;
 
-public class FusionForgeRecipeCategory implements IRecipeCategory<RecipeEntry<FusionForgeRecipe>> {
-    private static final Identifier TEXTURE = Identifier.of(LateGamePlus.MOD_ID, "textures/gui/container/fusion_forge_jei.png");
+public class FusionForgeRecipeCategory implements IRecipeCategory<RecipeHolder<FusionForgeRecipe>> {
+    private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath(LateGamePlus.MOD_ID, "textures/gui/container/fusion_forge_jei.png");
     private static final Identifier BURN_PROGRESS_TEXTURE =
-        Identifier.of(LateGamePlus.MOD_ID, "textures/gui/sprites/burn_progress.png");
+        Identifier.fromNamespaceAndPath(LateGamePlus.MOD_ID, "textures/gui/sprites/burn_progress.png");
     private static final Identifier LIT_PROGRESS_TEXTURE =
-        Identifier.ofVanilla("textures/gui/sprites/container/furnace/lit_progress.png");
+        Identifier.withDefaultNamespace("textures/gui/sprites/container/furnace/lit_progress.png");
     private static final Identifier X2_TEXTURE =
-        Identifier.of(LateGamePlus.MOD_ID, "textures/gui/sprites/fusion_forge_x2.png");
+        Identifier.fromNamespaceAndPath(LateGamePlus.MOD_ID, "textures/gui/sprites/fusion_forge_x2.png");
     private static final int BACKGROUND_WIDTH = 127;
     private static final int BACKGROUND_HEIGHT = 61;
     private static final int CATEGORY_WIDTH = 127;
@@ -93,14 +93,14 @@ public class FusionForgeRecipeCategory implements IRecipeCategory<RecipeEntry<Fu
 
     @SuppressWarnings("null")
     @Override
-    public @NotNull IRecipeType<RecipeEntry<FusionForgeRecipe>> getRecipeType() {
+    public @NotNull IRecipeType<RecipeHolder<FusionForgeRecipe>> getRecipeType() {
         return FusionForgeJeiPlugin.FUSION_FORGE_TYPE;
     }
 
     @SuppressWarnings("null")
     @Override
-    public Text getTitle() {
-        return Text.translatable("block.lategameplus.fusion_forge");
+    public Component getTitle() {
+        return Component.translatable("block.lategameplus.fusion_forge");
     }
 
     @Override
@@ -124,7 +124,7 @@ public class FusionForgeRecipeCategory implements IRecipeCategory<RecipeEntry<Fu
     }
 
     @Override
-    public void setRecipe(IRecipeLayoutBuilder builder, RecipeEntry<FusionForgeRecipe> recipe, IFocusGroup focuses) {
+    public void setRecipe(IRecipeLayoutBuilder builder, RecipeHolder<FusionForgeRecipe> recipe, IFocusGroup focuses) {
         FusionForgeRecipe value = recipe.value();
         builder.addInputSlot(INPUT_A_X, INPUT_A_Y).add(value.getInputA());
         builder.addInputSlot(INPUT_B_X, INPUT_B_Y).add(value.getInputB());
@@ -135,7 +135,7 @@ public class FusionForgeRecipeCategory implements IRecipeCategory<RecipeEntry<Fu
     }
 
     @Override
-    public void createRecipeExtras(IRecipeExtrasBuilder builder, RecipeEntry<FusionForgeRecipe> recipe,
+    public void createRecipeExtras(IRecipeExtrasBuilder builder, RecipeHolder<FusionForgeRecipe> recipe,
                                    IFocusGroup focuses) {
         FusionForgeRecipe value = recipe.value();
         int cookTime = Math.max(1, value.getCookTime());
@@ -153,7 +153,7 @@ public class FusionForgeRecipeCategory implements IRecipeCategory<RecipeEntry<Fu
     }
 
     @Override
-    public void draw(RecipeEntry<FusionForgeRecipe> recipe, IRecipeSlotsView recipeSlotsView, DrawContext context,
+    public void draw(RecipeHolder<FusionForgeRecipe> recipe, IRecipeSlotsView recipeSlotsView, GuiGraphicsExtractor context,
                      double mouseX, double mouseY) {
         background.draw(context);
         x2Icon.draw(context, X2_X, X2_Y);
@@ -162,30 +162,30 @@ public class FusionForgeRecipeCategory implements IRecipeCategory<RecipeEntry<Fu
     }
 
     @Override
-    public void getTooltip(ITooltipBuilder tooltip, RecipeEntry<FusionForgeRecipe> recipe,
+    public void getTooltip(ITooltipBuilder tooltip, RecipeHolder<FusionForgeRecipe> recipe,
                            IRecipeSlotsView recipeSlotsView, double mouseX, double mouseY) {
         if (mouseX >= X2_X && mouseX < X2_X + X2_WIDTH && mouseY >= X2_Y && mouseY < X2_Y + X2_HEIGHT) {
-            tooltip.add(Text.translatable(X2_TOOLTIP_KEY));
+            tooltip.add(Component.translatable(X2_TOOLTIP_KEY));
         }
     }
 
-    private static void drawExperienceText(RecipeEntry<FusionForgeRecipe> recipe, DrawContext context) {
+    private static void drawExperienceText(RecipeHolder<FusionForgeRecipe> recipe, GuiGraphicsExtractor context) {
         float exp = recipe.value().getExperience();
         if (exp <= 0.0f) {
             return;
         }
         String text = formatExperience(exp) + " XP";
-        context.drawText(MinecraftClient.getInstance().textRenderer, text,
+        context.text(Minecraft.getInstance().font, text,
             OUTPUT_X + XP_TEXT_X_OFFSET, OUTPUT_Y + XP_TEXT_Y_OFFSET, TXT_COLOR, false);
     }
 
-    private static void drawTimeText(RecipeEntry<FusionForgeRecipe> recipe, DrawContext context) {
+    private static void drawTimeText(RecipeHolder<FusionForgeRecipe> recipe, GuiGraphicsExtractor context) {
         int cookTime = recipe.value().getCookTime();
         if (cookTime <= 0) {
             return;
         }
         String text = formatSeconds(cookTime) + "s";
-        context.drawText(MinecraftClient.getInstance().textRenderer, text,
+        context.text(Minecraft.getInstance().font, text,
             OUTPUT_X + TIME_TEXT_X_OFFSET, OUTPUT_Y + TIME_TEXT_Y_OFFSET, TXT_COLOR, false);
     }
 

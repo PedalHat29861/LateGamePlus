@@ -1,10 +1,10 @@
 package com.pedalhat.lategameplus.effect;
 
-import net.minecraft.entity.effect.StatusEffect;
-import net.minecraft.entity.effect.StatusEffectCategory;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectCategory;
 
-public class VolcanicInfusionStatusEffect extends StatusEffect {
+public class VolcanicInfusionStatusEffect extends MobEffect {
     public VolcanicInfusionStatusEffect() {
-        super(StatusEffectCategory.BENEFICIAL, 0xFFD200);
+        super(MobEffectCategory.BENEFICIAL, 0xFFD200);
     }
 }

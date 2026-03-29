@@ -2,23 +2,23 @@ package com.pedalhat.lategameplus.screen;
 
 import com.pedalhat.lategameplus.LateGamePlus;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.client.gl.RenderPipelines;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.ingame.HandledScreen;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.entity.player.Inventory;
 
-public class FusionForgeScreen extends HandledScreen<FusionForgeScreenHandler> {
-    private static final Identifier TEXTURE = Identifier.of(LateGamePlus.MOD_ID, "textures/gui/container/fusion_forge.png");
+public class FusionForgeScreen extends AbstractContainerScreen<FusionForgeScreenHandler> {
+    private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath(LateGamePlus.MOD_ID, "textures/gui/container/fusion_forge.png");
     private static final Identifier BURN_PROGRESS_TEXTURE =
-        Identifier.of(LateGamePlus.MOD_ID, "textures/gui/sprites/burn_progress.png");
+        Identifier.fromNamespaceAndPath(LateGamePlus.MOD_ID, "textures/gui/sprites/burn_progress.png");
     private static final Identifier LIT_PROGRESS_TEXTURE =
-        Identifier.of(LateGamePlus.MOD_ID, "textures/gui/sprites/lit_progress.png");
+        Identifier.fromNamespaceAndPath(LateGamePlus.MOD_ID, "textures/gui/sprites/lit_progress.png");
     private static final Identifier RECIPE_BUTTON_TEXTURE =
-        Identifier.ofVanilla("textures/gui/sprites/recipe_book/button.png");
+        Identifier.withDefaultNamespace("textures/gui/sprites/recipe_book/button.png");
     private static final Identifier RECIPE_BUTTON_HIGHLIGHTED_TEXTURE =
-        Identifier.ofVanilla("textures/gui/sprites/recipe_book/button_highlighted.png");
+        Identifier.withDefaultNamespace("textures/gui/sprites/recipe_book/button_highlighted.png");
     private static final boolean JEI_LOADED = FabricLoader.getInstance().isModLoaded("jei");
     private static final int RECIPE_BUTTON_X = 17;
     private static final int RECIPE_BUTTON_Y = 21;
@@ -40,21 +40,21 @@ public class FusionForgeScreen extends HandledScreen<FusionForgeScreenHandler> {
     private static final int FLAME_X = 68;
     private static final int FLAME_Y = 40;
 
-    public FusionForgeScreen(FusionForgeScreenHandler handler, PlayerInventory inventory, Text title) {
-        super(handler, inventory, title);
-        this.titleY = 8;
-        this.titleX = 12;
-        this.playerInventoryTitleY = 85;
-        this.backgroundWidth = 176;
-        this.backgroundHeight = 179;
+    public FusionForgeScreen(FusionForgeScreenHandler handler, Inventory inventory, Component title) {
+        super(handler, inventory, title, 176, 179);
+        this.titleLabelY = 8;
+        this.titleLabelX = 12;
+        this.inventoryLabelY = 85;
     }
 
     @Override
-    protected void drawBackground(DrawContext context, float delta, int mouseX, int mouseY) {
-        int x = (width - backgroundWidth) / 2;
-        int y = (height - backgroundHeight) / 2;
-        context.drawTexture(RenderPipelines.GUI_TEXTURED, TEXTURE, x, y, 0, 0, backgroundWidth,
-            backgroundHeight, backgroundWidth, backgroundHeight);
+    public void extractBackground(GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
+        super.extractBackground(context, mouseX, mouseY, delta);
+
+        int x = leftPos;
+        int y = topPos;
+        context.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, x, y, 0, 0, imageWidth,
+            imageHeight, imageWidth, imageHeight);
 
         if (JEI_LOADED) {
             int buttonX = x + RECIPE_BUTTON_X;
@@ -63,7 +63,7 @@ public class FusionForgeScreen extends HandledScreen<FusionForgeScreenHandler> {
                 && mouseX < buttonX + RECIPE_BUTTON_WIDTH
                 && mouseY >= buttonY
                 && mouseY < buttonY + RECIPE_BUTTON_HEIGHT;
-            context.drawTexture(
+            context.blit(
                 RenderPipelines.GUI_TEXTURED,
                 hovered ? RECIPE_BUTTON_HIGHLIGHTED_TEXTURE : RECIPE_BUTTON_TEXTURE,
                 buttonX,
@@ -77,47 +77,45 @@ public class FusionForgeScreen extends HandledScreen<FusionForgeScreenHandler> {
             );
         }
 
-        int progress = handler.getCookProgress();
+        int progress = menu.getCookProgress();
         if (progress > 0) {
-            context.drawTexture(RenderPipelines.GUI_TEXTURED, BURN_PROGRESS_TEXTURE, x + ARROW_X, y + ARROW_Y, ARROW_U,
+            context.blit(RenderPipelines.GUI_TEXTURED, BURN_PROGRESS_TEXTURE, x + ARROW_X, y + ARROW_Y, ARROW_U,
                 ARROW_V, progress, ARROW_HEIGHT, ARROW_WIDTH, ARROW_HEIGHT);
         }
-        int fuel = handler.getFuelProgress();
+        int fuel = menu.getFuelProgress();
         if (fuel > 0) {
             int flameOffset = FLAME_HEIGHT - fuel;
-            long worldTime = client != null && client.world != null ? client.world.getTime() : 0L;
+            long worldTime = minecraft != null && minecraft.level != null ? minecraft.level.getGameTime() : 0L;
             int frame = (int) ((worldTime / FLAME_FRAME_TICKS) % FLAME_FRAME_COUNT);
-            context.drawTexture(RenderPipelines.GUI_TEXTURED, LIT_PROGRESS_TEXTURE, x + FLAME_X,
+            context.blit(RenderPipelines.GUI_TEXTURED, LIT_PROGRESS_TEXTURE, x + FLAME_X,
                 y + FLAME_Y + flameOffset, FLAME_U, FLAME_V + frame * FLAME_HEIGHT + flameOffset, FLAME_WIDTH, fuel, FLAME_WIDTH,
                 FLAME_TEXTURE_HEIGHT);
         }
     }
 
     @Override
-    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        renderBackground(context, mouseX, mouseY, delta);
-        super.render(context, mouseX, mouseY, delta);
-        drawMouseoverTooltip(context, mouseX, mouseY);
+    protected void extractTooltip(GuiGraphicsExtractor context, int mouseX, int mouseY) {
+        super.extractTooltip(context, mouseX, mouseY);
         drawFuelTooltip(context, mouseX, mouseY);
     }
 
-    private void drawFuelTooltip(DrawContext context, int mouseX, int mouseY) {
-        int x = (width - backgroundWidth) / 2;
-        int y = (height - backgroundHeight) / 2;
+    private void drawFuelTooltip(GuiGraphicsExtractor context, int mouseX, int mouseY) {
+        int x = leftPos;
+        int y = topPos;
         int left = x + FLAME_X;
         int top = y + FLAME_Y;
         if (mouseX < left || mouseX >= left + FLAME_WIDTH || mouseY < top || mouseY >= top + FLAME_HEIGHT) {
             return;
         }
 
-        int capacity = handler.getFuelCapacity();
+        int capacity = menu.getFuelCapacity();
         if (capacity <= 0) {
             return;
         }
-        int current = handler.getFuelStored();
-        context.drawTooltip(
-            textRenderer,
-            Text.translatable("tooltip.lategameplus.fusion_forge.fuel_capacity", current, capacity),
+        int current = menu.getFuelStored();
+        context.setTooltipForNextFrame(
+            font,
+            Component.translatable("tooltip.lategameplus.fusion_forge.fuel_capacity", current, capacity),
             mouseX,
             mouseY
         );

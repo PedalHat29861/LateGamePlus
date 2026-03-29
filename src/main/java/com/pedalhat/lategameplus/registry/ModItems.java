@@ -9,75 +9,117 @@ import com.pedalhat.lategameplus.item.NetheriteCrossbowItem;
 import com.pedalhat.lategameplus.item.DebrisResonatorItem;
 import com.pedalhat.lategameplus.item.PompeiiWormItem;
 import com.pedalhat.lategameplus.tag.LGPItemTags;
-
-import net.minecraft.component.ComponentMap;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.AttributeModifierSlot;
-import net.minecraft.component.type.AttributeModifiersComponent;
-import net.minecraft.component.type.ConsumableComponents;
-import net.minecraft.component.type.EquippableComponent;
-import net.minecraft.component.type.FoodComponent;
-import net.minecraft.component.type.RepairableComponent;
-import net.minecraft.component.type.NbtComponent;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.attribute.EntityAttributeModifier;
-import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.item.Item;
-import net.minecraft.item.Items;
-import net.minecraft.item.FishingRodItem;
-import net.minecraft.item.equipment.ArmorMaterial;
-import net.minecraft.item.equipment.ArmorMaterials;
-import net.minecraft.item.equipment.EquipmentType;
-import net.minecraft.item.consume.ApplyEffectsConsumeEffect;
-import net.minecraft.item.equipment.EquipmentAssetKeys;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.entry.RegistryEntryList;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.Rarity;
-import net.minecraft.util.DyeColor;
-import net.minecraft.sound.SoundEvents;
-
 import java.util.EnumMap;
 import java.util.Map;
+import net.minecraft.core.HolderSet;
+import net.minecraft.core.Registry;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.EquipmentSlotGroup;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.FishingRodItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.Rarity;
+import net.minecraft.world.item.component.Consumables;
+import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
+import net.minecraft.world.item.consume_effects.ApplyStatusEffectsConsumeEffect;
+import net.minecraft.world.item.enchantment.Repairable;
+import net.minecraft.world.item.equipment.ArmorMaterial;
+import net.minecraft.world.item.equipment.ArmorMaterials;
+import net.minecraft.world.item.equipment.ArmorType;
+import net.minecraft.world.item.equipment.EquipmentAssets;
+import net.minecraft.world.item.equipment.Equippable;
 import java.util.Arrays;
 
 public class ModItems {
-    private static ComponentMap getChestplateAttributesForLevel(int lvl) {
-        int clamped = Math.max(0, Math.min(4, lvl));
-        return switch (clamped) {
-            case 0 -> ComponentMap.EMPTY;
-            case 1 -> Items.GOLDEN_CHESTPLATE.getComponents();
-            case 2 -> Items.IRON_CHESTPLATE.getComponents();
-            case 3 -> Items.DIAMOND_CHESTPLATE.getComponents();
-            case 4 -> Items.NETHERITE_CHESTPLATE.getComponents();
-            default -> Items.IRON_CHESTPLATE.getComponents();
+    public static ItemAttributeModifiers getChestplateAttributesForLevel(int lvl) {
+        int armor = switch (Math.max(0, Math.min(4, lvl))) {
+            case 0 -> 0;
+            case 1 -> 5;
+            case 2 -> 6;
+            case 3, 4 -> 8;
+            default -> 6;
         };
+        double toughness = switch (Math.max(0, Math.min(4, lvl))) {
+            case 3 -> 2.0;
+            case 4 -> 3.0;
+            default -> 0.0;
+        };
+        double knockbackResistance = lvl >= 4 ? 0.1 : 0.0;
+
+        if (armor <= 0 && toughness <= 0.0 && knockbackResistance <= 0.0) {
+            return null;
+        }
+
+        ItemAttributeModifiers.Builder builder = ItemAttributeModifiers.builder()
+            .add(
+                Attributes.ARMOR,
+                new AttributeModifier(
+                    Identifier.fromNamespaceAndPath(LateGamePlus.MOD_ID, "netherite_elytra_armor"),
+                    armor,
+                    AttributeModifier.Operation.ADD_VALUE
+                ),
+                EquipmentSlotGroup.CHEST
+            );
+
+        if (toughness > 0.0) {
+            builder.add(
+                Attributes.ARMOR_TOUGHNESS,
+                new AttributeModifier(
+                    Identifier.fromNamespaceAndPath(LateGamePlus.MOD_ID, "netherite_elytra_armor_toughness"),
+                    toughness,
+                    AttributeModifier.Operation.ADD_VALUE
+                ),
+                EquipmentSlotGroup.CHEST
+            );
+        }
+
+        if (knockbackResistance > 0.0) {
+            builder.add(
+                Attributes.KNOCKBACK_RESISTANCE,
+                new AttributeModifier(
+                    Identifier.fromNamespaceAndPath(LateGamePlus.MOD_ID, "netherite_elytra_knockback_resistance"),
+                    knockbackResistance,
+                    AttributeModifier.Operation.ADD_VALUE
+                ),
+                EquipmentSlotGroup.CHEST
+            );
+        }
+
+        return builder.build();
     }
 
-    private static RepairableComponent repairsWithNuggetAndIngot() {
-        RegistryEntryList<Item> mats = RegistryEntryList.of(
-            Registries.ITEM.getEntry(NETHERITE_NUGGET),
-            Registries.ITEM.getEntry(Items.NETHERITE_INGOT)
+    private static Repairable repairsWithNuggetAndIngot() {
+        HolderSet<Item> mats = HolderSet.direct(
+            BuiltInRegistries.ITEM.wrapAsHolder(NETHERITE_NUGGET),
+            BuiltInRegistries.ITEM.wrapAsHolder(Items.NETHERITE_INGOT)
         );
-        return new RepairableComponent(mats);
+        return new Repairable(mats);
     }
 
-    private static RegistryKey<Item> key(String name) {
-        return RegistryKey.of(RegistryKeys.ITEM, Identifier.of(LateGamePlus.MOD_ID, name));
+    private static ResourceKey<Item> key(String name) {
+        return ResourceKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(LateGamePlus.MOD_ID, name));
     }
 
-    private static Item.Settings settings(String name) {
-        return new Item.Settings().registryKey(key(name));
+    private static Item.Properties settings(String name) {
+        return new Item.Properties().setId(key(name));
     }
 
     private static <T extends Item> T register(String name, T item) {
-        return Registry.register(Registries.ITEM, key(name), item);
+        return Registry.register(BuiltInRegistries.ITEM, key(name), item);
     }
 
     public static Item NETHERITE_NUGGET;
@@ -97,65 +139,66 @@ public class ModItems {
     public static Item VOLCANIC_CONCOCTION;
     public static Item LAVA_VISION_ICON;
     public static Map<DyeColor, Item> NETHERITE_HARNESSES;
+    private static final int VANILLA_FISHING_ROD_DURABILITY = 64;
 
-    private static final RegistryKey<net.minecraft.item.equipment.EquipmentAsset> NETHERITE_WOLF_ARMOR_ASSET =
-        RegistryKey.of(EquipmentAssetKeys.REGISTRY_KEY, Identifier.of(LateGamePlus.MOD_ID, "netherite_armadillo_scute"));
+    private static final ResourceKey<net.minecraft.world.item.equipment.EquipmentAsset> NETHERITE_WOLF_ARMOR_ASSET =
+        ResourceKey.create(EquipmentAssets.ROOT_ID, Identifier.fromNamespaceAndPath(LateGamePlus.MOD_ID, "netherite_armadillo_scute"));
     private static final ArmorMaterial NETHERITE_WOLF_ARMOR_MATERIAL =
         new ArmorMaterial(
             ArmorMaterials.ARMADILLO_SCUTE.durability() * 2,
-            Map.of(EquipmentType.BODY, 22),
+            Map.of(ArmorType.BODY, 22),
             ArmorMaterials.NETHERITE.enchantmentValue(),
-            SoundEvents.ITEM_ARMOR_EQUIP_WOLF,
+            SoundEvents.ARMOR_EQUIP_WOLF,
             ArmorMaterials.NETHERITE.toughness(),
             ArmorMaterials.NETHERITE.knockbackResistance(),
             LGPItemTags.REPAIRS_NETHERITE_WOLF_ARMOR,
             NETHERITE_WOLF_ARMOR_ASSET
         );
 
-    private static AttributeModifiersComponent createHarnessAttributes(String name) {
-        return AttributeModifiersComponent.builder()
+    private static ItemAttributeModifiers createHarnessAttributes(String name) {
+        return ItemAttributeModifiers.builder()
             .add(
-                EntityAttributes.ARMOR,
-                new EntityAttributeModifier(
-                    Identifier.of(LateGamePlus.MOD_ID, name + "_armor"),
+                Attributes.ARMOR,
+                new AttributeModifier(
+                    Identifier.fromNamespaceAndPath(LateGamePlus.MOD_ID, name + "_armor"),
                     10.0,
-                    EntityAttributeModifier.Operation.ADD_VALUE
+                    AttributeModifier.Operation.ADD_VALUE
                 ),
-                AttributeModifierSlot.BODY
+                EquipmentSlotGroup.BODY
             ).build();
     }
 
-    private static RegistryKey<net.minecraft.item.equipment.EquipmentAsset> harnessAsset(DyeColor color) {
-        return RegistryKey.of(
-            EquipmentAssetKeys.REGISTRY_KEY,
-            Identifier.of(LateGamePlus.MOD_ID, color.asString() + "_netherite_harness")
+    private static ResourceKey<net.minecraft.world.item.equipment.EquipmentAsset> harnessAsset(DyeColor color) {
+        return ResourceKey.create(
+            EquipmentAssets.ROOT_ID,
+            Identifier.fromNamespaceAndPath(LateGamePlus.MOD_ID, color.getSerializedName() + "_netherite_harness")
         );
     }
 
-    private static EquippableComponent createHarnessEquippable(DyeColor color) {
-        RegistryEntryList<EntityType<?>> allowed = RegistryEntryList.of(
-            Registries.ENTITY_TYPE.getEntry(EntityType.HAPPY_GHAST)
+    private static Equippable createHarnessEquippable(DyeColor color) {
+        HolderSet<EntityType<?>> allowed = HolderSet.direct(
+            BuiltInRegistries.ENTITY_TYPE.wrapAsHolder(EntityType.HAPPY_GHAST)
         );
 
-        return EquippableComponent.builder(EquipmentSlot.BODY)
-                .equipSound(SoundEvents.ENTITY_HAPPY_GHAST_EQUIP)
-                .model(harnessAsset(color))
-                .allowedEntities(allowed)
-                .equipOnInteract(true)
-                .canBeSheared(true)
-                .shearingSound(Registries.SOUND_EVENT.getEntry(SoundEvents.ENTITY_HAPPY_GHAST_UNEQUIP))
+        return Equippable.builder(EquipmentSlot.BODY)
+                .setEquipSound(SoundEvents.HARNESS_EQUIP)
+                .setAsset(harnessAsset(color))
+                .setAllowedEntities(allowed)
+                .setEquipOnInteract(true)
+                .setCanBeSheared(true)
+                .setShearingSound(BuiltInRegistries.SOUND_EVENT.wrapAsHolder(SoundEvents.HARNESS_UNEQUIP))
                 .build();
     }
 
     private static Item registerHarness(DyeColor color) {
-        String name = color.asString() + "_netherite_harness";
+        String name = color.getSerializedName() + "_netherite_harness";
         return register(name,
             new Item(
                 settings(name)
-                    .maxCount(1)
-                    .fireproof()
-                    .component(DataComponentTypes.EQUIPPABLE, createHarnessEquippable(color))
-                    .component(DataComponentTypes.ATTRIBUTE_MODIFIERS, createHarnessAttributes(name))
+                    .stacksTo(1)
+                    .fireResistant()
+                    .component(DataComponents.EQUIPPABLE, createHarnessEquippable(color))
+                    .component(DataComponents.ATTRIBUTE_MODIFIERS, createHarnessAttributes(name))
             )
         );
     }
@@ -172,45 +215,44 @@ public class ModItems {
 
     public static void init(ModConfig cfg) {
         NETHERITE_NUGGET = register("netherite_nugget",
-            new Item(settings("netherite_nugget").fireproof()));
+            new Item(settings("netherite_nugget").fireResistant()));
 
-        var equip = EquippableComponent.builder(EquipmentSlot.CHEST)
-            .model(RegistryKey.of(EquipmentAssetKeys.REGISTRY_KEY,
-                    Identifier.of(LateGamePlus.MOD_ID, "wings/netherite_elytra")))
-            .dispensable(true)
-            .damageOnHurt(true)
+        var equip = Equippable.builder(EquipmentSlot.CHEST)
+            .setAsset(ResourceKey.create(EquipmentAssets.ROOT_ID,
+                    Identifier.fromNamespaceAndPath(LateGamePlus.MOD_ID, "wings/netherite_elytra")))
+            .setDispensable(true)
+            .setDamageOnHurt(true)
             .build();
 
-        Item.Settings elytraSettings = settings("netherite_elytra")
-            .maxCount(1)
-            .maxDamage(648)
-            .fireproof()
-            .component(DataComponentTypes.EQUIPPABLE, equip)
-            .component(DataComponentTypes.GLIDER, net.minecraft.util.Unit.INSTANCE)
-            .component(DataComponentTypes.REPAIRABLE, repairsWithNuggetAndIngot())
+        Item.Properties elytraSettings = settings("netherite_elytra")
+            .stacksTo(1)
+            .durability(648)
+            .fireResistant()
+            .component(DataComponents.EQUIPPABLE, equip)
+            .component(DataComponents.GLIDER, net.minecraft.util.Unit.INSTANCE)
+            .component(DataComponents.REPAIRABLE, repairsWithNuggetAndIngot())
             .rarity(Rarity.EPIC);
 
-        var base = getChestplateAttributesForLevel(cfg.netheriteElytraProtectionLevel);
-        var attr = base.get(DataComponentTypes.ATTRIBUTE_MODIFIERS);
+        var attr = getChestplateAttributesForLevel(cfg.netheriteElytraProtectionLevel);
         if (attr != null) {
-            elytraSettings.component(DataComponentTypes.ATTRIBUTE_MODIFIERS, attr);
+            elytraSettings.component(DataComponents.ATTRIBUTE_MODIFIERS, attr);
         }
         NETHERITE_ELYTRA = register("netherite_elytra", new Item(elytraSettings));
 
         NETHERITE_APPLE = register("netherite_apple",
             new Item(settings("netherite_apple")
-                .fireproof()
+                .fireResistant()
                 .food(
-                    new FoodComponent.Builder()
+                    new FoodProperties.Builder()
                         .nutrition(6)
                         .saturationModifier(1.3F)
                         .alwaysEdible()
                         .build(),
-                    ConsumableComponents.food()
-                        .consumeEffect(new ApplyEffectsConsumeEffect(new StatusEffectInstance(StatusEffects.REGENERATION, 200, 1), 1.0F))
-                        .consumeEffect(new ApplyEffectsConsumeEffect(new StatusEffectInstance(StatusEffects.FIRE_RESISTANCE, 3000, 0), 1.0F))
-                        .consumeEffect(new ApplyEffectsConsumeEffect(new StatusEffectInstance(StatusEffects.ABSORPTION, 2400, 2), 1.0F))
-                        .consumeEffect(new ApplyEffectsConsumeEffect(new StatusEffectInstance(StatusEffects.RESISTANCE, 300, 3), 1.0F))
+                    Consumables.defaultFood()
+                        .onConsume(new ApplyStatusEffectsConsumeEffect(new MobEffectInstance(MobEffects.REGENERATION, 200, 1), 1.0F))
+                        .onConsume(new ApplyStatusEffectsConsumeEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 3000, 0), 1.0F))
+                        .onConsume(new ApplyStatusEffectsConsumeEffect(new MobEffectInstance(MobEffects.ABSORPTION, 2400, 2), 1.0F))
+                        .onConsume(new ApplyStatusEffectsConsumeEffect(new MobEffectInstance(MobEffects.RESISTANCE, 300, 3), 1.0F))
                         .build()
                 ).rarity(Rarity.RARE)
             )
@@ -218,33 +260,33 @@ public class ModItems {
 
         ENCHANTED_NETHERITE_APPLE = register("enchanted_netherite_apple",
             new Item(settings("enchanted_netherite_apple")
-                .fireproof()
+                .fireResistant()
                 .food(
-                    new FoodComponent.Builder()
+                    new FoodProperties.Builder()
                         .nutrition(10)
                         .saturationModifier(1.5F)
                         .alwaysEdible()
                         .build(),
-                    ConsumableComponents.food()
-                        .consumeEffect(new ApplyEffectsConsumeEffect(new StatusEffectInstance(StatusEffects.REGENERATION, 800, 2), 1.0F))
-                        .consumeEffect(new ApplyEffectsConsumeEffect(new StatusEffectInstance(StatusEffects.RESISTANCE, 10000, 1), 1.0F))
-                        .consumeEffect(new ApplyEffectsConsumeEffect(new StatusEffectInstance(StatusEffects.FIRE_RESISTANCE, 12000, 0), 1.0F))
-                        .consumeEffect(new ApplyEffectsConsumeEffect(new StatusEffectInstance(StatusEffects.ABSORPTION, 4800, 5), 1.0F))
-                        .consumeEffect(new ApplyEffectsConsumeEffect(new StatusEffectInstance(StatusEffects.SPEED, 300, 1), 1.0F))
-                        .consumeEffect(new ApplyEffectsConsumeEffect(new StatusEffectInstance(StatusEffects.STRENGTH, 300, 1), 1.0F))
+                    Consumables.defaultFood()
+                        .onConsume(new ApplyStatusEffectsConsumeEffect(new MobEffectInstance(MobEffects.REGENERATION, 800, 2), 1.0F))
+                        .onConsume(new ApplyStatusEffectsConsumeEffect(new MobEffectInstance(MobEffects.RESISTANCE, 10000, 1), 1.0F))
+                        .onConsume(new ApplyStatusEffectsConsumeEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 12000, 0), 1.0F))
+                        .onConsume(new ApplyStatusEffectsConsumeEffect(new MobEffectInstance(MobEffects.ABSORPTION, 4800, 5), 1.0F))
+                        .onConsume(new ApplyStatusEffectsConsumeEffect(new MobEffectInstance(MobEffects.SPEED, 300, 1), 1.0F))
+                        .onConsume(new ApplyStatusEffectsConsumeEffect(new MobEffectInstance(MobEffects.STRENGTH, 300, 1), 1.0F))
                         .build()
                 ).rarity(Rarity.EPIC)
-                .component(DataComponentTypes.ENCHANTMENT_GLINT_OVERRIDE, true)
+                .component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true)
             )
         );
 
         NETHERITE_BOW = register("netherite_bow",
             new NetheriteBowItem(
                 settings("netherite_bow")
-                    .maxDamage(500)
+                    .durability(500)
                     .enchantable(15)
-                    .fireproof()
-                    .component(DataComponentTypes.REPAIRABLE, repairsWithNuggetAndIngot())
+                    .fireResistant()
+                    .component(DataComponents.REPAIRABLE, repairsWithNuggetAndIngot())
                     .rarity(Rarity.COMMON)
             )
         );
@@ -252,11 +294,11 @@ public class ModItems {
         NETHERITE_CROSSBOW = register("netherite_crossbow",
             new NetheriteCrossbowItem(
                 settings("netherite_crossbow")
-                    .maxDamage(700)
+                    .durability(700)
                     .enchantable(1)
-                    .fireproof()
-                    .component(DataComponentTypes.REPAIRABLE, repairsWithNuggetAndIngot())
-                    .component(DataComponentTypes.ITEM_MODEL, Identifier.of(LateGamePlus.MOD_ID, "netherite_crossbow"))
+                    .fireResistant()
+                    .component(DataComponents.REPAIRABLE, repairsWithNuggetAndIngot())
+                    .component(DataComponents.ITEM_MODEL, Identifier.fromNamespaceAndPath(LateGamePlus.MOD_ID, "netherite_crossbow"))
                     .rarity(Rarity.COMMON)
             )
         );
@@ -264,20 +306,20 @@ public class ModItems {
         NETHERITE_FISHING_ROD = register("netherite_fishing_rod",
             new FishingRodItem(
                 settings("netherite_fishing_rod")
-                    .maxDamage(Items.FISHING_ROD.getDefaultStack().getMaxDamage() * 4)
+                    .durability(VANILLA_FISHING_ROD_DURABILITY * 4)
                     .enchantable(15)
-                    .fireproof()
-                    .component(DataComponentTypes.REPAIRABLE, repairsWithNuggetAndIngot())
+                    .fireResistant()
+                    .component(DataComponents.REPAIRABLE, repairsWithNuggetAndIngot())
                     .rarity(Rarity.COMMON)
             )
         );
 
         TOTEM_OF_NETHERDYING = register("totem_of_netherdying",
             new Item(settings("totem_of_netherdying")
-                .fireproof()
+                .fireResistant()
                 .rarity(Rarity.UNCOMMON)
-                .maxCount(1)
-                .maxDamage(Math.max(1, ConfigManager.get().netheriteTotemUses))
+                .stacksTo(1)
+                .durability(Math.max(1, ConfigManager.get().netheriteTotemUses))
             )
         );
 
@@ -285,24 +327,24 @@ public class ModItems {
             new Item(
                 settings("netherite_wolf_armor")
                     .wolfArmor(NETHERITE_WOLF_ARMOR_MATERIAL)
-                    .fireproof()
+                    .fireResistant()
             )
         );
 
         LODESTONE_WARP = register("lodestone_warp",
             new LodestoneWarpItem(
                 settings("lodestone_warp")
-                    .maxDamage(1)
+                    .durability(1)
             )
         );
         DEBRIS_RESONATOR = register("debris_resonator",
             new DebrisResonatorItem(
                 settings("debris_resonator")
-                    .maxCount(1)
-                    .fireproof()
+                    .stacksTo(1)
+                    .fireResistant()
                     .rarity(Rarity.RARE)
-                    .component(DataComponentTypes.ITEM_MODEL, Identifier.of(LateGamePlus.MOD_ID, "debris_resonator"))
-                    .component(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT)
+                    .component(DataComponents.ITEM_MODEL, Identifier.fromNamespaceAndPath(LateGamePlus.MOD_ID, "debris_resonator"))
+                    .component(DataComponents.CUSTOM_DATA, CustomData.EMPTY)
             )
         );
 
@@ -312,47 +354,47 @@ public class ModItems {
         }
         POMPEII_WORM = register("pompeii_worm",
             new PompeiiWormItem(settings("pompeii_worm")
-                .maxCount(64)
-                .fireproof()
+                .stacksTo(64)
+                .fireResistant()
                 .food(
-                    new FoodComponent.Builder()
+                    new FoodProperties.Builder()
                         .nutrition(4)
                         .saturationModifier(0.8F)
                         .alwaysEdible()
                         .build(),
-                    ConsumableComponents.food()
-                        .consumeEffect(new ApplyEffectsConsumeEffect(new StatusEffectInstance(StatusEffects.FIRE_RESISTANCE, 70, 0), 1.0F))
-                        .consumeEffect(new ApplyEffectsConsumeEffect(new StatusEffectInstance(StatusEffects.FIRE_RESISTANCE, 140, 0), 0.1F))
+                    Consumables.defaultFood()
+                        .onConsume(new ApplyStatusEffectsConsumeEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 70, 0), 1.0F))
+                        .onConsume(new ApplyStatusEffectsConsumeEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 140, 0), 0.1F))
                         .build()
                 ).rarity(Rarity.COMMON)
             )
         );
         BLIND_SHRIMP = register("blind_shrimp",
             new Item(settings("blind_shrimp")
-                .maxCount(64)
-                .fireproof()
+                .stacksTo(64)
+                .fireResistant()
                 .food(
-                    new FoodComponent.Builder()
+                    new FoodProperties.Builder()
                         .nutrition(1)
                         .saturationModifier(0.4F)
                         .alwaysEdible()
                         .build(),
-                    ConsumableComponents.food()
-                        .consumeEffect(new ApplyEffectsConsumeEffect(new StatusEffectInstance(ModEffects.VOLCANIC_INFUSION, 400, 0), 1.0F))
-                        .consumeEffect(new ApplyEffectsConsumeEffect(new StatusEffectInstance(ModEffects.LAVA_VISION, 400, 0), 1.0F))
+                    Consumables.defaultFood()
+                        .onConsume(new ApplyStatusEffectsConsumeEffect(new MobEffectInstance(ModEffects.VOLCANIC_INFUSION, 400, 0), 1.0F))
+                        .onConsume(new ApplyStatusEffectsConsumeEffect(new MobEffectInstance(ModEffects.LAVA_VISION, 400, 0), 1.0F))
                         .build()
                 ).rarity(Rarity.COMMON)
             )
         );
         VOLCANIC_CONCOCTION = register("volcanic_concoction",
             new Item(settings("volcanic_concoction")
-                .maxCount(16)
+                .stacksTo(16)
                 .rarity(Rarity.COMMON)
             )
         );
         LAVA_VISION_ICON = register("lava_vision_icon",
             new Item(settings("lava_vision_icon")
-                .maxCount(1)
+                .stacksTo(1)
                 .rarity(Rarity.COMMON)
             )
         );

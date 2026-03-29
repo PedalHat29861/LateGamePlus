@@ -1,12 +1,12 @@
 package com.pedalhat.lategameplus.mixin;
 
 import com.pedalhat.lategameplus.item.DebrisResonatorItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.screen.AnvilScreenHandler;
-import net.minecraft.screen.Property;
-import net.minecraft.screen.slot.Slot;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.Mth;
+import net.minecraft.world.inventory.AnvilMenu;
+import net.minecraft.world.inventory.DataSlot;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -15,32 +15,32 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(AnvilScreenHandler.class)
+@Mixin(AnvilMenu.class)
 public abstract class DebrisResonatorAnvilRechargeMixin {
     @Unique
     private static final int LGP$FULL_RECHARGE_MAX_XP_COST = 10;
 
-    @Shadow @Final private Property levelCost;
-    @Shadow private int repairItemUsage;
+    @Shadow @Final private DataSlot cost;
+    @Shadow private int repairItemCountCost;
 
     @Unique
     private boolean lategameplus$processingRecharge;
 
-    @Inject(method = "updateResult", at = @At("RETURN"))
+    @Inject(method = "createResult", at = @At("RETURN"))
     private void lategameplus$applyDebrisRecharge(CallbackInfo ci) {
         if (lategameplus$processingRecharge) {
             return;
         }
         lategameplus$processingRecharge = true;
         try {
-            AnvilScreenHandler self = (AnvilScreenHandler)(Object) this;
+            AnvilMenu self = (AnvilMenu)(Object) this;
 
             Slot baseSlot = self.getSlot(0);
             Slot additionSlot = self.getSlot(1);
             Slot outputSlot = self.getSlot(2);
 
-            ItemStack baseStack = baseSlot.getStack();
-            ItemStack additionStack = additionSlot.getStack();
+            ItemStack baseStack = baseSlot.getItem();
+            ItemStack additionStack = additionSlot.getItem();
 
             if (baseStack.isEmpty() || additionStack.isEmpty()) {
                 return;
@@ -49,8 +49,8 @@ public abstract class DebrisResonatorAnvilRechargeMixin {
                 return;
             }
 
-            boolean usesEchoShard = additionStack.isOf(Items.ECHO_SHARD);
-            boolean usesAmethystShard = additionStack.isOf(Items.AMETHYST_SHARD);
+            boolean usesEchoShard = additionStack.is(Items.ECHO_SHARD);
+            boolean usesAmethystShard = additionStack.is(Items.AMETHYST_SHARD);
 
             if (!usesEchoShard && !usesAmethystShard) {
                 return;
@@ -66,10 +66,10 @@ public abstract class DebrisResonatorAnvilRechargeMixin {
 
                 ItemStack result = baseStack.copy();
                 DebrisResonatorItem.setBatterySeconds(result, maxBattery);
-                outputSlot.setStack(result);
-                this.repairItemUsage = 1;
-                this.levelCost.set(LGP$FULL_RECHARGE_MAX_XP_COST);
-                self.sendContentUpdates();
+                outputSlot.setByPlayer(result);
+                this.repairItemCountCost = 1;
+                this.cost.set(LGP$FULL_RECHARGE_MAX_XP_COST);
+                self.broadcastChanges();
                 return;
             }
 
@@ -85,7 +85,7 @@ public abstract class DebrisResonatorAnvilRechargeMixin {
                 }
 
                 int piecesNeeded = Math.ceilDiv(missing, chunk);
-                int use = MathHelper.clamp(additionStack.getCount(), 1, piecesNeeded);
+                int use = Mth.clamp(additionStack.getCount(), 1, piecesNeeded);
                 int restored = chunk * use;
                 if (restored <= 0) {
                     return;
@@ -93,13 +93,13 @@ public abstract class DebrisResonatorAnvilRechargeMixin {
 
                 ItemStack result = baseStack.copy();
                 DebrisResonatorItem.addBatterySeconds(result, restored);
-                outputSlot.setStack(result);
-                this.repairItemUsage = use;
+                outputSlot.setByPlayer(result);
+                this.repairItemCountCost = use;
                 int fullPieces = Math.max(1, Math.ceilDiv(maxBattery, chunk));
                 int xpCost = Math.round((use * (float) LGP$FULL_RECHARGE_MAX_XP_COST) / fullPieces);
-                xpCost = MathHelper.clamp(xpCost, 1, LGP$FULL_RECHARGE_MAX_XP_COST);
-                this.levelCost.set(xpCost);
-                self.sendContentUpdates();
+                xpCost = Mth.clamp(xpCost, 1, LGP$FULL_RECHARGE_MAX_XP_COST);
+                this.cost.set(xpCost);
+                self.broadcastChanges();
             }
         } finally {
             lategameplus$processingRecharge = false;

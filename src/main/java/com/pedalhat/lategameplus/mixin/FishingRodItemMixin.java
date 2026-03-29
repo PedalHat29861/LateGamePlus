@@ -1,7 +1,7 @@
 package com.pedalhat.lategameplus.mixin;
 
 import com.pedalhat.lategameplus.mixinutil.AutoReelDamageContext;
-import net.minecraft.item.FishingRodItem;
+import net.minecraft.world.item.FishingRodItem;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;

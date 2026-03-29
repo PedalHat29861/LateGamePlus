@@ -1,12 +1,12 @@
 package com.pedalhat.lategameplus.mixin;
 
 import com.pedalhat.lategameplus.registry.ModEffects;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.registry.tag.FluidTags;
-import net.minecraft.registry.tag.TagKey;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.tags.FluidTags;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -33,7 +33,7 @@ public class LivingEntityLavaTravelMixin {
     protected boolean jumping;
 
     @Inject(method = "travelInLava", at = @At("HEAD"))
-    private void lategameplus$captureLavaInput(Vec3d movementInput, double gravity, boolean falling, double y, CallbackInfo ci) {
+    private void lategameplus$captureLavaInput(Vec3 movementInput, double gravity, boolean falling, double y, CallbackInfo ci) {
         this.lategameplus$lastLavaInputY = movementInput.y;
         if (this.jumping && this.lategameplus$lastLavaInputY <= 0.0) {
             this.lategameplus$lastLavaInputY = 1.0;
@@ -42,7 +42,7 @@ public class LivingEntityLavaTravelMixin {
 
     @ModifyConstant(method = "travelInLava", constant = @Constant(floatValue = 0.02f))
     private float lategameplus$boostLavaTravel(float original) {
-        StatusEffectInstance effect = ((LivingEntity) (Object) this).getStatusEffect(ModEffects.VOLCANIC_INFUSION);
+        MobEffectInstance effect = ((LivingEntity) (Object) this).getEffect(ModEffects.VOLCANIC_INFUSION);
         if (effect == null) {
             return original;
         }
@@ -51,17 +51,17 @@ public class LivingEntityLavaTravelMixin {
 
     @ModifyArgs(
         method = "travelInLava",
-        at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/Vec3d;multiply(DDD)Lnet/minecraft/util/math/Vec3d;")
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/world/phys/Vec3;multiply(DDD)Lnet/minecraft/world/phys/Vec3;")
     )
     private void lategameplus$boostLavaVerticalShallow(Args args) {
-        StatusEffectInstance effect = ((LivingEntity) (Object) this).getStatusEffect(ModEffects.VOLCANIC_INFUSION);
+        MobEffectInstance effect = ((LivingEntity) (Object) this).getEffect(ModEffects.VOLCANIC_INFUSION);
         if (effect == null) {
             return;
         }
         if (this.lategameplus$lastLavaInputY <= 0.0) {
             return;
         }
-        if (((LivingEntity) (Object) this).getVelocity().y <= 0.0) {
+        if (((LivingEntity) (Object) this).getDeltaMovement().y <= 0.0) {
             return;
         }
         double yMultiplier = (double) args.get(1);
@@ -71,17 +71,17 @@ public class LivingEntityLavaTravelMixin {
 
     @ModifyArgs(
         method = "travelInLava",
-        at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/Vec3d;add(DDD)Lnet/minecraft/util/math/Vec3d;")
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/world/phys/Vec3;add(DDD)Lnet/minecraft/world/phys/Vec3;")
     )
     private void lategameplus$boostLavaSink(Args args) {
-        StatusEffectInstance effect = ((LivingEntity) (Object) this).getStatusEffect(ModEffects.VOLCANIC_INFUSION);
+        MobEffectInstance effect = ((LivingEntity) (Object) this).getEffect(ModEffects.VOLCANIC_INFUSION);
         if (effect == null) {
             return;
         }
         if (this.lategameplus$lastLavaInputY > 0.0) {
             return;
         }
-        if (((LivingEntity) (Object) this).getVelocity().y > 0.0) {
+        if (((LivingEntity) (Object) this).getDeltaMovement().y > 0.0) {
             return;
         }
         double yValue = (double) args.get(1);
@@ -90,14 +90,14 @@ public class LivingEntityLavaTravelMixin {
     }
 
     @ModifyArgs(
-        method = "swimUpward",
-        at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/Vec3d;add(DDD)Lnet/minecraft/util/math/Vec3d;")
+        method = "jumpInLiquid",
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/world/phys/Vec3;add(DDD)Lnet/minecraft/world/phys/Vec3;")
     )
     private void lategameplus$boostLavaSwimUpward(Args args, TagKey<Fluid> fluid) {
         if (!FluidTags.LAVA.equals(fluid)) {
             return;
         }
-        StatusEffectInstance effect = ((LivingEntity) (Object) this).getStatusEffect(ModEffects.VOLCANIC_INFUSION);
+        MobEffectInstance effect = ((LivingEntity) (Object) this).getEffect(ModEffects.VOLCANIC_INFUSION);
         if (effect == null) {
             return;
         }
@@ -108,18 +108,18 @@ public class LivingEntityLavaTravelMixin {
 
     @Redirect(
         method = "travelInLava",
-        at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/Vec3d;multiply(D)Lnet/minecraft/util/math/Vec3d;")
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/world/phys/Vec3;scale(D)Lnet/minecraft/world/phys/Vec3;")
     )
-    private Vec3d lategameplus$boostLavaVerticalDeep(Vec3d velocity, double value) {
-        StatusEffectInstance effect = ((LivingEntity) (Object) this).getStatusEffect(ModEffects.VOLCANIC_INFUSION);
+    private Vec3 lategameplus$boostLavaVerticalDeep(Vec3 velocity, double value) {
+        MobEffectInstance effect = ((LivingEntity) (Object) this).getEffect(ModEffects.VOLCANIC_INFUSION);
         if (effect == null) {
-            return velocity.multiply(value);
+            return velocity.scale(value);
         }
         double baseY = velocity.y * value;
         if (baseY <= 0.0 || this.lategameplus$lastLavaInputY <= 0.0) {
-            return new Vec3d(velocity.x * value, baseY, velocity.z * value);
+            return new Vec3(velocity.x * value, baseY, velocity.z * value);
         }
         float multiplier = effect.getAmplifier() >= 1 ? LAVA_VERTICAL_MULTIPLIER_TIER2 : LAVA_VERTICAL_MULTIPLIER_TIER1;
-        return new Vec3d(velocity.x * value, baseY * multiplier, velocity.z * value);
+        return new Vec3(velocity.x * value, baseY * multiplier, velocity.z * value);
     }
 }

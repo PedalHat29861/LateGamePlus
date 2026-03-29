@@ -7,38 +7,39 @@ import com.pedalhat.lategameplus.recipe.FusionForgeRecipe;
 import com.pedalhat.lategameplus.recipe.FusionForgeRecipeInput;
 import com.pedalhat.lategameplus.recipe.ModRecipes;
 import com.pedalhat.lategameplus.screen.FusionForgeScreenHandler;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.ExperienceOrbEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.Inventories;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.inventory.SidedInventory;
-import net.minecraft.item.FuelRegistry;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.recipe.RecipeEntry;
-import net.minecraft.recipe.ServerRecipeManager;
-import net.minecraft.screen.NamedScreenHandlerFactory;
-import net.minecraft.screen.PropertyDelegate;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.screen.ArrayPropertyDelegate;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.storage.ReadView;
-import net.minecraft.storage.WriteView;
-import net.minecraft.text.Text;
-import net.minecraft.util.collection.DefaultedList;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.NonNullList;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
+import net.minecraft.world.Container;
+import net.minecraft.world.ContainerHelper;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.WorldlyContainer;
+import net.minecraft.world.entity.ExperienceOrb;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerData;
+import net.minecraft.world.inventory.SimpleContainerData;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.RecipeManager;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.FuelValues;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.phys.Vec3;
 
-public class FusionForgeBlockEntity extends BlockEntity implements NamedScreenHandlerFactory, SidedInventory {
+public class FusionForgeBlockEntity extends BlockEntity implements MenuProvider, WorldlyContainer {
     public static final int INVENTORY_SIZE = 5;
     private static final int PROPERTY_COUNT = 6;
     private static final int DEFAULT_COOK_TIME = 200;
@@ -52,8 +53,8 @@ public class FusionForgeBlockEntity extends BlockEntity implements NamedScreenHa
     private static final int[] FUEL_SLOTS = {FusionForgeScreenHandler.FUEL_SLOT};
     private static final int[] EMPTY_SLOTS = {};
 
-    private final DefaultedList<ItemStack> inventory = DefaultedList.ofSize(INVENTORY_SIZE, ItemStack.EMPTY);
-    private final PropertyDelegate propertyDelegate = new ArrayPropertyDelegate(PROPERTY_COUNT) {
+    private final NonNullList<ItemStack> inventory = NonNullList.withSize(INVENTORY_SIZE, ItemStack.EMPTY);
+    private final ContainerData propertyDelegate = new SimpleContainerData(PROPERTY_COUNT) {
         @Override
         public int get(int index) {
             return switch (index) {
@@ -94,24 +95,24 @@ public class FusionForgeBlockEntity extends BlockEntity implements NamedScreenHa
     }
 
     @Override
-    protected void readData(ReadView view) {
-        super.readData(view);
-        Inventories.readData(view, inventory);
-        cookTime = view.getInt("cook_time", 0);
-        fuelStoredTicks = Math.max(0, view.getInt("fuel_ticks", 0));
-        fuelCapacityTicks = Math.max(0, view.getInt("fuel_capacity", view.getInt("fuel_max", 0)));
+    protected void loadAdditional(ValueInput view) {
+        super.loadAdditional(view);
+        ContainerHelper.loadAllItems(view, inventory);
+        cookTime = view.getIntOr("cook_time", 0);
+        fuelStoredTicks = Math.max(0, view.getIntOr("fuel_ticks", 0));
+        fuelCapacityTicks = Math.max(0, view.getIntOr("fuel_capacity", view.getIntOr("fuel_max", 0)));
         if (fuelStoredTicks > fuelCapacityTicks && fuelCapacityTicks > 0) {
             fuelStoredTicks = fuelCapacityTicks;
         }
-        storedExperience = view.getFloat("stored_exp", 0.0f);
-        idleDelayTicks = view.getInt("idle_delay", 0);
+        storedExperience = view.getFloatOr("stored_exp", 0.0f);
+        idleDelayTicks = view.getIntOr("idle_delay", 0);
         hadCatalyst = hasCatalyst();
     }
 
     @Override
-    protected void writeData(WriteView view) {
-        super.writeData(view);
-        Inventories.writeData(view, inventory);
+    protected void saveAdditional(ValueOutput view) {
+        super.saveAdditional(view);
+        ContainerHelper.saveAllItems(view, inventory);
         view.putInt("cook_time", cookTime);
         view.putInt("fuel_ticks", fuelStoredTicks);
         view.putInt("fuel_capacity", fuelCapacityTicks);
@@ -121,17 +122,17 @@ public class FusionForgeBlockEntity extends BlockEntity implements NamedScreenHa
     }
 
     @Override
-    public Text getDisplayName() {
-        return Text.translatable("block.lategameplus.fusion_forge");
+    public Component getDisplayName() {
+        return Component.translatable("block.lategameplus.fusion_forge");
     }
 
     @Override
-    public ScreenHandler createMenu(int syncId, PlayerInventory playerInventory, PlayerEntity player) {
+    public AbstractContainerMenu createMenu(int syncId, Inventory playerInventory, Player player) {
         return new FusionForgeScreenHandler(syncId, playerInventory, this, propertyDelegate);
     }
 
     @Override
-    public int size() {
+    public int getContainerSize() {
         return inventory.size();
     }
 
@@ -146,63 +147,63 @@ public class FusionForgeBlockEntity extends BlockEntity implements NamedScreenHa
     }
 
     @Override
-    public ItemStack getStack(int slot) {
+    public ItemStack getItem(int slot) {
         return inventory.get(slot);
     }
 
     @Override
-    public ItemStack removeStack(int slot, int amount) {
-        ItemStack result = Inventories.splitStack(inventory, slot, amount);
+    public ItemStack removeItem(int slot, int amount) {
+        ItemStack result = ContainerHelper.removeItem(inventory, slot, amount);
         if (!result.isEmpty()) {
-            markDirty();
+            setChanged();
         }
         return result;
     }
 
     @Override
-    public ItemStack removeStack(int slot) {
-        ItemStack result = Inventories.removeStack(inventory, slot);
+    public ItemStack removeItemNoUpdate(int slot) {
+        ItemStack result = ContainerHelper.takeItem(inventory, slot);
         if (!result.isEmpty()) {
-            markDirty();
+            setChanged();
         }
         return result;
     }
 
     @Override
-    public void setStack(int slot, ItemStack stack) {
+    public void setItem(int slot, ItemStack stack) {
         inventory.set(slot, stack);
-        if (stack.getCount() > stack.getMaxCount()) {
-            stack.setCount(stack.getMaxCount());
+        if (stack.getCount() > stack.getMaxStackSize()) {
+            stack.setCount(stack.getMaxStackSize());
         }
-        markDirty();
+        setChanged();
     }
 
     @Override
-    public boolean canPlayerUse(PlayerEntity player) {
-        return Inventory.canPlayerUse(this, player);
+    public boolean stillValid(Player player) {
+        return Container.stillValidBlockEntity(this, player);
     }
 
     @Override
-    public boolean isValid(int slot, ItemStack stack) {
+    public boolean canPlaceItem(int slot, ItemStack stack) {
         return switch (slot) {
             case FusionForgeScreenHandler.FUEL_SLOT -> {
-                World world = getWorld();
+                Level world = getLevel();
                 if (world == null) yield false;
-                yield world.getFuelRegistry().isFuel(stack);
+                yield world.fuelValues().isFuel(stack);
             }
-            case FusionForgeScreenHandler.CATALYST_SLOT -> stack.isOf(Items.NETHER_STAR);
+            case FusionForgeScreenHandler.CATALYST_SLOT -> stack.is(Items.NETHER_STAR);
             case FusionForgeScreenHandler.OUTPUT_SLOT -> false;
             default -> true;
         };
     }
 
     @Override
-    public void clear() {
+    public void clearContent() {
         inventory.clear();
     }
 
     @Override
-    public int[] getAvailableSlots(Direction side) {
+    public int[] getSlotsForFace(Direction side) {
         if (side == Direction.UP) {
             return TOP_SLOTS;
         }
@@ -214,8 +215,8 @@ public class FusionForgeBlockEntity extends BlockEntity implements NamedScreenHa
         if (side == back) {
             return BACK_SLOTS;
         }
-        Direction left = facing.rotateYCounterclockwise();
-        Direction right = facing.rotateYClockwise();
+        Direction left = facing.getCounterClockWise();
+        Direction right = facing.getClockWise();
         if (side == left || side == right) {
             return FUEL_SLOTS;
         }
@@ -223,41 +224,41 @@ public class FusionForgeBlockEntity extends BlockEntity implements NamedScreenHa
     }
 
     @Override
-    public boolean canInsert(int slot, ItemStack stack, @SuppressWarnings("null") Direction direction) {
+    public boolean canPlaceItemThroughFace(int slot, ItemStack stack, @SuppressWarnings("null") Direction direction) {
         if (direction == null) {
-            return isValid(slot, stack);
+            return canPlaceItem(slot, stack);
         }
         if (direction == Direction.UP) {
-            return slot == FusionForgeScreenHandler.INPUT_A_SLOT && isValid(slot, stack);
+            return slot == FusionForgeScreenHandler.INPUT_A_SLOT && canPlaceItem(slot, stack);
         }
         if (direction == Direction.DOWN) {
             return false;
         }
         Direction facing = getFacing();
         if (direction == facing.getOpposite()) {
-            return slot == FusionForgeScreenHandler.INPUT_B_SLOT && isValid(slot, stack);
+            return slot == FusionForgeScreenHandler.INPUT_B_SLOT && canPlaceItem(slot, stack);
         }
-        Direction left = facing.rotateYCounterclockwise();
-        Direction right = facing.rotateYClockwise();
+        Direction left = facing.getCounterClockWise();
+        Direction right = facing.getClockWise();
         if (direction == left || direction == right) {
-            return slot == FusionForgeScreenHandler.FUEL_SLOT && isValid(slot, stack);
+            return slot == FusionForgeScreenHandler.FUEL_SLOT && canPlaceItem(slot, stack);
         }
         return false;
     }
 
     @Override
-    public boolean canExtract(int slot, ItemStack stack, Direction direction) {
+    public boolean canTakeItemThroughFace(int slot, ItemStack stack, Direction direction) {
         if (direction == Direction.DOWN) {
             if (slot == FusionForgeScreenHandler.OUTPUT_SLOT) {
                 return true;
             }
-            return slot == FusionForgeScreenHandler.FUEL_SLOT && stack.isOf(Items.BUCKET);
+            return slot == FusionForgeScreenHandler.FUEL_SLOT && stack.is(Items.BUCKET);
         }
         return false;
     }
 
-    public static void tick(World world, BlockPos pos, BlockState state, FusionForgeBlockEntity blockEntity) {
-        if (world.isClient()) {
+    public static void tick(Level world, BlockPos pos, BlockState state, FusionForgeBlockEntity blockEntity) {
+        if (world.isClientSide()) {
             return;
         }
 
@@ -266,7 +267,7 @@ public class FusionForgeBlockEntity extends BlockEntity implements NamedScreenHa
         if (blockEntity.updateRecipeValues(recipe)) {
             dirty = true;
         }
-        if (blockEntity.syncFuelCapacity(world.getFuelRegistry())) {
+        if (blockEntity.syncFuelCapacity(world.fuelValues())) {
             dirty = true;
         }
         int fuelPerTick = blockEntity.getFuelPerTick();
@@ -275,9 +276,9 @@ public class FusionForgeBlockEntity extends BlockEntity implements NamedScreenHa
         boolean workingThisTick = false;
 
         if (hasCatalyst && !blockEntity.hadCatalyst) {
-            world.playSound(null, pos, SoundEvents.BLOCK_BEACON_ACTIVATE, SoundCategory.BLOCKS, 0.6f, 1.0f);
-            if (world instanceof ServerWorld serverWorld) {
-                serverWorld.spawnParticles(
+            world.playSound(null, pos, SoundEvents.BEACON_ACTIVATE, SoundSource.BLOCKS, 0.6f, 1.0f);
+            if (world instanceof ServerLevel serverWorld) {
+                serverWorld.sendParticles(
                     ParticleTypes.ENCHANT,
                     pos.getX() + 0.5,
                     pos.getY() + 0.8,
@@ -302,7 +303,7 @@ public class FusionForgeBlockEntity extends BlockEntity implements NamedScreenHa
         if (blockEntity.fuelStoredTicks < blockEntity.fuelCapacityTicks) {
             int consumeGuard = 0;
             while (blockEntity.fuelStoredTicks < blockEntity.fuelCapacityTicks && consumeGuard++ < 64) {
-                if (!blockEntity.consumeFuel(world.getFuelRegistry())) {
+                if (!blockEntity.consumeFuel(world.fuelValues())) {
                     break;
                 }
                 dirty = true;
@@ -345,32 +346,32 @@ public class FusionForgeBlockEntity extends BlockEntity implements NamedScreenHa
             ? (showWorking ? FusionForgeState.NETHER_WORKING : FusionForgeState.NETHER_DISABLED)
             : (showWorking ? FusionForgeState.WORKING : FusionForgeState.DISABLED);
 
-        FusionForgeState previousState = state.get(FusionForgeBlock.STATE);
+        FusionForgeState previousState = state.getValue(FusionForgeBlock.STATE);
         if (previousState != targetState) {
             if (targetState == FusionForgeState.DISABLED
                 && (previousState == FusionForgeState.NETHER_DISABLED
                     || previousState == FusionForgeState.NETHER_WORKING)) {
-                world.playSound(null, pos, SoundEvents.BLOCK_BEACON_DEACTIVATE, SoundCategory.BLOCKS, 0.6f, 1.0f);
+                world.playSound(null, pos, SoundEvents.BEACON_DEACTIVATE, SoundSource.BLOCKS, 0.6f, 1.0f);
             }
-            world.setBlockState(pos, state.with(FusionForgeBlock.STATE, targetState), net.minecraft.block.Block.NOTIFY_LISTENERS);
+            world.setBlock(pos, state.setValue(FusionForgeBlock.STATE, targetState), net.minecraft.world.level.block.Block.UPDATE_CLIENTS);
         }
 
         if (dirty) {
-            blockEntity.markDirty();
+            blockEntity.setChanged();
         }
     }
 
     private boolean hasCatalyst() {
         ItemStack stack = inventory.get(FusionForgeScreenHandler.CATALYST_SLOT);
-        return !stack.isEmpty() && stack.isOf(Items.NETHER_STAR);
+        return !stack.isEmpty() && stack.is(Items.NETHER_STAR);
     }
 
-    private boolean consumeFuel(FuelRegistry fuelRegistry) {
+    private boolean consumeFuel(FuelValues fuelRegistry) {
         ItemStack fuelStack = inventory.get(FusionForgeScreenHandler.FUEL_SLOT);
         if (fuelStack.isEmpty() || !fuelRegistry.isFuel(fuelStack)) {
             return false;
         }
-        int fuelTime = fuelRegistry.getFuelTicks(fuelStack);
+        int fuelTime = fuelRegistry.burnDuration(fuelStack);
         if (fuelTime <= 0) {
             return false;
         }
@@ -379,20 +380,21 @@ public class FusionForgeBlockEntity extends BlockEntity implements NamedScreenHa
             return false;
         }
 
-        ItemStack remainder = fuelStack.getRecipeRemainder();
+        ItemStackTemplate remainderTemplate = fuelStack.getItem().getCraftingRemainder();
+        ItemStack remainder = remainderTemplate != null ? remainderTemplate.create() : ItemStack.EMPTY;
         if (remainder.isEmpty()) {
-            fuelStack.decrement(1);
+            fuelStack.shrink(1);
         } else if (fuelStack.getCount() == 1) {
             inventory.set(FusionForgeScreenHandler.FUEL_SLOT, remainder.copy());
         } else {
-            fuelStack.decrement(1);
+            fuelStack.shrink(1);
         }
         fuelCapacityTicks = capacity;
         fuelStoredTicks = Math.min(fuelCapacityTicks, fuelStoredTicks + fuelTime);
         return true;
     }
 
-    private boolean syncFuelCapacity(FuelRegistry fuelRegistry) {
+    private boolean syncFuelCapacity(FuelValues fuelRegistry) {
         int capacity = getFuelCapacity(fuelRegistry);
         boolean changed = false;
         if (fuelCapacityTicks != capacity) {
@@ -406,8 +408,8 @@ public class FusionForgeBlockEntity extends BlockEntity implements NamedScreenHa
         return changed;
     }
 
-    private static int getFuelCapacity(FuelRegistry fuelRegistry) {
-        int lavaFuel = fuelRegistry.getFuelTicks(new ItemStack(Items.LAVA_BUCKET));
+    private static int getFuelCapacity(FuelValues fuelRegistry) {
+        int lavaFuel = fuelRegistry.burnDuration(new ItemStack(Items.LAVA_BUCKET));
         if (lavaFuel <= 0) {
             lavaFuel = FALLBACK_LAVA_FUEL_TICKS;
         }
@@ -415,13 +417,13 @@ public class FusionForgeBlockEntity extends BlockEntity implements NamedScreenHa
         return (int) Math.min(Integer.MAX_VALUE, capacity);
     }
 
-    private FusionForgeRecipe getRecipe(World world) {
-        if (!(world.getRecipeManager() instanceof ServerRecipeManager recipeManager)) {
+    private FusionForgeRecipe getRecipe(Level world) {
+        if (!(world.recipeAccess() instanceof RecipeManager recipeManager)) {
             return null;
         }
         FusionForgeRecipeInput input = createRecipeInput();
-        FusionForgeRecipe match = recipeManager.getFirstMatch(ModRecipes.FUSION_FORGE, input, world)
-            .map(RecipeEntry::value)
+        FusionForgeRecipe match = recipeManager.getRecipeFor(ModRecipes.FUSION_FORGE, input, world)
+            .map(RecipeHolder::value)
             .orElse(null);
         if (match != null) {
             return match;
@@ -476,10 +478,10 @@ public class FusionForgeBlockEntity extends BlockEntity implements NamedScreenHa
         if (output.isEmpty()) {
             return true;
         }
-        if (!ItemStack.areItemsAndComponentsEqual(output, result)) {
+        if (!ItemStack.isSameItemSameComponents(output, result)) {
             return false;
         }
-        return output.getCount() + totalCount <= output.getMaxCount();
+        return output.getCount() + totalCount <= output.getMaxStackSize();
     }
 
     private void craftOnce(FusionForgeRecipe recipe) {
@@ -492,7 +494,7 @@ public class FusionForgeBlockEntity extends BlockEntity implements NamedScreenHa
             toInsert.setCount(totalCount);
             inventory.set(FusionForgeScreenHandler.OUTPUT_SLOT, toInsert);
         } else {
-            output.increment(totalCount);
+            output.grow(totalCount);
         }
         addExperience(recipe);
 
@@ -513,21 +515,21 @@ public class FusionForgeBlockEntity extends BlockEntity implements NamedScreenHa
         boolean direct = recipe.getInputA().test(a) && recipe.getInputB().test(b);
         boolean swapped = recipe.getInputA().test(b) && recipe.getInputB().test(a);
         if (direct || swapped) {
-            a.decrement(1);
-            b.decrement(1);
+            a.shrink(1);
+            b.shrink(1);
         }
     }
 
     private Direction getFacing() {
-        BlockState state = getCachedState();
-        if (state != null && state.contains(FusionForgeBlock.FACING)) {
-            return state.get(FusionForgeBlock.FACING);
+        BlockState state = getBlockState();
+        if (state != null && state.hasProperty(FusionForgeBlock.FACING)) {
+            return state.getValue(FusionForgeBlock.FACING);
         }
         return Direction.NORTH;
     }
 
-    private FusionForgeRecipe findRecipeFallback(ServerRecipeManager recipeManager, FusionForgeRecipeInput input, World world) {
-        for (RecipeEntry<?> entry : recipeManager.values()) {
+    private FusionForgeRecipe findRecipeFallback(RecipeManager recipeManager, FusionForgeRecipeInput input, Level world) {
+        for (RecipeHolder<?> entry : recipeManager.getRecipes()) {
             if (entry.value() instanceof FusionForgeRecipe recipe && recipe.matches(input, world)) {
                 return recipe;
             }
@@ -535,47 +537,47 @@ public class FusionForgeBlockEntity extends BlockEntity implements NamedScreenHa
         return null;
     }
 
-    public void onOutputTaken(PlayerEntity player) {
+    public void onOutputTaken(Player player) {
         if (storedExperience <= 0.0f) {
             return;
         }
-        World world = getWorld();
-        if (!(world instanceof ServerWorld serverWorld)) {
+        Level world = getLevel();
+        if (!(world instanceof ServerLevel serverWorld)) {
             return;
         }
         int xp = popStoredExperience(serverWorld);
         if (xp > 0) {
-            ExperienceOrbEntity.spawn(serverWorld, player.getEntityPos(), xp);
+            ExperienceOrb.award(serverWorld, player.position(), xp);
         }
     }
 
-    public void dropStoredExperience(ServerWorld world) {
+    public void dropStoredExperience(ServerLevel world) {
         if (storedExperience <= 0.0f) {
             return;
         }
         int xp = popStoredExperience(world);
         if (xp > 0) {
-            ExperienceOrbEntity.spawn(world, Vec3d.ofCenter(pos), xp);
+            ExperienceOrb.award(world, Vec3.atCenterOf(worldPosition), xp);
         }
     }
 
     @Override
-    public void onBlockReplaced(BlockPos pos, BlockState oldState) {
-        super.onBlockReplaced(pos, oldState);
-        World world = getWorld();
-        if (world instanceof ServerWorld serverWorld) {
+    public void preRemoveSideEffects(BlockPos pos, BlockState oldState) {
+        super.preRemoveSideEffects(pos, oldState);
+        Level world = getLevel();
+        if (world instanceof ServerLevel serverWorld) {
             dropStoredExperience(serverWorld);
         }
     }
 
-    private int popStoredExperience(ServerWorld world) {
-        int whole = MathHelper.floor(storedExperience);
+    private int popStoredExperience(ServerLevel world) {
+        int whole = Mth.floor(storedExperience);
         float fractional = storedExperience - whole;
-        if (fractional > 0.0f && world.random.nextFloat() < fractional) {
+        if (fractional > 0.0f && world.getRandom().nextFloat() < fractional) {
             whole += 1;
         }
         storedExperience = 0.0f;
-        markDirty();
+        setChanged();
         return whole;
     }
 

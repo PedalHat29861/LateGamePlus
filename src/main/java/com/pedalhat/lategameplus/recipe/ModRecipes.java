@@ -1,13 +1,11 @@
 package com.pedalhat.lategameplus.recipe;
 
 import com.pedalhat.lategameplus.LateGamePlus;
-
-import net.minecraft.recipe.RecipeSerializer;
-import net.minecraft.recipe.RecipeType;
-import net.minecraft.recipe.SpecialCraftingRecipe;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.util.Identifier;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.RecipeType;
 
 /**
  * Registers custom recipe serializers used by the mod.
@@ -17,13 +15,13 @@ public class ModRecipes {
     /** Serializer for crafting a {@code Lodestone Warp} from a lodestone-bound
      * compass and an ender pearl. */
     public static final RecipeSerializer<WarpFromLodestoneCompassRecipe> WARP_FROM_LODESTONE_COMPASS =
-            Registry.register(Registries.RECIPE_SERIALIZER,
-                    Identifier.of(LateGamePlus.MOD_ID, "crafting_special_lodestone_warp"),
-                    new SpecialCraftingRecipe.SpecialRecipeSerializer<>(WarpFromLodestoneCompassRecipe::new));
+            Registry.register(BuiltInRegistries.RECIPE_SERIALIZER,
+                    Identifier.fromNamespaceAndPath(LateGamePlus.MOD_ID, "crafting_special_lodestone_warp"),
+                    WarpFromLodestoneCompassRecipe.SERIALIZER);
 
     public static final RecipeType<FusionForgeRecipe> FUSION_FORGE =
-            Registry.register(Registries.RECIPE_TYPE,
-                    Identifier.of(LateGamePlus.MOD_ID, "fusion_forge"),
+            Registry.register(BuiltInRegistries.RECIPE_TYPE,
+                    Identifier.fromNamespaceAndPath(LateGamePlus.MOD_ID, "fusion_forge"),
                     new RecipeType<>() {
                         @Override
                         public String toString() {
@@ -32,9 +30,9 @@ public class ModRecipes {
                     });
 
     public static final RecipeSerializer<FusionForgeRecipe> FUSION_FORGE_SERIALIZER =
-            Registry.register(Registries.RECIPE_SERIALIZER,
-                    Identifier.of(LateGamePlus.MOD_ID, "fusion_forge"),
-                    new FusionForgeRecipeSerializer());
+            Registry.register(BuiltInRegistries.RECIPE_SERIALIZER,
+                    Identifier.fromNamespaceAndPath(LateGamePlus.MOD_ID, "fusion_forge"),
+                    FusionForgeRecipeSerializer.INSTANCE);
 
     // No custom smithing serializer is needed; we patch smithing craft via mixin for NBT copy.
 

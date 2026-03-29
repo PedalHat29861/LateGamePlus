@@ -2,20 +2,20 @@ package com.pedalhat.lategameplus.registry;
 
 import com.pedalhat.lategameplus.LateGamePlus;
 import com.pedalhat.lategameplus.screen.FusionForgeScreenHandler;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.resource.featuretoggle.FeatureFlags;
-import net.minecraft.screen.ScreenHandlerType;
-import net.minecraft.util.Identifier;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.flag.FeatureFlags;
+import net.minecraft.world.inventory.MenuType;
 
 public final class ModScreenHandlers {
-    public static ScreenHandlerType<FusionForgeScreenHandler> FUSION_FORGE;
+    public static MenuType<FusionForgeScreenHandler> FUSION_FORGE;
 
     public static void init() {
         FUSION_FORGE = Registry.register(
-            Registries.SCREEN_HANDLER,
-            Identifier.of(LateGamePlus.MOD_ID, "fusion_forge"),
-            new ScreenHandlerType<>(FusionForgeScreenHandler::new, FeatureFlags.VANILLA_FEATURES)
+            BuiltInRegistries.MENU,
+            Identifier.fromNamespaceAndPath(LateGamePlus.MOD_ID, "fusion_forge"),
+            new MenuType<>(FusionForgeScreenHandler::new, FeatureFlags.VANILLA_SET)
         );
     }
 

@@ -1,24 +1,23 @@
 package com.pedalhat.lategameplus.recipe;
 
+import com.mojang.serialization.MapCodec;
 import com.pedalhat.lategameplus.registry.ModItems;
-
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.LodestoneTrackerComponent;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.recipe.RecipeSerializer;
-import net.minecraft.recipe.SpecialCraftingRecipe;
-import net.minecraft.recipe.book.CraftingRecipeCategory;
-import net.minecraft.recipe.input.CraftingRecipeInput;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.world.World;
-
 import java.util.List;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.LodestoneTracker;
+import net.minecraft.world.item.crafting.CraftingInput;
+import net.minecraft.world.item.crafting.CustomRecipe;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.level.Level;
 
 /**
  * Special crafting recipe that converts a lodestone-bound compass plus
  * shaped ingredients into a Lodestone Warp item. The resulting item inherits
- * the {@link DataComponentTypes#LODESTONE_TRACKER} from the center compass.
+ * the {@link DataComponents#LODESTONE_TRACKER} from the center compass.
  *
  * Pattern (3x3):
  *  D Y D
@@ -26,10 +25,13 @@ import java.util.List;
  *  D E D
  *  D = Diamond, Y = Ender Eye, E = Ender Pearl, N = Netherite Nugget, C = Lodestone-bound Compass
  */
-public class WarpFromLodestoneCompassRecipe extends SpecialCraftingRecipe {
+public class WarpFromLodestoneCompassRecipe extends CustomRecipe {
+    public static final WarpFromLodestoneCompassRecipe INSTANCE = new WarpFromLodestoneCompassRecipe();
+    public static final MapCodec<WarpFromLodestoneCompassRecipe> MAP_CODEC = MapCodec.unit(INSTANCE);
+    public static final StreamCodec<RegistryFriendlyByteBuf, WarpFromLodestoneCompassRecipe> STREAM_CODEC = StreamCodec.unit(INSTANCE);
+    public static final RecipeSerializer<WarpFromLodestoneCompassRecipe> SERIALIZER = new RecipeSerializer<>(MAP_CODEC, STREAM_CODEC);
 
-    public WarpFromLodestoneCompassRecipe(CraftingRecipeCategory category) {
-        super(category);
+    public WarpFromLodestoneCompassRecipe() {
     }
 
     private static int idx(int x, int y, int w) {
@@ -37,45 +39,45 @@ public class WarpFromLodestoneCompassRecipe extends SpecialCraftingRecipe {
     }
 
     @Override
-    public boolean matches(CraftingRecipeInput input, World world) {
-        if (input.getWidth() != 3 || input.getHeight() != 3) return false;
+    public boolean matches(CraftingInput input, Level world) {
+        if (input.width() != 3 || input.height() != 3) return false;
 
-        List<ItemStack> s = input.getStacks();
+        List<ItemStack> s = input.items();
 
-        if (!s.get(idx(0,0,3)).isOf(Items.DIAMOND))     return false;
-        if (!s.get(idx(1,0,3)).isOf(Items.ENDER_EYE))   return false;
-        if (!s.get(idx(2,0,3)).isOf(Items.DIAMOND))     return false;
+        if (!s.get(idx(0,0,3)).is(Items.DIAMOND))     return false;
+        if (!s.get(idx(1,0,3)).is(Items.ENDER_EYE))   return false;
+        if (!s.get(idx(2,0,3)).is(Items.DIAMOND))     return false;
 
-        if (!s.get(idx(0,1,3)).isOf(ModItems.NETHERITE_NUGGET)) return false;
+        if (!s.get(idx(0,1,3)).is(ModItems.NETHERITE_NUGGET)) return false;
 
         ItemStack compass = s.get(idx(1,1,3));
-        if (!compass.isOf(Items.COMPASS)) return false;
-        LodestoneTrackerComponent tracker = compass.get(DataComponentTypes.LODESTONE_TRACKER);
+        if (!compass.is(Items.COMPASS)) return false;
+        LodestoneTracker tracker = compass.get(DataComponents.LODESTONE_TRACKER);
         if (tracker == null || tracker.target().isEmpty()) return false;
 
-        if (!s.get(idx(2,1,3)).isOf(ModItems.NETHERITE_NUGGET)) return false;
+        if (!s.get(idx(2,1,3)).is(ModItems.NETHERITE_NUGGET)) return false;
 
-        if (!s.get(idx(0,2,3)).isOf(Items.DIAMOND))     return false;
-        if (!s.get(idx(1,2,3)).isOf(Items.ENDER_PEARL)) return false;
-        if (!s.get(idx(2,2,3)).isOf(Items.DIAMOND))     return false;
+        if (!s.get(idx(0,2,3)).is(Items.DIAMOND))     return false;
+        if (!s.get(idx(1,2,3)).is(Items.ENDER_PEARL)) return false;
+        if (!s.get(idx(2,2,3)).is(Items.DIAMOND))     return false;
 
         return true;
     }
 
     @Override
-    public ItemStack craft(CraftingRecipeInput input, RegistryWrapper.WrapperLookup registries) {
-        ItemStack compass = input.getStacks().get(idx(1,1,3));
-        LodestoneTrackerComponent tracker = compass.get(DataComponentTypes.LODESTONE_TRACKER);
+    public ItemStack assemble(CraftingInput input) {
+        ItemStack compass = input.items().get(idx(1,1,3));
+        LodestoneTracker tracker = compass.get(DataComponents.LODESTONE_TRACKER);
 
         ItemStack result = new ItemStack(ModItems.LODESTONE_WARP);
         if (tracker != null && tracker.target().isPresent()) {
-            result.set(DataComponentTypes.LODESTONE_TRACKER, tracker);
+            result.set(DataComponents.LODESTONE_TRACKER, tracker);
         }
         return result;
     }
 
     @Override
-    public RecipeSerializer<? extends SpecialCraftingRecipe> getSerializer() {
+    public RecipeSerializer<? extends CustomRecipe> getSerializer() {
         return ModRecipes.WARP_FROM_LODESTONE_COMPASS;
     }
 }

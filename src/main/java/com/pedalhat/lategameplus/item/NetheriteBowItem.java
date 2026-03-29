@@ -1,21 +1,21 @@
 package com.pedalhat.lategameplus.item;
 
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.projectile.PersistentProjectileEntity;
-import net.minecraft.entity.projectile.ProjectileEntity;
-import net.minecraft.item.BowItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
+import net.minecraft.world.item.BowItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 
 public class NetheriteBowItem extends BowItem {
-    public NetheriteBowItem(Settings settings) {
+    public NetheriteBowItem(Properties settings) {
         super(settings);
     }
 
-    public ProjectileEntity createArrowEntity(World world, LivingEntity shooter, ItemStack weaponStack, ItemStack projectileStack, boolean critical) {
-        ProjectileEntity projectile = super.createArrowEntity(world, shooter, weaponStack, projectileStack, critical);
-        if (projectile instanceof PersistentProjectileEntity persistent) {
-            persistent.applyDamageModifier(1.5F);
+    public Projectile createProjectile(Level world, LivingEntity shooter, ItemStack weaponStack, ItemStack projectileStack, boolean critical) {
+        Projectile projectile = super.createProjectile(world, shooter, weaponStack, projectileStack, critical);
+        if (projectile instanceof AbstractArrow persistent) {
+            persistent.setBaseDamageFromMob(1.5F);
         }
         return projectile;
     }

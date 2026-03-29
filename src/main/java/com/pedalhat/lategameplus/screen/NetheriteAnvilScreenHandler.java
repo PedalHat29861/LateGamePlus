@@ -4,19 +4,19 @@ import com.pedalhat.lategameplus.LateGamePlus;
 import com.pedalhat.lategameplus.config.ConfigManager;
 import com.pedalhat.lategameplus.mixin.AnvilScreenHandlerAccessor;
 import com.pedalhat.lategameplus.registry.ModBlocks;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.screen.AnvilScreenHandler;
-import net.minecraft.screen.Property;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.screen.ScreenHandlerContext;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.AnvilMenu;
+import net.minecraft.world.inventory.ContainerLevelAccess;
+import net.minecraft.world.inventory.DataSlot;
+import net.minecraft.world.item.ItemStack;
 
-public class NetheriteAnvilScreenHandler extends AnvilScreenHandler {
+public class NetheriteAnvilScreenHandler extends AnvilMenu {
     private static final int MIN_CAP = 20;
     private static final int MAX_CAP = 39;
 
-    public NetheriteAnvilScreenHandler(int syncId, PlayerInventory inv, ScreenHandlerContext ctx) {
+    public NetheriteAnvilScreenHandler(int syncId, Inventory inv, ContainerLevelAccess ctx) {
         super(syncId, inv, ctx);
     }
 
@@ -25,20 +25,20 @@ public class NetheriteAnvilScreenHandler extends AnvilScreenHandler {
     }
 
     @Override
-    public boolean canUse(PlayerEntity player) {
-        return ScreenHandler.canUse(this.context, player, ModBlocks.NETHERITE_ANVIL);
+    public boolean stillValid(Player player) {
+        return AbstractContainerMenu.stillValid(this.access, player, ModBlocks.NETHERITE_ANVIL);
     }
 
     @Override
-    public void updateResult() {
+    public void createResult() {
         AnvilScreenHandlerAccessor accessor = (AnvilScreenHandlerAccessor) (Object) this;
-        Property levelCost = accessor.getLevelCost();
-        ItemStack baseInput = this.getSlot(INPUT_1_ID).getStack();
-        ItemStack additionInput = this.getSlot(INPUT_2_ID).getStack();
-        ItemStack outputBefore = this.getSlot(OUTPUT_ID).getStack();
+        DataSlot levelCost = accessor.getLevelCost();
+        ItemStack baseInput = this.getSlot(INPUT_SLOT).getItem();
+        ItemStack additionInput = this.getSlot(ADDITIONAL_SLOT).getItem();
+        ItemStack outputBefore = this.getSlot(RESULT_SLOT).getItem();
         int previousCost = levelCost.get();
 
-        super.updateResult();
+        super.createResult();
 
         int maxCost = resolveMaxCost();
         int vanillaCost = levelCost.get();
@@ -53,7 +53,7 @@ public class NetheriteAnvilScreenHandler extends AnvilScreenHandler {
                 finalCost,
                 maxCost
             );
-            this.sendContentUpdates();
+            this.broadcastChanges();
         }
 
         int playerLevels = this.player != null ? this.player.experienceLevel : -1;
@@ -63,7 +63,7 @@ public class NetheriteAnvilScreenHandler extends AnvilScreenHandler {
             baseInput,
             additionInput,
             outputBefore,
-            this.getSlot(OUTPUT_ID).getStack(),
+            this.getSlot(RESULT_SLOT).getItem(),
             previousCost,
             vanillaCost,
             finalCost,
@@ -73,16 +73,16 @@ public class NetheriteAnvilScreenHandler extends AnvilScreenHandler {
     }
 
     @Override
-    public boolean canTakeOutput(PlayerEntity player, boolean present) {
+    public boolean mayPickup(Player player, boolean present) {
         AnvilScreenHandlerAccessor accessor = (AnvilScreenHandlerAccessor) (Object) this;
-        Property levelCost = accessor.getLevelCost();
+        DataSlot levelCost = accessor.getLevelCost();
         int cost = levelCost.get();
-        boolean allowed = cost > 0 && (player.getAbilities().creativeMode || player.experienceLevel >= cost);
+        boolean allowed = cost > 0 && (player.getAbilities().instabuild || player.experienceLevel >= cost);
 
         LateGamePlus.LOGGER.info(
             "[NetheriteAnvil] canTakeOutput | playerLevels={} creative={} cost={} present={} allowed={}",
             player.experienceLevel,
-            player.getAbilities().creativeMode,
+            player.getAbilities().instabuild,
             cost,
             present,
             allowed

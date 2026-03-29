@@ -16,7 +16,7 @@ import dev.isxander.yacl3.api.controller.IntegerSliderControllerBuilder;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 
 @Environment(EnvType.CLIENT)
 public class ModMenuCompat implements ModMenuApi {
@@ -27,8 +27,8 @@ public class ModMenuCompat implements ModMenuApi {
             final ModConfig cfg = ConfigManager.get();
 
             var crossbowDamageMultiplier = Option.<Float>createBuilder()
-                .name(Text.translatable("lategameplus.config.crossbow.damage_multiplier"))
-                .description(OptionDescription.of(Text.translatable("lategameplus.config.crossbow.damage_multiplier.desc")))
+                .name(Component.translatable("lategameplus.config.crossbow.damage_multiplier"))
+                .description(OptionDescription.of(Component.translatable("lategameplus.config.crossbow.damage_multiplier.desc")))
                 .binding(
                     1.5f,
                     () -> cfg.netheriteCrossbowDamageMultiplier,
@@ -40,8 +40,8 @@ public class ModMenuCompat implements ModMenuApi {
                 .build();
 
             var fishingTimeMultiplier = Option.<Float>createBuilder()
-                .name(Text.translatable("lategameplus.config.fishing.time_multiplier"))
-                .description(OptionDescription.of(Text.translatable("lategameplus.config.fishing.time_multiplier.desc")))
+                .name(Component.translatable("lategameplus.config.fishing.time_multiplier"))
+                .description(OptionDescription.of(Component.translatable("lategameplus.config.fishing.time_multiplier.desc")))
                 .binding(
                     1.0f,
                     () -> cfg.fishingTimeMultiplier,
@@ -53,8 +53,8 @@ public class ModMenuCompat implements ModMenuApi {
                 .build();
 
             var netheriteAnvilCap = Option.<Integer>createBuilder()
-                .name(Text.translatable("lategameplus.config.anvil.max_cost"))
-                .description(OptionDescription.of(Text.translatable("lategameplus.config.anvil.max_cost.desc")))
+                .name(Component.translatable("lategameplus.config.anvil.max_cost"))
+                .description(OptionDescription.of(Component.translatable("lategameplus.config.anvil.max_cost.desc")))
                 .binding(
                     35,
                     () -> Math.max(20, Math.min(39, cfg.netheriteAnvilMaxLevelCost)),
@@ -66,8 +66,8 @@ public class ModMenuCompat implements ModMenuApi {
                 .build();
 
             var nuggetRepairPercent = Option.<Integer>createBuilder()
-                .name(Text.translatable("lategameplus.config.repair.nugget_percent"))
-                .description(OptionDescription.of(Text.translatable("lategameplus.config.repair.nugget_percent.desc")))
+                .name(Component.translatable("lategameplus.config.repair.nugget_percent"))
+                .description(OptionDescription.of(Component.translatable("lategameplus.config.repair.nugget_percent.desc")))
                 .binding(
                     Math.round(100f / 18f),
                     () -> Math.round(cfg.nuggetRepairPercent * 100f),
@@ -79,8 +79,8 @@ public class ModMenuCompat implements ModMenuApi {
                 .build();
 
             var elytraProt = Option.<Integer>createBuilder()
-                .name(Text.translatable("lategameplus.config.elytra.protection_level"))
-                .description(OptionDescription.of(Text.translatable("lategameplus.config.elytra.protection_level.desc")))
+                .name(Component.translatable("lategameplus.config.elytra.protection_level"))
+                .description(OptionDescription.of(Component.translatable("lategameplus.config.elytra.protection_level.desc")))
                 .binding(
                     2,
                     () -> cfg.netheriteElytraProtectionLevel,
@@ -92,8 +92,8 @@ public class ModMenuCompat implements ModMenuApi {
                 .build();
 
             var netheriteTotemUses = Option.<Integer>createBuilder()
-                .name(Text.translatable("lategameplus.config.totem.netherite_uses"))
-                .description(OptionDescription.of(Text.translatable("lategameplus.config.totem.netherite_uses.desc")))
+                .name(Component.translatable("lategameplus.config.totem.netherite_uses"))
+                .description(OptionDescription.of(Component.translatable("lategameplus.config.totem.netherite_uses.desc")))
                 .binding(
                     2,
                     () -> cfg.netheriteTotemUses,
@@ -105,8 +105,8 @@ public class ModMenuCompat implements ModMenuApi {
                 .build();
 
             var lodestoneWarpCooldownSeconds = Option.<Integer>createBuilder()
-                .name(Text.translatable("lategameplus.config.lodestone.warp_cooldown_seconds"))
-                .description(OptionDescription.of(Text.translatable("lategameplus.config.lodestone.warp_cooldown_seconds.desc")))
+                .name(Component.translatable("lategameplus.config.lodestone.warp_cooldown_seconds"))
+                .description(OptionDescription.of(Component.translatable("lategameplus.config.lodestone.warp_cooldown_seconds.desc")))
                 .binding(
                     4,
                     () -> Math.max(0, cfg.lodestoneWarpCooldownTicks / 20),
@@ -118,8 +118,8 @@ public class ModMenuCompat implements ModMenuApi {
                 .build();
 
             var lodestoneWarpCrossDim = Option.<Boolean>createBuilder()
-                .name(Text.translatable("lategameplus.config.lodestone.warp_across_dimensions"))
-                .description(OptionDescription.of(Text.translatable("lategameplus.config.lodestone.warp_across_dimensions.desc")))
+                .name(Component.translatable("lategameplus.config.lodestone.warp_across_dimensions"))
+                .description(OptionDescription.of(Component.translatable("lategameplus.config.lodestone.warp_across_dimensions.desc")))
                 .binding(
                     false,
                     () -> cfg.lodestoneWarpCrossDim,
@@ -129,8 +129,8 @@ public class ModMenuCompat implements ModMenuApi {
                 .build();
 
             var lodestoneWarpReusable = Option.<Boolean>createBuilder()
-                .name(Text.translatable("lategameplus.config.lodestone.warp_reusable"))
-                .description(OptionDescription.of(Text.translatable("lategameplus.config.lodestone.warp_reusable.desc")))
+                .name(Component.translatable("lategameplus.config.lodestone.warp_reusable"))
+                .description(OptionDescription.of(Component.translatable("lategameplus.config.lodestone.warp_reusable.desc")))
                 .binding(
                     false,
                     () -> cfg.lodestoneWarpReusable,
@@ -140,8 +140,8 @@ public class ModMenuCompat implements ModMenuApi {
                 .build();
 
             var bruteDropChance = Option.<Integer>createBuilder()
-                .name(Text.translatable("lategameplus.config.piglin_brute.drop_chance_percent"))
-                .description(OptionDescription.of(Text.translatable("lategameplus.config.piglin_brute.drop_chance_percent.desc")))
+                .name(Component.translatable("lategameplus.config.piglin_brute.drop_chance_percent"))
+                .description(OptionDescription.of(Component.translatable("lategameplus.config.piglin_brute.drop_chance_percent.desc")))
                 .binding(
                     15,
                     () -> Math.round(cfg.piglinBruteDropChance * 100f),
@@ -153,8 +153,8 @@ public class ModMenuCompat implements ModMenuApi {
                 .build();
 
             var bruteNuggetMin = Option.<Integer>createBuilder()
-                .name(Text.translatable("lategameplus.config.piglin_brute.nugget_min"))
-                .description(OptionDescription.of(Text.translatable("lategameplus.config.piglin_brute.nugget_min.desc")))
+                .name(Component.translatable("lategameplus.config.piglin_brute.nugget_min"))
+                .description(OptionDescription.of(Component.translatable("lategameplus.config.piglin_brute.nugget_min.desc")))
                 .binding(
                     0,
                     () -> cfg.piglinBruteNuggetMin,
@@ -166,8 +166,8 @@ public class ModMenuCompat implements ModMenuApi {
                 .build();
 
             var bruteNuggetMax = Option.<Integer>createBuilder()
-                .name(Text.translatable("lategameplus.config.piglin_brute.nugget_max"))
-                .description(OptionDescription.of(Text.translatable("lategameplus.config.piglin_brute.nugget_max.desc")))
+                .name(Component.translatable("lategameplus.config.piglin_brute.nugget_max"))
+                .description(OptionDescription.of(Component.translatable("lategameplus.config.piglin_brute.nugget_max.desc")))
                 .binding(
                     2,
                     () -> cfg.piglinBruteNuggetMax,
@@ -179,8 +179,8 @@ public class ModMenuCompat implements ModMenuApi {
                 .build();
 
             var debrisMaxBattery = Option.<Integer>createBuilder()
-                .name(Text.translatable("lategameplus.config.debris.max_battery_seconds"))
-                .description(OptionDescription.of(Text.translatable("lategameplus.config.debris.max_battery_seconds.desc")))
+                .name(Component.translatable("lategameplus.config.debris.max_battery_seconds"))
+                .description(OptionDescription.of(Component.translatable("lategameplus.config.debris.max_battery_seconds.desc")))
                 .binding(
                     1800,
                     () -> Math.max(0, cfg.debrisResonatorMaxBatterySeconds),
@@ -192,8 +192,8 @@ public class ModMenuCompat implements ModMenuApi {
                 .build();
 
             var debrisCooldownSelf = Option.<Integer>createBuilder()
-                .name(Text.translatable("lategameplus.config.debris.cooldown_self_seconds"))
-                .description(OptionDescription.of(Text.translatable("lategameplus.config.debris.cooldown_self_seconds.desc")))
+                .name(Component.translatable("lategameplus.config.debris.cooldown_self_seconds"))
+                .description(OptionDescription.of(Component.translatable("lategameplus.config.debris.cooldown_self_seconds.desc")))
                 .binding(
                     25,
                     () -> Math.max(0, cfg.debrisResonatorCooldownSelfSeconds),
@@ -205,8 +205,8 @@ public class ModMenuCompat implements ModMenuApi {
                 .build();
 
             var debrisCooldownOther = Option.<Integer>createBuilder()
-                .name(Text.translatable("lategameplus.config.debris.cooldown_other_seconds"))
-                .description(OptionDescription.of(Text.translatable("lategameplus.config.debris.cooldown_other_seconds.desc")))
+                .name(Component.translatable("lategameplus.config.debris.cooldown_other_seconds"))
+                .description(OptionDescription.of(Component.translatable("lategameplus.config.debris.cooldown_other_seconds.desc")))
                 .binding(
                     10,
                     () -> Math.max(0, cfg.debrisResonatorCooldownOtherSeconds),
@@ -218,8 +218,8 @@ public class ModMenuCompat implements ModMenuApi {
                 .build();
 
             var debrisCooldownFar = Option.<Integer>createBuilder()
-                .name(Text.translatable("lategameplus.config.debris.cooldown_far_seconds"))
-                .description(OptionDescription.of(Text.translatable("lategameplus.config.debris.cooldown_far_seconds.desc")))
+                .name(Component.translatable("lategameplus.config.debris.cooldown_far_seconds"))
+                .description(OptionDescription.of(Component.translatable("lategameplus.config.debris.cooldown_far_seconds.desc")))
                 .binding(
                     60,
                     () -> Math.max(0, cfg.debrisResonatorCooldownFarSeconds),
@@ -231,8 +231,8 @@ public class ModMenuCompat implements ModMenuApi {
                 .build();
 
             var debrisRangeY = Option.<Integer>createBuilder()
-                .name(Text.translatable("lategameplus.config.debris.range_y"))
-                .description(OptionDescription.of(Text.translatable("lategameplus.config.debris.range_y.desc")))
+                .name(Component.translatable("lategameplus.config.debris.range_y"))
+                .description(OptionDescription.of(Component.translatable("lategameplus.config.debris.range_y.desc")))
                 .binding(
                     2,
                     () -> Math.max(0, cfg.debrisResonatorRangeY),
@@ -244,8 +244,8 @@ public class ModMenuCompat implements ModMenuApi {
                 .build();
 
             var debrisVolume = Option.<Float>createBuilder()
-                .name(Text.translatable("lategameplus.config.debris.sound_volume"))
-                .description(OptionDescription.of(Text.translatable("lategameplus.config.debris.sound_volume.desc")))
+                .name(Component.translatable("lategameplus.config.debris.sound_volume"))
+                .description(OptionDescription.of(Component.translatable("lategameplus.config.debris.sound_volume.desc")))
                 .binding(
                     1.0f,
                     () -> Math.max(0f, cfg.debrisResonatorSoundVolume),
@@ -257,7 +257,7 @@ public class ModMenuCompat implements ModMenuApi {
                 .build();
 
             var catGeneral = ConfigCategory.createBuilder()
-                .name(Text.translatable("lategameplus.config.category.general"))
+                .name(Component.translatable("lategameplus.config.category.general"))
                 .option(crossbowDamageMultiplier)
                 .option(fishingTimeMultiplier)
                 .option(netheriteAnvilCap)
@@ -267,21 +267,21 @@ public class ModMenuCompat implements ModMenuApi {
                 .build();
 
             var catLodestone = ConfigCategory.createBuilder()
-                .name(Text.translatable("lategameplus.config.category.lodestone"))
+                .name(Component.translatable("lategameplus.config.category.lodestone"))
                 .option(lodestoneWarpCooldownSeconds)
                 .option(lodestoneWarpCrossDim)
                 .option(lodestoneWarpReusable)
                 .build();
 
             var catPiglin = ConfigCategory.createBuilder()
-                .name(Text.translatable("lategameplus.config.category.piglin"))
+                .name(Component.translatable("lategameplus.config.category.piglin"))
                 .option(bruteDropChance)
                 .option(bruteNuggetMin)
                 .option(bruteNuggetMax)
                 .build();
 
             var catDebris = ConfigCategory.createBuilder()
-                .name(Text.translatable("lategameplus.config.category.debris_resonator"))
+                .name(Component.translatable("lategameplus.config.category.debris_resonator"))
                 .option(debrisMaxBattery)
                 .option(debrisCooldownSelf)
                 .option(debrisCooldownOther)
@@ -291,7 +291,7 @@ public class ModMenuCompat implements ModMenuApi {
                 .build();
 
             return YetAnotherConfigLib.createBuilder()
-                .title(Text.literal("LateGamePlus"))
+                .title(Component.literal("LateGamePlus"))
                 .category(catGeneral)
                 .category(catLodestone)
                 .category(catPiglin)

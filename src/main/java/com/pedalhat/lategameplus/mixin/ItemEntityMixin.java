@@ -1,7 +1,7 @@
 package com.pedalhat.lategameplus.mixin;
 
 import com.pedalhat.lategameplus.mixinutil.LGPLavaImmuneItemEntity;
-import net.minecraft.entity.ItemEntity;
+import net.minecraft.world.entity.item.ItemEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -26,7 +26,7 @@ public class ItemEntityMixin implements LGPLavaImmuneItemEntity {
         this.lategameplus$lavaProtectionTicks--;
         ItemEntity self = (ItemEntity)(Object)this;
         self.setInvulnerable(true);
-        self.extinguish();
+        self.clearFire();
         if (this.lategameplus$lavaProtectionTicks == 0) {
             self.setInvulnerable(false);
         }

@@ -1,14 +1,14 @@
 package com.pedalhat.lategameplus.item;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 
 public class PompeiiWormItem extends Item {
-    public PompeiiWormItem(Settings settings) {
+    public PompeiiWormItem(Properties settings) {
         super(settings);
     }
     @Override
-    public int getMaxUseTime(ItemStack stack, LivingEntity user) {
+    public int getUseDuration(ItemStack stack, LivingEntity user) {
         return 16;
     }
     

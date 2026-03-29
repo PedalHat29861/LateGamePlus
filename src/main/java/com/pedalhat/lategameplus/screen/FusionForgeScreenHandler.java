@@ -2,19 +2,19 @@ package com.pedalhat.lategameplus.screen;
 
 import com.pedalhat.lategameplus.block.entity.FusionForgeBlockEntity;
 import com.pedalhat.lategameplus.registry.ModScreenHandlers;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.inventory.SimpleInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.item.FuelRegistry;
-import net.minecraft.screen.ArrayPropertyDelegate;
-import net.minecraft.screen.PropertyDelegate;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.screen.slot.Slot;
+import net.minecraft.world.Container;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerData;
+import net.minecraft.world.inventory.SimpleContainerData;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.entity.FuelValues;
 
-public class FusionForgeScreenHandler extends ScreenHandler {
+public class FusionForgeScreenHandler extends AbstractContainerMenu {
     public static final int INPUT_A_SLOT = 0;
     public static final int INPUT_B_SLOT = 1;
     public static final int FUEL_SLOT = 2;
@@ -26,104 +26,104 @@ public class FusionForgeScreenHandler extends ScreenHandler {
 
     public static final int SLOT_COUNT = FusionForgeBlockEntity.INVENTORY_SIZE;
 
-    private final Inventory inventory;
-    private final FuelRegistry fuelRegistry;
-    private final PropertyDelegate propertyDelegate;
+    private final Container inventory;
+    private final FuelValues fuelRegistry;
+    private final ContainerData propertyDelegate;
     private final FusionForgeBlockEntity blockEntity;
 
-    public FusionForgeScreenHandler(int syncId, PlayerInventory playerInventory) {
-        this(syncId, playerInventory, new SimpleInventory(SLOT_COUNT), new ArrayPropertyDelegate(PROPERTY_COUNT));
+    public FusionForgeScreenHandler(int syncId, Inventory playerInventory) {
+        this(syncId, playerInventory, new SimpleContainer(SLOT_COUNT), new SimpleContainerData(PROPERTY_COUNT));
     }
 
-    public FusionForgeScreenHandler(int syncId, PlayerInventory playerInventory, Inventory inventory,
-                                    PropertyDelegate propertyDelegate) {
+    public FusionForgeScreenHandler(int syncId, Inventory playerInventory, Container inventory,
+                                    ContainerData propertyDelegate) {
         super(ModScreenHandlers.FUSION_FORGE, syncId);
-        checkSize(inventory, SLOT_COUNT);
-        checkDataCount(propertyDelegate, PROPERTY_COUNT);
+        checkContainerSize(inventory, SLOT_COUNT);
+        checkContainerDataCount(propertyDelegate, PROPERTY_COUNT);
         this.inventory = inventory;
-        this.fuelRegistry = playerInventory.player.getEntityWorld().getFuelRegistry();
+        this.fuelRegistry = playerInventory.player.level().fuelValues();
         this.propertyDelegate = propertyDelegate;
         this.blockEntity = inventory instanceof FusionForgeBlockEntity fusionForge ? fusionForge : null;
-        inventory.onOpen(playerInventory.player);
-        addProperties(propertyDelegate);
+        inventory.startOpen(playerInventory.player);
+        addDataSlots(propertyDelegate);
 
         addSlot(new Slot(inventory, INPUT_A_SLOT, 49, 22));
         addSlot(new Slot(inventory, INPUT_B_SLOT, 86, 22));
         addSlot(new Slot(inventory, FUEL_SLOT, 68, 57) {
             @Override
-            public boolean canInsert(ItemStack stack) {
+            public boolean mayPlace(ItemStack stack) {
                 return fuelRegistry.isFuel(stack);
             }
         });
         addSlot(new Slot(inventory, CATALYST_SLOT, 19, 50) {
             @Override
-            public boolean canInsert(ItemStack stack) {
-                return stack.isOf(Items.NETHER_STAR);
+            public boolean mayPlace(ItemStack stack) {
+                return stack.is(Items.NETHER_STAR);
             }
         });
         addSlot(new Slot(inventory, OUTPUT_SLOT, 142, 42) {
             @Override
-            public boolean canInsert(ItemStack stack) {
+            public boolean mayPlace(ItemStack stack) {
                 return false;
             }
 
             @Override
-            public void onTakeItem(PlayerEntity player, ItemStack stack) {
-                super.onTakeItem(player, stack);
+            public void onTake(Player player, ItemStack stack) {
+                super.onTake(player, stack);
                 if (blockEntity != null) {
                     blockEntity.onOutputTaken(player);
                 }
             }
         });
 
-        addPlayerSlots(playerInventory, 8, 97);
+        addStandardInventorySlots(playerInventory, 8, 97);
     }
 
     @Override
-    public boolean canUse(PlayerEntity player) {
-        return inventory.canPlayerUse(player);
+    public boolean stillValid(Player player) {
+        return inventory.stillValid(player);
     }
 
     @Override
-    public ItemStack quickMove(PlayerEntity player, int index) {
+    public ItemStack quickMoveStack(Player player, int index) {
         ItemStack newStack = ItemStack.EMPTY;
         Slot slot = this.slots.get(index);
-        if (slot == null || !slot.hasStack()) {
+        if (slot == null || !slot.hasItem()) {
             return ItemStack.EMPTY;
         }
 
-        ItemStack original = slot.getStack();
+        ItemStack original = slot.getItem();
         newStack = original.copy();
 
         if (index < SLOT_COUNT) {
-            if (!this.insertItem(original, SLOT_COUNT, this.slots.size(), true)) {
+            if (!this.moveItemStackTo(original, SLOT_COUNT, this.slots.size(), true)) {
                 return ItemStack.EMPTY;
             }
         } else if (fuelRegistry.isFuel(original)) {
-            if (!this.insertItem(original, FUEL_SLOT, FUEL_SLOT + 1, false)) {
+            if (!this.moveItemStackTo(original, FUEL_SLOT, FUEL_SLOT + 1, false)) {
                 return ItemStack.EMPTY;
             }
-        } else if (original.isOf(Items.NETHER_STAR)) {
-            if (!this.insertItem(original, CATALYST_SLOT, CATALYST_SLOT + 1, false)) {
+        } else if (original.is(Items.NETHER_STAR)) {
+            if (!this.moveItemStackTo(original, CATALYST_SLOT, CATALYST_SLOT + 1, false)) {
                 return ItemStack.EMPTY;
             }
         } else {
-            if (!this.insertItem(original, INPUT_A_SLOT, INPUT_B_SLOT + 1, false)) {
+            if (!this.moveItemStackTo(original, INPUT_A_SLOT, INPUT_B_SLOT + 1, false)) {
                 return ItemStack.EMPTY;
             }
         }
 
         if (original.isEmpty()) {
-            slot.setStack(ItemStack.EMPTY);
+            slot.setByPlayer(ItemStack.EMPTY);
         } else {
-            slot.markDirty();
+            slot.setChanged();
         }
 
         if (original.getCount() == newStack.getCount()) {
             return ItemStack.EMPTY;
         }
 
-        slot.onTakeItem(player, original);
+        slot.onTake(player, original);
         return newStack;
     }
 

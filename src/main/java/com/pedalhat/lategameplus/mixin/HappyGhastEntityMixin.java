@@ -3,33 +3,33 @@ package com.pedalhat.lategameplus.mixin;
 import com.pedalhat.lategameplus.mixinutil.LGPChestedGhast;
 import com.pedalhat.lategameplus.mixinutil.LGPChestedGhastInternal;
 import com.pedalhat.lategameplus.tag.LGPItemTags;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.data.DataTracker;
-import net.minecraft.entity.data.TrackedData;
-import net.minecraft.entity.data.TrackedDataHandlerRegistry;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.entity.passive.AnimalEntity;
-import net.minecraft.entity.passive.HappyGhastEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.Inventories;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.screen.GenericContainerScreenHandler;
-import net.minecraft.screen.SimpleNamedScreenHandlerFactory;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.storage.ReadView;
-import net.minecraft.storage.WriteView;
-import net.minecraft.text.Text;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.collection.DefaultedList;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
+import net.minecraft.core.NonNullList;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
+import net.minecraft.world.Container;
+import net.minecraft.world.ContainerHelper;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.SimpleMenuProvider;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.animal.happyghast.HappyGhast;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.ChestMenu;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -37,51 +37,51 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(HappyGhastEntity.class)
-public abstract class HappyGhastEntityMixin extends AnimalEntity implements LGPChestedGhast, LGPChestedGhastInternal {
+@Mixin(HappyGhast.class)
+public abstract class HappyGhastEntityMixin extends Animal implements LGPChestedGhast, LGPChestedGhastInternal {
     @Unique
-    private static final TrackedData<Integer> LATEGAMEPLUS$CHEST_COUNT =
-        DataTracker.registerData(HappyGhastEntity.class, TrackedDataHandlerRegistry.INTEGER);
+    private static final EntityDataAccessor<Integer> LATEGAMEPLUS$CHEST_COUNT =
+        SynchedEntityData.defineId(HappyGhast.class, EntityDataSerializers.INT);
 
     @Unique
-    private final DefaultedList<ItemStack> lategameplus$chestInventory =
-        DefaultedList.ofSize(54, ItemStack.EMPTY);
+    private final NonNullList<ItemStack> lategameplus$chestInventory =
+        NonNullList.withSize(54, ItemStack.EMPTY);
 
     @Unique
     private int lategameplus$chestCount = 0;
 
-    protected HappyGhastEntityMixin(EntityType<? extends AnimalEntity> entityType, World world) {
+    protected HappyGhastEntityMixin(EntityType<? extends Animal> entityType, Level world) {
         super(entityType, world);
     }
 
-    @Inject(method = "initDataTracker", at = @At("TAIL"))
-    private void lategameplus$trackChests(DataTracker.Builder builder, CallbackInfo ci) {
-        builder.add(LATEGAMEPLUS$CHEST_COUNT, 0);
+    @Inject(method = "defineSynchedData", at = @At("TAIL"))
+    private void lategameplus$trackChests(SynchedEntityData.Builder builder, CallbackInfo ci) {
+        builder.define(LATEGAMEPLUS$CHEST_COUNT, 0);
     }
 
-    @Inject(method = "readCustomData", at = @At("TAIL"))
-    private void lategameplus$readStorage(ReadView view, CallbackInfo ci) {
-        this.lategameplus$setChestCount(view.getInt("lategameplus_chests", 0));
-        view.getOptionalReadView("lategameplus_storage")
-            .ifPresent(storage -> Inventories.readData(storage, this.lategameplus$chestInventory));
-        this.getDataTracker().set(LATEGAMEPLUS$CHEST_COUNT, this.lategameplus$chestCount);
+    @Inject(method = "readAdditionalSaveData", at = @At("TAIL"))
+    private void lategameplus$readStorage(ValueInput view, CallbackInfo ci) {
+        this.lategameplus$setChestCount(view.getIntOr("lategameplus_chests", 0));
+        view.child("lategameplus_storage")
+            .ifPresent(storage -> ContainerHelper.loadAllItems(storage, this.lategameplus$chestInventory));
+        this.getEntityData().set(LATEGAMEPLUS$CHEST_COUNT, this.lategameplus$chestCount);
     }
 
-    @Inject(method = "writeCustomData", at = @At("TAIL"))
-    private void lategameplus$writeStorage(WriteView view, CallbackInfo ci) {
+    @Inject(method = "addAdditionalSaveData", at = @At("TAIL"))
+    private void lategameplus$writeStorage(ValueOutput view, CallbackInfo ci) {
         view.putInt("lategameplus_chests", this.lategameplus$chestCount);
-        Inventories.writeData(view.get("lategameplus_storage"), this.lategameplus$chestInventory);
+        ContainerHelper.saveAllItems(view.child("lategameplus_storage"), this.lategameplus$chestInventory);
     }
 
     @Inject(method = "tick", at = @At("TAIL"))
     private void lategameplus$applyNetheriteHarnessBuffs(CallbackInfo ci) {
-        if (this.getEntityWorld().isClient()) {
-            this.lategameplus$chestCount = MathHelper.clamp(this.getDataTracker().get(LATEGAMEPLUS$CHEST_COUNT), 0, 2);
+        if (this.level().isClientSide()) {
+            this.lategameplus$chestCount = Mth.clamp(this.getEntityData().get(LATEGAMEPLUS$CHEST_COUNT), 0, 2);
             return;
         }
 
-        ItemStack harness = this.getEquippedStack(EquipmentSlot.BODY);
-        boolean hasHarness = harness.isIn(LGPItemTags.NETHERITE_HARNESSES);
+        ItemStack harness = this.getItemBySlot(EquipmentSlot.BODY);
+        boolean hasHarness = harness.is(LGPItemTags.NETHERITE_HARNESSES);
         if (!hasHarness && (this.lategameplus$chestCount > 0 || !this.lategameplus$isStorageEmpty())) {
             this.lategameplus$dropStoredItems();
             this.lategameplus$setChestCount(0);
@@ -91,40 +91,40 @@ public abstract class HappyGhastEntityMixin extends AnimalEntity implements LGPC
             return;
         }
 
-        StatusEffectInstance current = this.getStatusEffect(StatusEffects.FIRE_RESISTANCE);
+        MobEffectInstance current = this.getEffect(MobEffects.FIRE_RESISTANCE);
         if (current == null || current.getDuration() <= 40) {
-            this.addStatusEffect(new StatusEffectInstance(StatusEffects.FIRE_RESISTANCE, 120, 0, true, false, true));
+            this.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 120, 0, true, false, true));
         }
     }
 
-    @Inject(method = "interactMob", at = @At("HEAD"), cancellable = true)
-    private void lategameplus$handleChestInteraction(PlayerEntity player, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
-        ItemStack stack = player.getStackInHand(hand);
-        boolean hasHarness = this.getEquippedStack(EquipmentSlot.BODY).isIn(LGPItemTags.NETHERITE_HARNESSES);
+    @Inject(method = "mobInteract", at = @At("HEAD"), cancellable = true)
+    private void lategameplus$handleChestInteraction(Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir) {
+        ItemStack stack = player.getItemInHand(hand);
+        boolean hasHarness = this.getItemBySlot(EquipmentSlot.BODY).is(LGPItemTags.NETHERITE_HARNESSES);
 
         if (!hasHarness || this.isBaby()) {
             return;
         }
 
-        boolean sneaking = player.isSneaking();
+        boolean sneaking = player.isShiftKeyDown();
         if (sneaking && this.lategameplus$chestCount > 0) {
-            if (!this.getEntityWorld().isClient()) {
+            if (!this.level().isClientSide()) {
                 this.lategameplus$openStorage(player);
             }
-            cir.setReturnValue(this.getEntityWorld().isClient() ? ActionResult.SUCCESS : ActionResult.SUCCESS_SERVER);
+            cir.setReturnValue(this.level().isClientSide() ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER);
             return;
         }
 
-        if (stack.isOf(Items.CHEST) && this.lategameplus$chestCount < 2) {
-            if (!this.getEntityWorld().isClient()) {
+        if (stack.is(Items.CHEST) && this.lategameplus$chestCount < 2) {
+            if (!this.level().isClientSide()) {
                 this.lategameplus$setChestCount(this.lategameplus$chestCount + 1);
                 if (!player.isCreative()) {
-                    stack.decrement(1);
+                    stack.shrink(1);
                 }
-                this.getEntityWorld().playSound(null, this.getX(), this.getY(), this.getZ(),
-                    SoundEvents.ENTITY_DONKEY_CHEST, SoundCategory.NEUTRAL, 1.0f, 1.0f);
+                this.level().playSound(null, this.getX(), this.getY(), this.getZ(),
+                    SoundEvents.DONKEY_CHEST, SoundSource.NEUTRAL, 1.0f, 1.0f);
             }
-            cir.setReturnValue(this.getEntityWorld().isClient() ? ActionResult.SUCCESS : ActionResult.SUCCESS_SERVER);
+            cir.setReturnValue(this.level().isClientSide() ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER);
         }
     }
 
@@ -140,9 +140,9 @@ public abstract class HappyGhastEntityMixin extends AnimalEntity implements LGPC
 
     @Unique
     private void lategameplus$setChestCount(int count) {
-        this.lategameplus$chestCount = MathHelper.clamp(count, 0, 2);
-        if (!this.getEntityWorld().isClient()) {
-            this.getDataTracker().set(LATEGAMEPLUS$CHEST_COUNT, this.lategameplus$chestCount);
+        this.lategameplus$chestCount = Mth.clamp(count, 0, 2);
+        if (!this.level().isClientSide()) {
+            this.getEntityData().set(LATEGAMEPLUS$CHEST_COUNT, this.lategameplus$chestCount);
         }
     }
 
@@ -151,39 +151,39 @@ public abstract class HappyGhastEntityMixin extends AnimalEntity implements LGPC
         for (int i = 0; i < this.lategameplus$chestInventory.size(); i++) {
             ItemStack stack = this.lategameplus$chestInventory.get(i);
             if (stack.isEmpty()) continue;
-            if (this.getEntityWorld() instanceof ServerWorld serverWorld) {
-                this.dropStack(serverWorld, stack);
+            if (this.level() instanceof ServerLevel serverWorld) {
+                this.spawnAtLocation(serverWorld, stack);
             }
             this.lategameplus$chestInventory.set(i, ItemStack.EMPTY);
         }
     }
 
     @Unique
-    private void lategameplus$openStorage(PlayerEntity player) {
-        if (!(player instanceof net.minecraft.server.network.ServerPlayerEntity serverPlayer)) {
+    private void lategameplus$openStorage(Player player) {
+        if (!(player instanceof net.minecraft.server.level.ServerPlayer serverPlayer)) {
             return;
         }
         int slots = this.lategameplus$chestCount == 1 ? 27 : 54;
-        Inventory view = this.lategameplus$wrapInventory(slots);
-        Text fallback = this.lategameplus$chestCount == 1
-            ? Text.translatable("container.chest")
-            : Text.translatable("container.chestDouble");
-        Text title = this.hasCustomName() ? this.getDisplayName() : fallback;
+        Container view = this.lategameplus$wrapInventory(slots);
+        Component fallback = this.lategameplus$chestCount == 1
+            ? Component.translatable("container.chest")
+            : Component.translatable("container.chestDouble");
+        Component title = this.hasCustomName() ? this.getDisplayName() : fallback;
 
-        serverPlayer.openHandledScreen(new SimpleNamedScreenHandlerFactory(
+        serverPlayer.openMenu(new SimpleMenuProvider(
             (syncId, playerInventory, ignoredPlayer) -> this.lategameplus$chestCount == 1
-                ? GenericContainerScreenHandler.createGeneric9x3(syncId, playerInventory, view)
-                : GenericContainerScreenHandler.createGeneric9x6(syncId, playerInventory, view),
+                ? ChestMenu.threeRows(syncId, playerInventory, view)
+                : ChestMenu.sixRows(syncId, playerInventory, view),
             title
         ));
     }
 
     @Unique
-    private Inventory lategameplus$wrapInventory(final int viewSize) {
-        final HappyGhastEntity self = (HappyGhastEntity)(Object)this;
-        return new Inventory() {
+    private Container lategameplus$wrapInventory(final int viewSize) {
+        final HappyGhast self = (HappyGhast)(Object)this;
+        return new Container() {
             @Override
-            public int size() {
+            public int getContainerSize() {
                 return viewSize;
             }
 
@@ -198,49 +198,49 @@ public abstract class HappyGhastEntityMixin extends AnimalEntity implements LGPC
             }
 
             @Override
-            public ItemStack getStack(int slot) {
+            public ItemStack getItem(int slot) {
                 return lategameplus$chestInventory.get(slot);
             }
 
             @Override
-            public ItemStack removeStack(int slot, int amount) {
-                ItemStack split = Inventories.splitStack(lategameplus$chestInventory, slot, amount);
+            public ItemStack removeItem(int slot, int amount) {
+                ItemStack split = ContainerHelper.removeItem(lategameplus$chestInventory, slot, amount);
                 if (!split.isEmpty()) {
-                    this.markDirty();
+                    this.setChanged();
                 }
                 return split;
             }
 
             @Override
-            public ItemStack removeStack(int slot) {
-                ItemStack removed = Inventories.removeStack(lategameplus$chestInventory, slot);
+            public ItemStack removeItemNoUpdate(int slot) {
+                ItemStack removed = ContainerHelper.takeItem(lategameplus$chestInventory, slot);
                 if (!removed.isEmpty()) {
-                    this.markDirty();
+                    this.setChanged();
                 }
                 return removed;
             }
 
             @Override
-            public void setStack(int slot, ItemStack stack) {
+            public void setItem(int slot, ItemStack stack) {
                 lategameplus$chestInventory.set(slot, stack);
-                if (stack.getCount() > stack.getMaxCount()) {
-                    stack.setCount(stack.getMaxCount());
+                if (stack.getCount() > stack.getMaxStackSize()) {
+                    stack.setCount(stack.getMaxStackSize());
                 }
-                this.markDirty();
+                this.setChanged();
             }
 
             @Override
-            public void markDirty() {
+            public void setChanged() {
                 // No-op; storage is bound to the entity and persisted via writeCustomData.
             }
 
             @Override
-            public boolean canPlayerUse(PlayerEntity player) {
-                return self.isAlive() && player.squaredDistanceTo(self) <= 64.0;
+            public boolean stillValid(Player player) {
+                return self.isAlive() && player.distanceToSqr(self) <= 64.0;
             }
 
             @Override
-            public void clear() {
+            public void clearContent() {
                 for (int i = 0; i < viewSize; i++) {
                     lategameplus$chestInventory.set(i, ItemStack.EMPTY);
                 }

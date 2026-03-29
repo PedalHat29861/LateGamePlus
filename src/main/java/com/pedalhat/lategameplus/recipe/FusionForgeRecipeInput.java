@@ -1,12 +1,12 @@
 package com.pedalhat.lategameplus.recipe;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.recipe.input.RecipeInput;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeInput;
 
 public record FusionForgeRecipeInput(ItemStack inputA, ItemStack inputB) implements RecipeInput {
 
     @Override
-    public ItemStack getStackInSlot(int slot) {
+    public ItemStack getItem(int slot) {
         return switch (slot) {
             case 0 -> inputA;
             case 1 -> inputB;

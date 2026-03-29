@@ -4,51 +4,49 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.pedalhat.lategameplus.config.ConfigManager;
 import com.pedalhat.lategameplus.registry.ModItems;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-import net.minecraft.command.CommandRegistryAccess;
-import net.minecraft.command.DefaultPermissions;
-import net.minecraft.command.permission.LeveledPermissionPredicate;
+import net.minecraft.commands.CommandBuildContext;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.text.Text;
-import net.minecraft.item.ItemStack;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.AttributeModifiersComponent;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.component.ComponentMap;
-import net.minecraft.item.Items;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.permissions.LevelBasedPermissionSet;
+import net.minecraft.server.permissions.Permissions;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
 
 public final class ModCommands {
     public static void register() {
         CommandRegistrationCallback.EVENT.register(ModCommands::registerCommands);
     }
 
-    private static void registerCommands(CommandDispatcher<ServerCommandSource> dispatcher,
-                                         CommandRegistryAccess access,
-                                         CommandManager.RegistrationEnvironment env) {
+    private static void registerCommands(CommandDispatcher<CommandSourceStack> dispatcher,
+                                         CommandBuildContext access,
+                                         Commands.CommandSelection env) {
 
-        dispatcher.register(CommandManager.literal("lategameplus")
-            .requires(src -> src.getPermissions().hasPermission(DefaultPermissions.GAMEMASTERS))
-            .then(CommandManager.literal("reload")
+        dispatcher.register(Commands.literal("lategameplus")
+            .requires(src -> src.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER))
+            .then(Commands.literal("reload")
                 .executes(ctx -> {
                     var server = ctx.getSource().getServer();
                     var src = ctx.getSource();
                     ConfigManager.load();
-                    var opSource = server.getCommandSource()
-                        .withPermissions(LeveledPermissionPredicate.OWNERS);
-                    server.getCommandManager()
+                    var opSource = server.createCommandSourceStack()
+                        .withPermission(LevelBasedPermissionSet.OWNER);
+                    server.getCommands()
                         .getDispatcher()
                         .execute("reload", opSource);
 
-                    ctx.getSource().sendFeedback(
-                        () -> Text.literal("LGP: config reloaded and datapacks /reload executed."),
+                    ctx.getSource().sendSuccess(
+                        () -> Component.literal("LGP: config reloaded and datapacks /reload executed."),
                         true
                     );
                     int patchedElytras = patchElytras(src.getServer());
 
-                    src.sendFeedback(
-                        () -> Text.literal("LGP: Elytra config reloaded. Elytras patched: "
+                    src.sendSuccess(
+                        () -> Component.literal("LGP: Elytra config reloaded. Elytras patched: "
                             + patchedElytras),
                         true
                     );
@@ -58,42 +56,29 @@ public final class ModCommands {
         );
     }
 
-    private static ComponentMap attrsFromLevel(int lvl) {
-        int c = Math.max(0, Math.min(4, lvl));
-        return switch (c) {
-            case 0 -> ComponentMap.EMPTY;
-            case 1 -> Items.GOLDEN_CHESTPLATE.getComponents();
-            case 2 -> Items.IRON_CHESTPLATE.getComponents();
-            case 3 -> Items.DIAMOND_CHESTPLATE.getComponents();
-            case 4 -> Items.NETHERITE_CHESTPLATE.getComponents();
-            default -> Items.IRON_CHESTPLATE.getComponents();
-        };
-    }
-
     private static int patchElytras(MinecraftServer server) {
         int level = ConfigManager.get().netheriteElytraProtectionLevel;
-        AttributeModifiersComponent attrs =
-            attrsFromLevel(level).get(DataComponentTypes.ATTRIBUTE_MODIFIERS);
+        ItemAttributeModifiers attrs = ModItems.getChestplateAttributesForLevel(level);
 
         int patched = 0;
-        for (ServerPlayerEntity p : server.getPlayerManager().getPlayerList()) {
-            PlayerInventory inv = p.getInventory();
+        for (ServerPlayer p : server.getPlayerList().getPlayers()) {
+            Inventory inv = p.getInventory();
 
-            for (int i = 0; i < inv.size(); i++) {
-                ItemStack stack = inv.getStack(i);
+            for (int i = 0; i < inv.getContainerSize(); i++) {
+                ItemStack stack = inv.getItem(i);
                 if (maybePatch(stack, attrs)) patched++;
             }
         }
         return patched;
     }
 
-    private static boolean maybePatch(ItemStack stack, AttributeModifiersComponent attrMods) {
-        if (stack.isEmpty() || !stack.isOf(ModItems.NETHERITE_ELYTRA)) return false;
+    private static boolean maybePatch(ItemStack stack, ItemAttributeModifiers attrMods) {
+        if (stack.isEmpty() || !stack.is(ModItems.NETHERITE_ELYTRA)) return false;
 
         if (attrMods != null) {
-            stack.set(DataComponentTypes.ATTRIBUTE_MODIFIERS, attrMods);
+            stack.set(DataComponents.ATTRIBUTE_MODIFIERS, attrMods);
         } else {
-            stack.remove(DataComponentTypes.ATTRIBUTE_MODIFIERS);
+            stack.remove(DataComponents.ATTRIBUTE_MODIFIERS);
         }
         return true;
     }

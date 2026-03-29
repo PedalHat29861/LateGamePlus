@@ -1,8 +1,8 @@
 package com.pedalhat.lategameplus.block;
 
-import net.minecraft.util.StringIdentifiable;
+import net.minecraft.util.StringRepresentable;
 
-public enum FusionForgeState implements StringIdentifiable {
+public enum FusionForgeState implements StringRepresentable {
     DISABLED("disabled"),
     WORKING("working"),
     NETHER_DISABLED("nether_disabled"),
@@ -15,7 +15,7 @@ public enum FusionForgeState implements StringIdentifiable {
     }
 
     @Override
-    public String asString() {
+    public String getSerializedName() {
         return name;
     }
 }

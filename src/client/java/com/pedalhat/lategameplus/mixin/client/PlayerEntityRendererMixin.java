@@ -2,28 +2,28 @@ package com.pedalhat.lategameplus.mixin.client;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.pedalhat.lategameplus.tag.LGPItemTags;
-import net.minecraft.client.render.entity.PlayerEntityRenderer;
-import net.minecraft.entity.PlayerLikeEntity;
-import net.minecraft.item.CrossbowItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Hand;
+import net.minecraft.client.renderer.entity.player.AvatarRenderer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Avatar;
+import net.minecraft.world.item.CrossbowItem;
+import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
-@Mixin(PlayerEntityRenderer.class)
+@Mixin(AvatarRenderer.class)
 public abstract class PlayerEntityRendererMixin {
     @ModifyExpressionValue(
-        method = "getArmPose(Lnet/minecraft/entity/PlayerLikeEntity;Lnet/minecraft/item/ItemStack;Lnet/minecraft/util/Hand;)Lnet/minecraft/client/render/entity/model/BipedEntityModel$ArmPose;",
-        at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;isOf(Lnet/minecraft/item/Item;)Z")
+        method = "getArmPose(Lnet/minecraft/world/entity/Avatar;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/InteractionHand;)Lnet/minecraft/client/model/HumanoidModel$ArmPose;",
+        at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;is(Ljava/lang/Object;)Z")
     )
     private static boolean lategameplus$acceptAnyCrossbow(boolean vanillaIsCrossbow,
-                                                          PlayerLikeEntity player,
+                                                          Avatar player,
                                                           ItemStack stack,
-                                                          Hand hand) {
+                                                          InteractionHand hand) {
         if (vanillaIsCrossbow) {
             return true;
         }
-        if (stack.isIn(LGPItemTags.CROSSBOWS)) {
+        if (stack.is(LGPItemTags.CROSSBOWS)) {
             return true;
         }
         return stack.getItem() instanceof CrossbowItem;

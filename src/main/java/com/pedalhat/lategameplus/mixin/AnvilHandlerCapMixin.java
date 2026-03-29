@@ -1,16 +1,16 @@
 package com.pedalhat.lategameplus.mixin;
 
 import com.pedalhat.lategameplus.LateGamePlus;
-import net.minecraft.screen.AnvilScreenHandler;
+import net.minecraft.world.inventory.AnvilMenu;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.ModifyConstant;
 
-@Mixin(AnvilScreenHandler.class)
+@Mixin(AnvilMenu.class)
 public abstract class AnvilHandlerCapMixin {
     private static boolean lategameplus$loggedConstantReplacement;
 
-    @ModifyConstant(method = "updateResult", constant = @Constant(intValue = 40))
+    @ModifyConstant(method = "createResult", constant = @Constant(intValue = 40))
     private int lategameplus$raiseOrRemoveTooExpensiveCap(int original) {
         if (!lategameplus$loggedConstantReplacement) {
             LateGamePlus.LOGGER.info(

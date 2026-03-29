@@ -5,42 +5,41 @@ import com.pedalhat.lategameplus.block.FusionForgeBlock;
 import com.pedalhat.lategameplus.block.FusionForgeState;
 import com.pedalhat.lategameplus.block.NetheriteAnvilBlock;
 import com.pedalhat.lategameplus.block.VolcanicObsidianBlock;
-
-import net.minecraft.block.Block;
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.Blocks;
-import net.minecraft.sound.BlockSoundGroup;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.Rarity;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Rarity;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 
 public final class ModBlocks {
-    private static RegistryKey<Block> blockKey(String name) {
-        return RegistryKey.of(RegistryKeys.BLOCK, Identifier.of(LateGamePlus.MOD_ID, name));
+    private static ResourceKey<Block> blockKey(String name) {
+        return ResourceKey.create(Registries.BLOCK, Identifier.fromNamespaceAndPath(LateGamePlus.MOD_ID, name));
     }
 
-    private static RegistryKey<Item> itemKey(String name) {
-        return RegistryKey.of(RegistryKeys.ITEM, Identifier.of(LateGamePlus.MOD_ID, name));
+    private static ResourceKey<Item> itemKey(String name) {
+        return ResourceKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(LateGamePlus.MOD_ID, name));
     }
 
     private static <T extends Block> T registerBlock(String name, T block) {
-        return Registry.register(Registries.BLOCK, blockKey(name), block);
+        return Registry.register(BuiltInRegistries.BLOCK, blockKey(name), block);
     }
 
-    private static BlockItem registerBlockItem(String name, Block block, Item.Settings itemSettings) {
-        return Registry.register(Registries.ITEM, itemKey(name),
-            new BlockItem(block, itemSettings.registryKey(itemKey(name))));
+    private static BlockItem registerBlockItem(String name, Block block, Item.Properties itemSettings) {
+        return Registry.register(BuiltInRegistries.ITEM, itemKey(name),
+            new BlockItem(block, itemSettings.setId(itemKey(name))));
     }
 
     private static <T extends Block> T registerWithItem(String name, T block, Rarity rarity, boolean fireproof) {
         T registered = registerBlock(name, block);
-        Item.Settings is = new Item.Settings().rarity(rarity);
-        if (fireproof) is = is.fireproof();
+        Item.Properties is = new Item.Properties().rarity(rarity);
+        if (fireproof) is = is.fireResistant();
         registerBlockItem(name, registered, is);
         return registered;
     }
@@ -52,13 +51,13 @@ public final class ModBlocks {
     public static void init() {
         // Block tuning: anvil sounds, netherite hardness/resistance (50F/1200F),
         // requires tool; mining level is controlled via data tags.
-        AbstractBlock.Settings netheriteAnvilSettings = AbstractBlock.Settings
-            .create()
-            .sounds(BlockSoundGroup.ANVIL)
+        BlockBehaviour.Properties netheriteAnvilSettings = BlockBehaviour.Properties
+            .of()
+            .sound(SoundType.ANVIL)
             .strength(60.0F, 1200.0F)
-            .requiresTool()
-            .luminance(state -> 3)
-            .registryKey(blockKey("netherite_anvil"));
+            .requiresCorrectToolForDrops()
+            .lightLevel(state -> 3)
+            .setId(blockKey("netherite_anvil"));
 
         NETHERITE_ANVIL = registerWithItem(
             "netherite_anvil",
@@ -67,16 +66,16 @@ public final class ModBlocks {
             true
         );
 
-        AbstractBlock.Settings fusionForgeSettings = AbstractBlock.Settings
-            .create()
-            .sounds(BlockSoundGroup.METAL)
+        BlockBehaviour.Properties fusionForgeSettings = BlockBehaviour.Properties
+            .of()
+            .sound(SoundType.METAL)
             .strength(4.5F, 1200.0F)
-            .requiresTool()
-            .luminance(state -> {
-                if (!state.contains(FusionForgeBlock.STATE)) {
+            .requiresCorrectToolForDrops()
+            .lightLevel(state -> {
+                if (!state.hasProperty(FusionForgeBlock.STATE)) {
                     return 0;
                 }
-                FusionForgeState forgeState = state.get(FusionForgeBlock.STATE);
+                FusionForgeState forgeState = state.getValue(FusionForgeBlock.STATE);
                 return switch (forgeState) {
                     case NETHER_WORKING -> 15;
                     case NETHER_DISABLED -> 10;
@@ -84,7 +83,7 @@ public final class ModBlocks {
                     case DISABLED -> 0;
                 };
             })
-            .registryKey(blockKey("fusion_forge"));
+            .setId(blockKey("fusion_forge"));
 
         FUSION_FORGE = registerWithItem(
             "fusion_forge",
@@ -93,10 +92,10 @@ public final class ModBlocks {
             true
         );
 
-        AbstractBlock.Settings volcanicObsidianSettings = AbstractBlock.Settings
-            .copy(Blocks.OBSIDIAN)
-            .dropsNothing()
-            .registryKey(blockKey("volcanic_obsidian"));
+        BlockBehaviour.Properties volcanicObsidianSettings = BlockBehaviour.Properties
+            .ofFullCopy(Blocks.OBSIDIAN)
+            .noLootTable()
+            .setId(blockKey("volcanic_obsidian"));
 
         VOLCANIC_OBSIDIAN = registerBlock(
             "volcanic_obsidian",
